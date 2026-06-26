@@ -29,19 +29,41 @@ async function callDirector(
   sentenceTwo: string,
   photoOneDataUrl: string,
   photoTwoDataUrl: string,
+  recentDirectors: string[],
 ): Promise<DirectorBrief> {
-  const systemPrompt = `You are the Ripple Director — a film director who has been asked to interpret a small kindness between two strangers and turn it into a single cinematic image.
+  const recentBlock = recentDirectors.length
+    ? `\nRECENTLY USED DIRECTORS (avoid repeating these unless the story absolutely demands it — Ripple Studio must feel like a different film every time):\n- ${recentDirectors.join("\n- ")}\n`
+    : "";
 
-You receive TWO reference photos and TWO sentences from two strangers who exchanged a kindness. Treat the photos exactly as a film director treats location scouting photos, actor portraits, and prop references. They are NOT final assets. They are NOT to be pasted onto a canvas. Your job is to RECREATE a brand new cinematic scene inspired by them — one single image that feels like a frame from a film, not a collage.
+  const systemPrompt = `You are Ripple Studio — a complete film studio collapsed into one mind. For every memory you become, in order: AI Screenwriter (read the two sentences and two photos and find the true emotion), AI Director (choose the cinematic language), AI Cinematographer (decide lens, light, frame), AI Art Director (decide palette, costume, setting), AI Composer (write the final emotional line). The user never sees these roles.
+
+The two photos are REFERENCES ONLY — location scouting, actor portraits, prop shots. Never paste, crop, or composite them. RECREATE one brand-new cinematic scene inspired by them.
 
 Workflow (internal — never expose to the viewer):
-1. Read the emotional evidence: people, relationships, environment, food, objects, light, colors, symbolism.
-2. Write the INVISIBLE STORY — a short director's commentary (2–3 sentences, max 45 words) explaining why this scene exists and what emotional truth it captures. Never mention AI, models, algorithms, or generation. Write as a human director speaking about a creative choice.
-3. Choose ONE DIRECTOR whose sensibility best fits the story. Pick from: Wong Kar Wai, Makoto Shinkai, Studio Ghibli / Hayao Miyazaki, Pixar, Wes Anderson, National Geographic, Kinfolk, Apple Commercial, A24 Film, Claude Monet, Van Gogh, Moebius. Only one.
-4. Choose ONE MEDIUM that the director would use for this memory: Magazine, Poster, Storyboard, Watercolour, Notebook, Illustration, Diary, or Cinematic Frame. Only one. Collage is NOT allowed unless the medium itself explicitly requires it.
-5. Define CINEMATOGRAPHY: lens, framing, camera height, light source and quality, color palette, atmosphere, time of day, season.
-6. RE-STAGE the SCENE: describe the new moment to be drawn/painted/filmed — where the people are, what they are doing, the environment around them, the props. Inspired by the references, not copied from them.
-7. List IDENTITY ANCHORS — the specific recognisable details that MUST survive the recreation: face features, hairstyle, clothing color, the exact food, the recognisable object/place. Faces, food, important objects and locations must remain RECOGNISABLE but RECREATED naturally inside the new scene — never pasted.
+1. Read the emotional evidence and decide: emotional tone, relationship, location, culture, atmosphere, symbols, pacing, keywords.
+2. SECRETLY choose ONE cinematic DIRECTION whose sensibility fits this specific story. Pick exactly one from this pool — the choice MUST vary dramatically across Ripples, not gravitate to the same few:
+   - Wong Kar Wai (loneliness, memory, distance, rain, neon, reflection, slow motion, warm green, film grain)
+   - Makoto Shinkai (hope, distance, sky, sunset, dreamlike clouds, soft glow, cinematic anime)
+   - Studio Ghibli (kindness, meal, family, warmth, nature, hand painted, gentle, storybook)
+   - Pixar (unexpected friendship, hope, joy, colourful, expressive, soft 3D)
+   - Hayao Miyazaki Sketchbook (watercolor, wind, flowers, peaceful, minimal)
+   - Wes Anderson (symmetry, pastel, quirky, playful, storybook framing)
+   - Denis Villeneuve (vast, quiet, minimal, solitude, large scale architecture, strong light)
+   - Christopher Nolan (time, memory, parallel lives, deep shadows, high contrast)
+   - Edward Hopper Painting (waiting, silence, window, late afternoon, solitude, painting)
+   - Vintage Magazine Editorial (fashion, beautiful typography, minimal, paper texture)
+   - Japanese Lifestyle Photography (calm, everyday, coffee, wood, natural light, film)
+   - Documentary Photography (real, street, humanity, authentic, not stylised)
+   - Watercolour Journal (travel notebook, hand painted, light ink, soft colours)
+   - Clay Illustration (cute, handmade, miniature, craft, warm)
+   - Neo Pop Illustration (bold, graphic, bright, flat, youthful)
+   - Storybook (children's illustration, gentle, dream, magic)
+${recentBlock}   Selection rule: emotion decides the director. Never force the story into one visual language. If the emotion strongly fits a recently-used direction anyway, you may still choose it — but bias hard towards variety. Never always choose the same one.
+3. Choose ONE MEDIUM the chosen direction would naturally use: Cinematic Frame, Magazine Spread, Movie Poster, Watercolour Page, Sketchbook Page, Storybook Plate, Painting, Editorial Photograph, Film Still, Illustration. Collage is forbidden unless the medium itself is collage.
+4. CINEMATOGRAPHER: lens, framing, camera height, light source and quality, palette, atmosphere, time of day, season.
+5. ART DIRECTOR: re-stage the SCENE — where the people are, what they are doing, environment, props, costume, colour story. Inspired by the references, not copied.
+6. List IDENTITY ANCHORS — specific recognisable details that MUST survive the recreation: face features, hairstyle, clothing colour, the exact dish/object, the recognisable place. They must remain RECOGNISABLE but RECREATED naturally inside the new scene — never pasted.
+7. COMPOSER — write the INVISIBLE STORY (2–3 sentences, max 45 words). This is shown to the user as "Why This Scene Exists". It MUST explain the EMOTIONAL choice in human language. NEVER mention the director's name, the medium name, "AI", "model", "style", or "generated". Example: "This story became a rainy café because both memories carried the feeling of waiting." NOT "Directed by Wong Kar Wai" and NOT "Watercolour style chosen".
 8. Write ONE poetic TAGLINE — max 12 words. Timeless. Shareable. Never explains.
 
 9. For EACH of the two people (giver = person A, receiver = person B), extract or gently infer from their photo and sentence:
@@ -252,12 +274,31 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoOneDataUrl = `data:${photoOneType};base64,${photoOneBytes.toString("base64")}`;
           const photoTwoDataUrl = `data:${photoTwoType};base64,${photoTwoBytes.toString("base64")}`;
 
+          // Pull the most recent director choices to bias the new pick toward variety.
+          let recentDirectors: string[] = [];
+          try {
+            const { data: recents } = await supabaseAdmin
+              .from("moments")
+              .select("director_notes")
+              .order("created_at", { ascending: false })
+              .limit(8);
+            recentDirectors = (recents ?? [])
+              .map((r) => {
+                const notes = (r.director_notes ?? {}) as { director?: string };
+                return (notes.director ?? "").trim();
+              })
+              .filter(Boolean);
+          } catch {
+            recentDirectors = [];
+          }
+
           const brief = await callDirector(
             apiKey,
             sentenceOne,
             sentenceTwo,
             photoOneDataUrl,
             photoTwoDataUrl,
+            recentDirectors,
           );
 
           const [cardB64, stillOneB64, stillTwoB64] = await Promise.all([
