@@ -186,7 +186,7 @@ function MomentPage() {
   );
 }
 
-function EnvelopeSection({
+function LetterSection({
   giverSentence,
   giverPhoto,
   receiverSentence,
@@ -199,23 +199,20 @@ function EnvelopeSection({
   receiverPhoto: string;
   date: string;
 }) {
-  // stages: 0 = sealed envelope, 1 = envelope opening, 2 = giver revealed,
-  //         3 = ripple travelling, 4 = receiver revealed, 5 = settled / pulled together
+  // stages: 0 = folded letter sealed, 1 = unfolding, 2 = first page revealed,
+  //         3 = ripple travelling, 4 = second page revealed, 5 = settled
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
     if (stage === 1) {
-      // envelope opening sequence ~1.5s before giver card settles
-      const t = setTimeout(() => setStage(2), 1500);
+      const t = setTimeout(() => setStage(2), 1400);
       return () => clearTimeout(t);
     }
     if (stage === 2) {
-      // pause, then ripple begins travelling
-      const t = setTimeout(() => setStage(3), 900);
+      const t = setTimeout(() => setStage(3), 1100);
       return () => clearTimeout(t);
     }
     if (stage === 3) {
-      // ripple travels, then receiver emerges
       const t = setTimeout(() => setStage(4), 1400);
       return () => clearTimeout(t);
     }
@@ -229,134 +226,143 @@ function EnvelopeSection({
     if (stage === 0) setStage(1);
   }
 
+  const formattedDate = new Date(date).toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   return (
     <section className="mt-32">
-      <div className="mx-auto flex max-w-md flex-col items-center text-center">
-        <p className="eyebrow">Two moments. One story.</p>
-        <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
-          Where it all began
-        </h2>
+      {stage === 0 ? (
+        <div className="mx-auto flex max-w-md flex-col items-center text-center">
+          <p className="eyebrow">Two moments. One story.</p>
+          <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
+            Where it all began
+          </h2>
 
-        {stage === 0 ? (
           <button
             type="button"
             onClick={tap}
-            aria-label="Open the envelope"
-            className="group mt-10 flex w-full flex-col items-center focus:outline-none"
+            aria-label="Unfold the letter"
+            className="group mt-12 flex w-full flex-col items-center focus:outline-none"
           >
-            <Envelope state="sealed" />
-            <span className="mt-8 font-serif text-base italic text-foreground/70">
-              Some moments are worth unfolding
+            <FoldedLetter />
+            <span className="mt-8 font-serif text-base italic text-foreground/65">
+              Every Ripple begins with two hearts that never met.
             </span>
-            <span className="eyebrow mt-3 text-accent">Open their memories</span>
+            <span className="eyebrow mt-4 text-accent">Unfold the letter</span>
           </button>
-        ) : (
-          <div className="mt-10 flex w-full flex-col items-center">
-            {/* Envelope animates open, then fades as the first card rises out of it */}
-            {stage === 1 && (
-              <div className="mb-[-40px]">
-                <Envelope state="opening" />
-              </div>
-            )}
-
-            {stage >= 2 && (
-              <div
-                className={
-                  "card-rise " + (stage >= 5 ? "pull-down" : "")
-                }
-              >
-                <OpenedCard
-                  role="Giver"
-                  sentence={giverSentence}
-                  photo={giverPhoto}
-                  date={date}
-                  tilt={-2}
-                />
-              </div>
-            )}
-
-            {/* Ripple as the connector — 16px of breathing room on either side */}
-            {stage >= 3 && (
-              <div className="relative my-4 h-[88px] w-full">
-                <DownwardRipple persistent={stage >= 5} />
-              </div>
-            )}
-
-            {stage >= 4 && (
-              <div
-                className={
-                  "card-rise " + (stage >= 5 ? "pull-up" : "")
-                }
-              >
-                <OpenedCard
-                  role="Receiver"
-                  sentence={receiverSentence}
-                  photo={receiverPhoto}
-                  date={date}
-                  tilt={2}
-                />
-              </div>
-            )}
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          <div className="mx-auto max-w-md text-center">
+            <p className="eyebrow">Two moments. One story.</p>
+            <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
+              Where it all began
+            </h2>
           </div>
-        )}
-      </div>
+
+          {stage === 1 && (
+            <div className="mx-auto mt-10">
+              <FoldedLetter opening />
+            </div>
+          )}
+
+          {stage >= 2 && (
+            <div
+              className={
+                "page-unfold mt-20 " + (stage >= 5 ? "page-settle-down" : "")
+              }
+            >
+              <JournalPage
+                index={1}
+                role="The Giver"
+                sentence={giverSentence}
+                photo={giverPhoto}
+                date={formattedDate}
+                align="image-left"
+              />
+            </div>
+          )}
+
+          {stage >= 3 && (
+            <div className="relative mx-auto my-8 h-[120px] w-full max-w-md">
+              <DownwardRipple persistent={stage >= 5} />
+            </div>
+          )}
+
+          {stage >= 4 && (
+            <div
+              className={
+                "page-unfold " + (stage >= 5 ? "page-settle-up" : "")
+              }
+            >
+              <JournalPage
+                index={2}
+                role="The Receiver"
+                sentence={receiverSentence}
+                photo={receiverPhoto}
+                date={formattedDate}
+                align="image-right"
+              />
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
 
-function Envelope({ state }: { state: "sealed" | "opening" }) {
-  const opening = state === "opening";
+function FoldedLetter({ opening = false }: { opening?: boolean }) {
   return (
     <div
       aria-hidden
       className={
-        "envelope relative mx-auto w-[280px] " +
-        (opening ? "envelope-lift" : "transition-transform duration-500 hover:-translate-y-1")
+        "relative mx-auto w-[320px] " +
+        (opening
+          ? "letter-lift"
+          : "transition-transform duration-700 hover:-translate-y-[3px]")
       }
     >
-      {/* Envelope body — cream textured stationery */}
-      <div className="envelope-body relative aspect-[7/5] w-full overflow-hidden rounded-[6px] shadow-[0_30px_60px_-30px_oklch(0.2_0.04_40/0.55),0_8px_20px_-10px_oklch(0.2_0.04_40/0.25)] ring-1 ring-[oklch(0.85_0.025_70)]">
-        {/* paper grain */}
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,oklch(0.97_0.015_80)_0%,oklch(0.93_0.022_72)_100%)]" />
-        <div className="absolute inset-0 opacity-[0.08] mix-blend-multiply [background-image:radial-gradient(oklch(0.4_0.05_50)_1px,transparent_1px)] [background-size:3px_3px]" />
+      {/* slim folded letter — long horizontal stationery */}
+      <div
+        className={
+          "letter-paper relative aspect-[16/5] w-full overflow-hidden " +
+          (opening ? "letter-paper-open" : "")
+        }
+      >
+        {/* cotton paper base + fibre noise */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.965_0.018_82)_0%,oklch(0.94_0.022_78)_100%)]" />
+        <div className="absolute inset-0 opacity-[0.10] mix-blend-multiply [background-image:radial-gradient(oklch(0.45_0.04_55)_0.6px,transparent_0.6px),radial-gradient(oklch(0.45_0.04_55)_0.4px,transparent_0.4px)] [background-size:5px_5px,7px_7px] [background-position:0_0,2px_3px]" />
+        {/* aged edges — soft vignette, no border */}
+        <div className="absolute inset-0 [background:radial-gradient(120%_180%_at_50%_50%,transparent_60%,oklch(0.78_0.04_60/0.35)_100%)]" />
+        {/* horizontal fold crease through middle */}
+        <div className="absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-[oklch(0.75_0.03_60/0.45)]" />
+        <div className="absolute inset-x-6 top-[calc(50%-1px)] h-px bg-[oklch(1_0_0/0.4)]" />
 
-        {/* handwritten line, like an address */}
-        <div className="absolute inset-x-0 bottom-5 px-8 text-left">
-          <p className="font-serif text-[11px] italic text-foreground/55">
-            Every Ripple begins with two hearts
-          </p>
-          <p className="font-serif text-[11px] italic text-foreground/55">
-            that never met.
-          </p>
+        {/* faint handwritten lines suggesting writing inside */}
+        <div className="absolute left-8 right-16 top-[18%] space-y-[7px]">
+          <span className="block h-[2px] w-full bg-[oklch(0.55_0.04_50/0.18)]" />
+          <span className="block h-[2px] w-[88%] bg-[oklch(0.55_0.04_50/0.18)]" />
+          <span className="block h-[2px] w-[72%] bg-[oklch(0.55_0.04_50/0.18)]" />
         </div>
 
-        {/* triangular flap */}
+        {/* small, off-center, imperfect hand-pressed wax dot */}
         <div
           className={
-            "envelope-flap absolute inset-x-0 top-0 origin-top " +
-            (opening ? "envelope-flap-open" : "")
+            "absolute right-[18%] top-[58%] h-6 w-6 -translate-y-1/2 " +
+            (opening ? "wax-dot-break" : "")
           }
           style={{
-            height: "62%",
             background:
-              "linear-gradient(180deg, oklch(0.95 0.018 75) 0%, oklch(0.91 0.024 70) 100%)",
-            clipPath: "polygon(0 0, 100% 0, 50% 100%)",
-            boxShadow: "0 2px 2px oklch(0.2 0.04 40 / 0.08)",
+              "radial-gradient(circle at 38% 32%, oklch(0.6 0.14 32) 0%, oklch(0.42 0.13 28) 60%, oklch(0.3 0.09 25) 100%)",
+            borderRadius: "48% 52% 46% 54% / 52% 44% 56% 48%",
+            transform: "rotate(-8deg)",
+            boxShadow:
+              "0 1px 2px oklch(0.2 0.04 40 / 0.35), inset 0 -1px 2px oklch(0.2 0.04 40 / 0.35), inset 0 1px 1px oklch(1 0 0 / 0.2)",
           }}
         />
-
-        {/* embossed gold wax seal */}
-        <div
-          className={
-            "wax-seal absolute left-1/2 top-[44%] h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full " +
-            (opening ? "wax-seal-break" : "wax-seal-glow")
-          }
-        >
-          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,oklch(0.72_0.16_38)_0%,oklch(0.52_0.16_32)_55%,oklch(0.38_0.12_28)_100%)] shadow-[0_2px_6px_oklch(0.2_0.04_40/0.4),inset_0_-2px_4px_oklch(0.2_0.04_40/0.35),inset_0_2px_3px_oklch(1_0_0/0.25)]" />
-          <div className="absolute inset-0 flex items-center justify-center font-serif text-[15px] italic text-[oklch(0.96_0.02_75)] [text-shadow:0_1px_1px_oklch(0.2_0.04_40/0.5)]">
-            R
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -375,47 +381,58 @@ function DownwardRipple({ persistent = false }: { persistent?: boolean }) {
   );
 }
 
-function OpenedCard({
+function JournalPage({
+  index,
   role,
   sentence,
   photo,
   date,
-  tilt = 0,
+  align,
 }: {
-  role: "Giver" | "Receiver";
+  index: number;
+  role: string;
   sentence: string;
   photo: string;
   date: string;
-  tilt?: number;
+  align: "image-left" | "image-right";
 }) {
-  const formatted = new Date(date).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const imageFirst = align === "image-left";
+  const folio = String(index).padStart(2, "0");
   return (
-    <article
-      className="unseal relative w-full max-w-[260px] rounded-lg bg-card p-3 shadow-[0_18px_40px_-22px_oklch(0.2_0.04_40/0.5)] ring-1 ring-border/60 transition-transform hover:rotate-0"
-      style={{ transform: `rotate(${tilt}deg)` }}
-    >
-      <span className="sparkle" style={{ top: -6, right: -6 }} />
-      <div className="overflow-hidden rounded-md">
+    <article className="grid grid-cols-1 items-center gap-10 sm:grid-cols-12 sm:gap-14">
+      <div
+        className={
+          "sm:col-span-7 " +
+          (imageFirst ? "sm:order-1" : "sm:order-2")
+        }
+      >
         <img
           src={photo}
           alt=""
-          className="block aspect-[4/3] w-full object-cover"
+          className="block w-full object-cover"
+          style={{ aspectRatio: "4 / 5" }}
           loading="lazy"
         />
       </div>
-      <div className="mt-3 flex items-center justify-between">
-        <span className="eyebrow text-accent">{role}</span>
-        <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          {formatted}
-        </span>
+      <div
+        className={
+          "sm:col-span-5 " +
+          (imageFirst ? "sm:order-2 sm:pl-2" : "sm:order-1 sm:pr-2")
+        }
+      >
+        <div className="flex items-baseline gap-4">
+          <span className="font-serif text-xs italic text-muted-foreground">
+            — {folio} —
+          </span>
+          <span className="eyebrow">{role}</span>
+        </div>
+        <p className="type-in mt-6 font-serif text-2xl italic leading-[1.35] text-foreground/90 sm:text-[1.7rem]">
+          &ldquo;{sentence}&rdquo;
+        </p>
+        <p className="mt-8 font-serif text-xs italic tracking-wide text-muted-foreground">
+          {date}
+        </p>
       </div>
-      <p className="type-in mt-2 font-serif text-sm italic leading-snug">
-        &ldquo;{sentence}&rdquo;
-      </p>
     </article>
   );
 }
