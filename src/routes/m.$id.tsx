@@ -196,8 +196,6 @@ function MomentPage() {
 }
 
 function RippleNote({
-  ...rest
-}: never): never;
   role,
   sentence,
   photo,
