@@ -195,6 +195,19 @@ function MomentPage() {
   );
 }
 
+function RippleConnector() {
+  return (
+    <div
+      aria-hidden
+      className="flex flex-col items-center gap-1.5 py-1"
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-accent/70" />
+      <span className="h-10 w-px bg-gradient-to-b from-accent/60 via-accent/30 to-transparent" />
+      <span className="h-1.5 w-1.5 rounded-full bg-accent/40" />
+    </div>
+  );
+}
+
 function RippleNote({
   role,
   sentence,
