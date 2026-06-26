@@ -1,16 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/v/next")({
   head: () => ({
     meta: [
-      { title: "Ripple Studio — Turn a small kindness into a memory" },
+      { title: "Ripple Studio · Next — Experimental" },
       {
         name: "description",
         content:
           "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
       },
-      { property: "og:title", content: "Ripple Studio" },
+      { property: "og:title", content: "Ripple Studio · Next" },
       {
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
@@ -69,7 +69,7 @@ function HomePage() {
 
   return (
     <main className="paper min-h-screen relative">
-      <VersionSwitcher current="beta1" />
+      <VersionSwitcher current="next" />
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>
@@ -303,8 +303,8 @@ function ComposingScreen() {
 
 function VersionSwitcher({ current }: { current: "beta1" | "next" }) {
   const versions = [
-    { id: "beta1" as const, label: "Beta 1.0", to: "/v/beta1", note: "Stable" },
-    { id: "next" as const, label: "Next", to: "/v/next", note: "Experimental" },
+    { id: "beta1" as const, label: "Beta 1.0", to: "/v/beta1" },
+    { id: "next" as const, label: "Next", to: "/v/next" },
   ];
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center pt-4 sm:pt-6">
@@ -318,11 +318,8 @@ function VersionSwitcher({ current }: { current: "beta1" | "next" }) {
               to={v.to}
               className={
                 "rounded-full px-3 py-1 transition-colors " +
-                (active
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground")
+                (active ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground")
               }
-              title={v.note}
             >
               {v.label}
             </Link>
