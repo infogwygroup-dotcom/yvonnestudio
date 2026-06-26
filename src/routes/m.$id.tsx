@@ -222,10 +222,10 @@ function LetterSection({
 
   useEffect(() => {
     const beats: Record<number, number> = {
-      1: 1700, // wax crack + flap unfold (slow)
-      2: 900,  // letter slide
-      3: 1300, // pause then ripple
-      4: 1100, // ripple fully formed
+      1: 2700, // wax crack + flap unfolds slowly (3 stages)
+      2: 1100, // letter slides up
+      3: 1500, // pause, then ripple
+      4: 1400, // ripple fully formed
     };
     const ms = beats[stage];
     if (!ms) return;
