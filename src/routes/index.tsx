@@ -72,9 +72,9 @@ function HomePage() {
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>
-          <h1 className="font-serif text-[2.5rem] leading-[1.05] text-balance sm:text-6xl sm:leading-[0.98]">
-            Every story begins{" "}
-            <span className="italic font-normal text-accent">with one small moment.</span>
+          <h1 className="font-serif text-[2.25rem] leading-[1.12] text-balance sm:text-6xl sm:leading-[0.98]">
+            Every story begins
+            <span className="block italic font-normal text-accent">with one small moment.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:max-w-md sm:text-lg">
             One photo. One feeling. One story waiting to be told.
