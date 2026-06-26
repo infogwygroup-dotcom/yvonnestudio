@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VBeta1RouteImport } from './routes/v.beta1'
 import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
 
@@ -22,6 +23,11 @@ const CollectionRoute = CollectionRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VBeta1Route = VBeta1RouteImport.update({
+  id: '/v/beta1',
+  path: '/v/beta1',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MIdRoute = MIdRouteImport.update({
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
+  '/v/beta1': typeof VBeta1Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/collection': typeof CollectionRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
+  '/v/beta1': typeof VBeta1Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
+  '/v/beta1': typeof VBeta1Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/collection' | '/api/create-moment' | '/m/$id'
+  fullPaths: '/' | '/collection' | '/api/create-moment' | '/m/$id' | '/v/beta1'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/collection' | '/api/create-moment' | '/m/$id'
-  id: '__root__' | '/' | '/collection' | '/api/create-moment' | '/m/$id'
+  to: '/' | '/collection' | '/api/create-moment' | '/m/$id' | '/v/beta1'
+  id:
+    | '__root__'
+    | '/'
+    | '/collection'
+    | '/api/create-moment'
+    | '/m/$id'
+    | '/v/beta1'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   ApiCreateMomentRoute: typeof ApiCreateMomentRoute
   MIdRoute: typeof MIdRoute
+  VBeta1Route: typeof VBeta1Route
 }
 
 declare module '@tanstack/react-router' {
@@ -83,6 +99,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v/beta1': {
+      id: '/v/beta1'
+      path: '/v/beta1'
+      fullPath: '/v/beta1'
+      preLoaderRoute: typeof VBeta1RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/m/$id': {
@@ -107,17 +130,8 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   ApiCreateMomentRoute: ApiCreateMomentRoute,
   MIdRoute: MIdRoute,
+  VBeta1Route: VBeta1Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

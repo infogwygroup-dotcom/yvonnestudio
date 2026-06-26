@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/v/beta1")({
   head: () => ({
     meta: [
       { title: "Ripple Studio — Turn a small kindness into a memory" },
