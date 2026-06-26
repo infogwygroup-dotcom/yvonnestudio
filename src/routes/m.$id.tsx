@@ -438,47 +438,70 @@ function LetterPage({
   still: string;
 }) {
   return (
-    <article className="grid grid-cols-12 items-center gap-6 sm:gap-10 px-2 sm:px-6">
-      {/* small cinematic still — 35% */}
-      <div className="col-span-12 sm:col-span-4">
-        <div
-          className="overflow-hidden"
-          style={{
-            aspectRatio: "3 / 2",
-            boxShadow: "0 16px 32px -22px oklch(0.2 0.04 40 / 0.35)",
-          }}
-        >
-          <img
-            src={still}
-            alt=""
-            className="block h-full w-full object-cover"
-            loading="lazy"
-          />
+    <article
+      className="relative mx-auto w-full overflow-hidden rounded-[2px]"
+      style={{
+        background:
+          "linear-gradient(180deg, oklch(0.97 0.012 85) 0%, oklch(0.955 0.014 80) 100%)",
+        boxShadow:
+          "0 1px 0 oklch(0.86 0.02 75) inset, 0 30px 50px -34px oklch(0.25 0.05 40 / 0.35), 0 2px 0 oklch(0.88 0.02 75)",
+      }}
+    >
+      {/* book spine shadow on the right edge to suggest an open page */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-4"
+        style={{
+          background:
+            "linear-gradient(270deg, oklch(0.78 0.03 65 / 0.35), transparent)",
+        }}
+      />
+
+      <div className="grid grid-cols-12 items-center gap-3 px-4 py-5 sm:gap-6 sm:px-7 sm:py-7">
+        {/* small landscape still — torn paper edge */}
+        <div className="col-span-5">
+          <div
+            className="relative overflow-hidden"
+            style={{
+              aspectRatio: "4 / 3",
+              boxShadow:
+                "0 10px 22px -16px oklch(0.2 0.04 40 / 0.45)",
+              clipPath:
+                "polygon(1% 2%, 99% 0%, 100% 98%, 2% 100%, 0% 50%)",
+            }}
+          >
+            <img
+              src={still}
+              alt=""
+              className="block h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* text — 65% */}
-      <div className="col-span-12 sm:col-span-8">
-        <div className="flex items-center gap-4 text-foreground/70">
-          <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.3em]">
-            {role}
-          </span>
-          <span className="h-px flex-1 bg-foreground/15" />
-          <span className="font-sans text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-            {date}
-          </span>
-        </div>
+        {/* text — 7/12 */}
+        <div className="col-span-7 pr-1 sm:pr-3">
+          <div className="flex items-center justify-between gap-3 text-foreground/70">
+            <span className="font-sans text-[9px] font-semibold uppercase tracking-[0.3em] text-accent sm:text-[10px]">
+              {role}
+            </span>
+            <span className="font-sans text-[9px] uppercase tracking-[0.28em] text-muted-foreground sm:text-[10px]">
+              {date}
+            </span>
+          </div>
 
-        <blockquote className="mt-5 font-serif text-[28px] italic leading-[1.2] text-foreground sm:text-[34px]">
-          &ldquo;{memory.sentence}&rdquo;
-        </blockquote>
+          <blockquote className="mt-2 font-serif text-[18px] italic leading-[1.2] text-foreground sm:mt-3 sm:text-[26px]">
+            &ldquo;{memory.sentence}&rdquo;
+          </blockquote>
 
-        <p className="mt-5 max-w-md font-serif text-[15px] leading-[1.6] text-foreground/70 sm:text-base whitespace-pre-line">
-          {memory.caption}
-        </p>
+          <div className="mt-2 h-px w-10 bg-foreground/20 sm:mt-3 sm:w-14" />
 
-        {(memory.location || memory.merchant || memory.meal) && (
-          <ul className="mt-6 space-y-1.5 font-sans text-[12px] tracking-wide text-muted-foreground sm:text-[13px]">
+          <p className="mt-2 font-serif text-[11px] leading-[1.55] text-foreground/70 sm:mt-3 sm:text-[13px] whitespace-pre-line">
+            {memory.caption}
+          </p>
+
+          {(memory.location || memory.merchant || memory.meal) && (
+            <ul className="mt-3 space-y-1 font-sans text-[10px] tracking-wide text-muted-foreground sm:mt-4 sm:text-[11px]">
             {memory.location && (
               <li className="flex items-center gap-2">
                 <span aria-hidden>📍</span>
@@ -497,8 +520,9 @@ function LetterPage({
                 <span>{memory.meal}</span>
               </li>
             )}
-          </ul>
-        )}
+            </ul>
+          )}
+        </div>
       </div>
     </article>
   );
