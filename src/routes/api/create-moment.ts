@@ -353,21 +353,31 @@ export const Route = createFileRoute("/api/create-moment")({
 
           // Pull the most recent director choices to bias the new pick toward variety.
           let recentDirectors: string[] = [];
+          let usedDirectorSet = new Set<string>();
           try {
             const { data: recents } = await supabaseAdmin
               .from("moments")
               .select("director_notes")
               .order("created_at", { ascending: false })
-              .limit(8);
+              .limit(200);
             recentDirectors = (recents ?? [])
               .map((r) => {
                 const notes = (r.director_notes ?? {}) as { director?: string };
                 return (notes.director ?? "").trim();
               })
               .filter(Boolean);
+            for (const raw of recentDirectors) {
+              const matched = matchPoolDirector(raw);
+              if (matched) usedDirectorSet.add(matched);
+            }
+            // Keep only the 8 most recent for the "avoid repeating" hint.
+            recentDirectors = recentDirectors.slice(0, 8);
           } catch {
             recentDirectors = [];
+            usedDirectorSet = new Set<string>();
           }
+
+          const unexploredDirectors = DIRECTOR_POOL.filter((d) => !usedDirectorSet.has(d));
 
           const rarity: Rarity = rollRarity();
 
@@ -378,6 +388,7 @@ export const Route = createFileRoute("/api/create-moment")({
             photoOneDataUrl,
             photoTwoDataUrl,
             recentDirectors,
+            unexploredDirectors,
             rarity,
           );
 
