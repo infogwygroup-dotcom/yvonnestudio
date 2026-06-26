@@ -15,6 +15,7 @@ import { Route as VNextRouteImport } from './routes/v.next'
 import { Route as VBeta1RouteImport } from './routes/v.beta1'
 import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
+import { Route as V2MIdRouteImport } from './routes/v2.m.$id'
 
 const CollectionRoute = CollectionRouteImport.update({
   id: '/collection',
@@ -46,6 +47,11 @@ const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
   path: '/api/create-moment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const V2MIdRoute = V2MIdRouteImport.update({
+  id: '/v2/m/$id',
+  path: '/v2/m/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
   '/v/next': typeof VNextRoute
+  '/v2/m/$id': typeof V2MIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
   '/v/next': typeof VNextRoute
+  '/v2/m/$id': typeof V2MIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
   '/v/next': typeof VNextRoute
+  '/v2/m/$id': typeof V2MIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/m/$id'
     | '/v/beta1'
     | '/v/next'
+    | '/v2/m/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/m/$id'
     | '/v/beta1'
     | '/v/next'
+    | '/v2/m/$id'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/m/$id'
     | '/v/beta1'
     | '/v/next'
+    | '/v2/m/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   MIdRoute: typeof MIdRoute
   VBeta1Route: typeof VBeta1Route
   VNextRoute: typeof VNextRoute
+  V2MIdRoute: typeof V2MIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCreateMomentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/v2/m/$id': {
+      id: '/v2/m/$id'
+      path: '/v2/m/$id'
+      fullPath: '/v2/m/$id'
+      preLoaderRoute: typeof V2MIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   MIdRoute: MIdRoute,
   VBeta1Route: VBeta1Route,
   VNextRoute: VNextRoute,
+  V2MIdRoute: V2MIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
