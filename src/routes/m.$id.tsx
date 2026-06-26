@@ -503,12 +503,12 @@ function WaxSeal() {
           boxShadow: "0 1px 2px oklch(0.18 0.06 32 / 0.4), inset 0 -1px 2px oklch(0.22 0.08 30 / 0.45)",
         }}
       />
-      {/* main wax body — concave seal: dark bowl, lit upper rim, shadowed lower rim */}
+      {/* main wax body — concave seal: dark centre, bright raised rim, shadowed outer edge */}
       <div
         className="wax-body relative flex h-full w-full items-center justify-center font-serif text-[28px] italic sm:text-[36px]"
         style={{
           background:
-            "radial-gradient(circle at 50% 50%, oklch(0.22 0.07 28) 0%, oklch(0.24 0.08 28) 30%, oklch(0.42 0.14 32) 58%, oklch(0.50 0.14 34) 100%)",
+            "radial-gradient(circle at 50% 50%, oklch(0.20 0.06 28) 0%, oklch(0.22 0.07 28) 26%, oklch(0.40 0.14 32) 48%, oklch(0.70 0.14 40) 58%, oklch(0.42 0.13 34) 68%, oklch(0.22 0.07 28) 100%)",
           borderRadius: "48% 52% 46% 54% / 50% 48% 52% 50%",
           boxShadow:
             "0 6px 14px oklch(0.18 0.06 40 / 0.5), 0 2px 4px oklch(0.18 0.06 40 / 0.4), 0 1px 0 oklch(1 0 0 / 0.15), inset 0 6px 12px oklch(1 0 0 / 0.16), inset 0 -6px 14px oklch(0.12 0.04 25 / 0.75), inset 0 0 22px oklch(0.12 0.04 25 / 0.6), inset 0 0 0 0.6px oklch(0.14 0.05 28 / 0.5)",
@@ -528,18 +528,18 @@ function WaxSeal() {
         />
         {/* lit upper rim crescent */}
         <span
-          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-70 mix-blend-screen"
+          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-75 mix-blend-screen"
           style={{
             background:
-              "radial-gradient(circle at 35% 30%, transparent 46%, oklch(0.80 0.14 38 / 0.55) 52%, transparent 62%)",
+              "radial-gradient(circle at 35% 28%, transparent 46%, oklch(0.84 0.14 38 / 0.55) 52%, transparent 62%)",
           }}
         />
         {/* shadowed lower rim */}
         <span
-          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-60 mix-blend-multiply"
+          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-65 mix-blend-multiply"
           style={{
             background:
-              "radial-gradient(circle at 70% 75%, oklch(0.14 0.04 25 / 0.65) 0%, transparent 40%)",
+              "radial-gradient(circle at 72% 76%, oklch(0.14 0.04 25 / 0.70) 0%, transparent 42%)",
           }}
         />
         {/* speckled wax grain */}
