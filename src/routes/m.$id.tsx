@@ -631,24 +631,31 @@ function WaxSeal() {
 
 function BotanicalSprig({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 80" className={className} fill="none" stroke="currentColor" strokeWidth="0.7" strokeLinecap="round" aria-hidden>
-      <path d="M24 4 C 25 26, 22 52, 24 78" />
-      {[14, 26, 38, 50, 62].map((y, i) => {
-        const dir = i % 2 === 0 ? 1 : -1;
+    <svg viewBox="0 0 48 80" className={className} fill="none" stroke="currentColor" strokeWidth="0.55" strokeLinecap="round" aria-hidden>
+      {/* main stem — curves gently */}
+      <path d="M22 2 C 26 18, 18 38, 24 58 C 27 68, 24 76, 22 78" />
+      {/* side branches with berry clusters */}
+      {[
+        { y: 14, dir: 1, len: 13 },
+        { y: 22, dir: -1, len: 11 },
+        { y: 32, dir: 1, len: 15 },
+        { y: 42, dir: -1, len: 12 },
+        { y: 52, dir: 1, len: 10 },
+        { y: 62, dir: -1, len: 13 },
+      ].map(({ y, dir, len }, i) => {
+        const tipX = 24 + dir * len;
+        const tipY = y - 3;
         return (
-          <g key={y}>
-            <path d={`M24 ${y} C ${24 + dir * 6} ${y - 3}, ${24 + dir * 12} ${y - 1}, ${24 + dir * 15} ${y + 4}`} />
-            <ellipse cx={24 + dir * 15} cy={y + 4} rx="2.6" ry="1.3" transform={`rotate(${dir * 35} ${24 + dir * 15} ${y + 4})`} fill="currentColor" opacity="0.4" />
+          <g key={i}>
+            <path d={`M24 ${y} Q ${24 + dir * (len * 0.55)} ${y - 1}, ${tipX} ${tipY}`} />
+            {/* berry cluster at the tip — 3 small round dots */}
+            <circle cx={tipX} cy={tipY} r="1.6" fill="currentColor" opacity="0.7" stroke="none" />
+            <circle cx={tipX + dir * 2.3} cy={tipY - 1.4} r="1.3" fill="currentColor" opacity="0.65" stroke="none" />
+            <circle cx={tipX - dir * 1} cy={tipY - 2.8} r="1.1" fill="currentColor" opacity="0.55" stroke="none" />
+            <circle cx={tipX + dir * 1.4} cy={tipY + 1.8} r="1" fill="currentColor" opacity="0.5" stroke="none" />
           </g>
         );
       })}
-      {/* tiny flower top-left */}
-      <g opacity="0.85" transform="translate(12 8)">
-        {[0, 72, 144, 216, 288].map((deg) => (
-          <ellipse key={deg} cx="0" cy="-3" rx="1.4" ry="2.4" transform={`rotate(${deg})`} fill="currentColor" opacity="0.55" />
-        ))}
-        <circle cx="0" cy="0" r="0.9" fill="currentColor" />
-      </g>
     </svg>
   );
 }
