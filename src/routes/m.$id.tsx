@@ -71,6 +71,10 @@ export const Route = createFileRoute("/m/$id")({
 function MomentPage() {
   const { moment } = Route.useLoaderData();
   const [copied, setCopied] = useState(false);
+  const closingLine = useMemo(() => {
+    const sum = Array.from(moment.id).reduce((a, c) => a + c.charCodeAt(0), 0);
+    return CLOSING_LINES[sum % CLOSING_LINES.length];
+  }, [moment.id]);
 
   async function share() {
     const url = typeof window !== "undefined" ? window.location.href : "";
