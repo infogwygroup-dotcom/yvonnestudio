@@ -148,7 +148,7 @@ function MomentPage() {
           date={moment.created_at}
           giver={{
             sentence: moment.sentence_one,
-            still: moment.still_one_url,
+            still: moment.photo_one_url,
             location: moment.giver_location,
             merchant: moment.giver_merchant,
             meal: moment.giver_meal,
@@ -156,7 +156,7 @@ function MomentPage() {
           }}
           receiver={{
             sentence: moment.sentence_two,
-            still: moment.still_two_url,
+            still: moment.photo_two_url,
             location: moment.receiver_location,
             merchant: moment.receiver_merchant,
             meal: moment.receiver_meal,
