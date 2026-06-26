@@ -89,7 +89,7 @@ function HomePage() {
         throw new Error(body.error || `Failed (${res.status})`);
       }
       const { id } = (await res.json()) as { id: string };
-      navigate({ to: "/m/$id", params: { id } });
+      navigate({ to: "/v2/m/$id", params: { id } });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setSubmitting(false);

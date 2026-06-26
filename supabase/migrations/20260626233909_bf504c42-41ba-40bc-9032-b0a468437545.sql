@@ -1,0 +1,1 @@
+ALTER TABLE public.moments ADD COLUMN IF NOT EXISTS narrative_device text; ALTER TABLE public.moments ADD COLUMN IF NOT EXISTS presentation_format text;

@@ -15,6 +15,8 @@ type DirectorBrief = {
   mood: string;
   visual_language: string[];
   format: string;
+  narrative_device: string;
+  presentation_format: string;
   giver_location: string;
   giver_merchant: string;
   giver_meal: string;
@@ -28,6 +30,22 @@ type DirectorBrief = {
 };
 
 type Rarity = "common" | "rare" | "epic" | "legendary";
+
+// Narrative devices — replace generic "Genre" in the user-facing identity block.
+const NARRATIVE_DEVICES = [
+  "Beginning Again", "The First Step", "A Letter Never Sent", "Parallel Lives",
+  "The Same Sky", "Missed Connection", "One Table Two Worlds", "Echoes",
+  "Silent Kindness", "Time Capsule", "Crossing Paths", "Homecoming",
+  "Waiting", "An Ordinary Miracle", "Shared Memory",
+] as const;
+
+// Presentation formats — gated by rarity. Common/Rare stay grounded; Epic/Legendary unlock experimental editions.
+const PRESENTATION_BY_RARITY: Record<Rarity, string[]> = {
+  common: ["Cinema Poster", "Journal Page", "Magazine Cover", "Photo Print"],
+  rare: ["Cinema Poster", "Magazine Cover", "Journal Page", "Travel Journal", "Notebook", "Old Letter"],
+  epic: ["Magazine Cover", "Museum Exhibition Card", "Film Strip", "Movie Ticket", "Newspaper Front Page", "Storyboard", "Book Chapter"],
+  legendary: ["Vinyl Record Cover", "Museum Exhibition Card", "Comic Page", "Scrapbook", "Memory Album", "Passport Page", "Blueprint", "Gallery Print"],
+};
 
 // Canonical director pool. Keep in sync with the list rendered into the system prompt.
 const DIRECTOR_POOL = [
@@ -84,6 +102,11 @@ function rarityDirective(rarity: Rarity): string {
   }
 }
 
+function presentationDirective(rarity: Rarity): string {
+  const pool = PRESENTATION_BY_RARITY[rarity];
+  return `PRESENTATION FORMAT — choose ONE collectible edition format for THIS Ripple from this rarity-gated pool: ${pool.join(" · ")}. Set "presentation_format" to that exact label. The presentation IS part of the artwork — pick the one that best frames the emotion, not the most decorative one.`;
+}
+
 async function callDirector(
   apiKey: string,
   sentenceOne: string,
@@ -135,6 +158,10 @@ ${recentBlock}${explorationBlock}   Selection rule: emotion decides the director
 
 ${rarityDirective(rarity)}
 
+${presentationDirective(rarity)}
+
+NARRATIVE DEVICE — choose ONE storytelling angle that explains WHY this scene exists. Pick from: ${NARRATIVE_DEVICES.join(" · ")}. Set "narrative_device" to that exact label. This replaces generic genre tagging.
+
 9.5. Also generate a GENRE (one of: Coming of Age, Romance, Slice of Life, Quiet Drama, Hope, Homecoming, Friendship, Journey, Family, Healing, Dream, Documentary, Road Movie, Mystery, Urban Poetry, Memory — or another single short label that fits better). Generate one MOOD (one short adjective: Hopeful, Lonely, Warm, Peaceful, Bittersweet, Joyful, Nostalgic, Dreamlike, Reflective, Playful, Melancholic, Quiet, etc.). Generate 3–5 short VISUAL_LANGUAGE tags (e.g. "Warm Film Grain", "Blue Hour", "Rain Reflection", "Golden Hour", "Soft Dust", "Minimal Japanese", "Painterly", "Handmade Paper", "Kodak Portra", "Leica Street", "Magazine Editorial", "Neo Noir", "Dreamlike", "Oil Painting", "Vintage Travel", "Watercolor Journal", "Handwritten Memory" — or invent new ones that fit). These appear in a small archival "Ripple Identity" caption — keep each tag 1–3 words, title case.
 
 9. For EACH of the two people (giver = person A, receiver = person B), extract or gently infer from their photo and sentence:
@@ -158,6 +185,8 @@ Return STRICT JSON only. No prose, no markdown fences.
   "mood": "...",
   "visual_language": ["...", "..."],
   "format": "...",
+  "narrative_device": "...",
+  "presentation_format": "...",
   "giver_location": "...",
   "giver_merchant": "...",
   "giver_meal": "...",
@@ -392,6 +421,25 @@ export const Route = createFileRoute("/api/create-moment")({
             rarity,
           );
 
+          // Deterministic fallback if the model omits the new V2 fields.
+          let narrativeDevice = (brief.narrative_device ?? "").trim();
+          if (!narrativeDevice) {
+            const seed = (sentenceOne + sentenceTwo).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+            narrativeDevice = NARRATIVE_DEVICES[seed % NARRATIVE_DEVICES.length];
+          }
+          let presentationFormat = (brief.presentation_format ?? "").trim();
+          const allowedPresentations = PRESENTATION_BY_RARITY[rarity];
+          const normalised = presentationFormat.toLowerCase();
+          const matchedPresentation = allowedPresentations.find(
+            (p) => p.toLowerCase() === normalised,
+          );
+          if (!matchedPresentation) {
+            const seed = (brief.tagline + rarity).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+            presentationFormat = allowedPresentations[seed % allowedPresentations.length];
+          } else {
+            presentationFormat = matchedPresentation;
+          }
+
           const safeStill = (b: string) =>
             composeStill(apiKey, brief, b).catch((e) => {
               console.warn("[create-moment] still fallback:", e instanceof Error ? e.message : e);
@@ -451,6 +499,8 @@ export const Route = createFileRoute("/api/create-moment")({
               mood: brief.mood,
               visual_language: Array.isArray(brief.visual_language) ? brief.visual_language.slice(0, 6) : [],
               format: brief.format || "Cinematic Frame",
+              narrative_device: narrativeDevice,
+              presentation_format: presentationFormat,
               director_notes: {
                 invisible_story: brief.invisible_story,
                 director: brief.director,

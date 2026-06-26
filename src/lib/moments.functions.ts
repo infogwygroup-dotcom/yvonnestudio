@@ -62,6 +62,8 @@ export type MomentView = {
   mood: string;
   visual_language: string[];
   format: string;
+  narrative_device: string;
+  presentation_format: string;
   director: string;
   giver_location: string;
   giver_merchant: string;
@@ -81,7 +83,7 @@ export const getMoment = createServerFn({ method: "GET" })
     const { data: row, error } = await supabaseAdmin
       .from("moments")
       .select(
-        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format",
+        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format, narrative_device, presentation_format",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -135,6 +137,8 @@ export const getMoment = createServerFn({ method: "GET" })
       mood: (row as { mood?: string | null }).mood ?? "",
       visual_language: ((row as { visual_language?: string[] | null }).visual_language ?? []) as string[],
       format: (row as { format?: string | null }).format ?? "",
+      narrative_device: (row as { narrative_device?: string | null }).narrative_device ?? "",
+      presentation_format: (row as { presentation_format?: string | null }).presentation_format ?? "",
       director: notes.director ?? "",
       giver_location: notes.giver_location ?? "",
       giver_merchant: notes.giver_merchant ?? "",
