@@ -171,6 +171,9 @@ function MomentPage() {
           </p>
         </section>
 
+        {/* Ripple Identity — archival caption */}
+        <RippleIdentity moment={moment} />
+
         {/* 6. Share */}
         <div className="flex flex-col items-center gap-5">
           <button
