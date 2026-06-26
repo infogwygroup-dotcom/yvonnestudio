@@ -23,8 +23,10 @@ export type Database = {
           genre: string | null
           id: string
           mood: string | null
+          narrative_device: string | null
           photo_one_path: string
           photo_two_path: string
+          presentation_format: string | null
           rarity: string
           ripple_number: number | null
           sentence_one: string
@@ -42,8 +44,10 @@ export type Database = {
           genre?: string | null
           id?: string
           mood?: string | null
+          narrative_device?: string | null
           photo_one_path: string
           photo_two_path: string
+          presentation_format?: string | null
           rarity?: string
           ripple_number?: number | null
           sentence_one: string
@@ -61,8 +65,10 @@ export type Database = {
           genre?: string | null
           id?: string
           mood?: string | null
+          narrative_device?: string | null
           photo_one_path?: string
           photo_two_path?: string
+          presentation_format?: string | null
           rarity?: string
           ripple_number?: number | null
           sentence_one?: string
