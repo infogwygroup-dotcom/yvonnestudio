@@ -421,6 +421,25 @@ export const Route = createFileRoute("/api/create-moment")({
             rarity,
           );
 
+          // Deterministic fallback if the model omits the new V2 fields.
+          let narrativeDevice = (brief.narrative_device ?? "").trim();
+          if (!narrativeDevice) {
+            const seed = (sentenceOne + sentenceTwo).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+            narrativeDevice = NARRATIVE_DEVICES[seed % NARRATIVE_DEVICES.length];
+          }
+          let presentationFormat = (brief.presentation_format ?? "").trim();
+          const allowedPresentations = PRESENTATION_BY_RARITY[rarity];
+          const normalised = presentationFormat.toLowerCase();
+          const matchedPresentation = allowedPresentations.find(
+            (p) => p.toLowerCase() === normalised,
+          );
+          if (!matchedPresentation) {
+            const seed = (brief.tagline + rarity).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+            presentationFormat = allowedPresentations[seed % allowedPresentations.length];
+          } else {
+            presentationFormat = matchedPresentation;
+          }
+
           const safeStill = (b: string) =>
             composeStill(apiKey, brief, b).catch((e) => {
               console.warn("[create-moment] still fallback:", e instanceof Error ? e.message : e);
@@ -480,6 +499,8 @@ export const Route = createFileRoute("/api/create-moment")({
               mood: brief.mood,
               visual_language: Array.isArray(brief.visual_language) ? brief.visual_language.slice(0, 6) : [],
               format: brief.format || "Cinematic Frame",
+              narrative_device: narrativeDevice,
+              presentation_format: presentationFormat,
               director_notes: {
                 invisible_story: brief.invisible_story,
                 director: brief.director,
