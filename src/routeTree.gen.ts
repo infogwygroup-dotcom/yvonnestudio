@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
 
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +37,47 @@ const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/collection': typeof CollectionRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/collection': typeof CollectionRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/collection': typeof CollectionRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/create-moment' | '/m/$id'
+  fullPaths: '/' | '/collection' | '/api/create-moment' | '/m/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/create-moment' | '/m/$id'
-  id: '__root__' | '/' | '/api/create-moment' | '/m/$id'
+  to: '/' | '/collection' | '/api/create-moment' | '/m/$id'
+  id: '__root__' | '/' | '/collection' | '/api/create-moment' | '/m/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CollectionRoute: typeof CollectionRoute
   ApiCreateMomentRoute: typeof ApiCreateMomentRoute
   MIdRoute: typeof MIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CollectionRoute: CollectionRoute,
   ApiCreateMomentRoute: ApiCreateMomentRoute,
   MIdRoute: MIdRoute,
 }
