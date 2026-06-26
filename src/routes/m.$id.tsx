@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getMoment } from "@/lib/moments.functions";
+import type { MomentView } from "@/lib/moments.functions";
 
 const CLOSING_LINES = [
   "Kindness always travels farther than expected.",
@@ -170,6 +171,9 @@ function MomentPage() {
             &ldquo;{closingLine}&rdquo;
           </p>
         </section>
+
+        {/* Ripple Identity — archival caption */}
+        <RippleIdentity moment={moment} />
 
         {/* 6. Share */}
         <div className="flex flex-col items-center gap-5">
@@ -773,4 +777,61 @@ function LetterPage({
   );
 }
 
+const RARITY_LABEL: Record<MomentView["rarity"], string> = {
+  common: "Standard Edition",
+  rare: "Rare Edition",
+  epic: "Epic Edition",
+  legendary: "Legendary Edition",
+};
+
+function RippleIdentity({ moment }: { moment: MomentView }) {
+  const number = moment.ripple_number
+    ? `No. ${String(moment.ripple_number).padStart(6, "0")}`
+    : `No. ${moment.id.slice(0, 6).toUpperCase()}`;
+  const tags = (moment.visual_language ?? []).filter(Boolean);
+  const rarityLabel = RARITY_LABEL[moment.rarity] ?? "Standard Edition";
+
+  const Row = ({ label, value }: { label: string; value: string }) =>
+    value ? (
+      <div className="grid grid-cols-[7.5rem_1fr] items-baseline gap-4 border-t border-foreground/10 py-3 sm:grid-cols-[9rem_1fr]">
+        <dt className="font-sans text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          {label}
+        </dt>
+        <dd className="font-serif text-[15px] leading-snug text-foreground/85 sm:text-base">
+          {value}
+        </dd>
+      </div>
+    ) : null;
+
+  return (
+    <section className="mx-auto mt-32 mb-24 max-w-xl px-1">
+      <div className="flex items-center justify-between gap-4">
+        <span className="font-sans text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+          Ripple {number}
+        </span>
+        <span className="font-sans text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+          {rarityLabel}
+        </span>
+      </div>
+      <div className="mt-3 h-px w-full bg-foreground/15" />
+      <p className="mt-6 text-center font-serif text-sm italic text-muted-foreground">
+        Directed by Ripple Studio
+      </p>
+
+      <dl className="mt-8">
+        <Row label="Genre" value={moment.genre} />
+        <Row label="Mood" value={moment.mood} />
+        <Row
+          label="Visual Language"
+          value={tags.length ? tags.join(" · ") : ""}
+        />
+        <Row label="Format" value={moment.format} />
+        {moment.rarity === "legendary" || moment.rarity === "epic" ? (
+          <Row label="Edition" value={rarityLabel} />
+        ) : null}
+        <div className="border-t border-foreground/10" />
+      </dl>
+    </section>
+  );
+}
 

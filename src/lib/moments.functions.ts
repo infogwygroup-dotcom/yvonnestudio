@@ -15,6 +15,13 @@ export type MomentView = {
   still_two_url: string;
   created_at: string;
   interpretation: string;
+  ripple_number: number | null;
+  rarity: "common" | "rare" | "epic" | "legendary";
+  genre: string;
+  mood: string;
+  visual_language: string[];
+  format: string;
+  director: string;
   giver_location: string;
   giver_merchant: string;
   giver_meal: string;
@@ -33,7 +40,7 @@ export const getMoment = createServerFn({ method: "GET" })
     const { data: row, error } = await supabaseAdmin
       .from("moments")
       .select(
-        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes",
+        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -58,6 +65,7 @@ export const getMoment = createServerFn({ method: "GET" })
 
     const notes = (row.director_notes ?? {}) as {
       invisible_story?: string;
+      director?: string;
       giver_location?: string;
       giver_merchant?: string;
       giver_meal?: string;
@@ -80,6 +88,13 @@ export const getMoment = createServerFn({ method: "GET" })
       still_two_url: row.still_two_path ? urlFor(row.still_two_path) : urlFor(row.photo_two_path),
       created_at: row.created_at,
       interpretation: notes.invisible_story ?? "",
+      ripple_number: (row as { ripple_number?: number | null }).ripple_number ?? null,
+      rarity: ((row as { rarity?: string }).rarity ?? "common") as MomentView["rarity"],
+      genre: (row as { genre?: string | null }).genre ?? "",
+      mood: (row as { mood?: string | null }).mood ?? "",
+      visual_language: ((row as { visual_language?: string[] | null }).visual_language ?? []) as string[],
+      format: (row as { format?: string | null }).format ?? "",
+      director: notes.director ?? "",
       giver_location: notes.giver_location ?? "",
       giver_merchant: notes.giver_merchant ?? "",
       giver_meal: notes.giver_meal ?? "",
