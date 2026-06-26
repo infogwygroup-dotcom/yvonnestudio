@@ -4,13 +4,13 @@ import { useRef, useState } from "react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ripple Moment — Turn a small kindness into a memory" },
+      { title: "Ripple Studio — Turn a small kindness into a memory" },
       {
         name: "description",
         content:
-          "Two strangers. Two photos. Two sentences. Ripple Moment turns a small act of kindness into a memory worth keeping.",
+          "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
       },
-      { property: "og:title", content: "Ripple Moment" },
+      { property: "og:title", content: "Ripple Studio" },
       {
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
@@ -69,25 +69,30 @@ function HomePage() {
 
   return (
     <main className="paper min-h-screen">
-      <div className="mx-auto max-w-3xl px-6 pt-16 pb-28 sm:pt-28">
+      <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
-          <p className="eyebrow">Vol. 01 · A small kindness</p>
-          <h1 className="mt-7 text-[2.75rem] leading-[0.95] sm:text-6xl">
-            Every Ripple
-            <span className="italic font-normal text-accent"> begins here</span>
+          <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>
+          <h1 className="font-serif text-[2.9rem] leading-[0.98] text-balance sm:text-6xl">
+            Every story begins
+            <br />
+            <span className="italic font-normal text-accent">with one small moment.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-            One photo. One feeling. One story waiting to happen.
+          <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+            One photo. One feeling. One story waiting to be told.
           </p>
         </header>
 
-        <div className="mt-16 h-px w-full bg-border" />
+        <BrandPromise />
 
-        <form onSubmit={onSubmit} className="mt-16 grid gap-14">
+        <div className="mt-12 h-px w-full bg-border" />
+
+        <form onSubmit={onSubmit} className="mt-14 grid gap-20">
           <SlotField
-            label="The first hand"
+            label="THE FIRST MOMENT"
             slot="one"
-            placeholder="“I only wrote two words today…”"
+            uploadLabel="Place your first memory"
+            helperText="A dinner you won’t forget. A place that still feels like home. Someone who smiled."
+            placeholder="“It was only two words, but I kept them.”"
             preview={previews.one}
             sentence={sentences.one}
             onFile={(f) => setSlotFile("one", f)}
@@ -101,9 +106,11 @@ function HomePage() {
           </div>
 
           <SlotField
-            label="The other hand"
+            label="THE SECOND MOMENT"
             slot="two"
-            placeholder="What would you want someone to remember?"
+            uploadLabel="Place your second memory"
+            helperText="A rainy street. A tiny moment that mattered. The other side of the same story."
+            placeholder="“What would you want someone to remember?”"
             preview={previews.two}
             sentence={sentences.two}
             onFile={(f) => setSlotFile("two", f)}
@@ -114,14 +121,14 @@ function HomePage() {
 
           <button
             type="submit"
-            className="group btn-journal mx-auto mt-8 inline-flex items-center gap-3 px-10 py-4 text-sm font-medium uppercase tracking-[0.18em]"
+            className="group btn-journal mx-auto mt-4 inline-flex items-center gap-3 px-10 py-4 text-sm font-medium uppercase tracking-[0.18em]"
           >
-            Compose the memory
+            Begin Your Story
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </button>
 
           <p className="text-center text-xs text-muted-foreground/80">
-            We don't ask for your name. The memory is the point.
+            We don’t ask for your name. The memory is the point.
           </p>
         </form>
 
@@ -139,9 +146,31 @@ function HomePage() {
   );
 }
 
+function BrandPromise() {
+  return (
+    <section className="mt-10 text-center">
+      <h2 className="mx-auto max-w-md font-serif text-[1.8rem] leading-[1.2] text-balance sm:text-[2.25rem]">
+        Every moment you share
+        <br />
+        becomes a story only
+        <br />
+        Ripple Studio could tell.
+      </h2>
+      <p className="mt-7 text-sm leading-relaxed text-muted-foreground sm:text-base">
+        No two stories are ever directed the same way.
+      </p>
+      <p className="mt-6 text-[11px] uppercase tracking-[0.25em] text-muted-foreground/70">
+        Story · Director · Artwork · Memory
+      </p>
+    </section>
+  );
+}
+
 function SlotField({
   label,
   slot,
+  uploadLabel,
+  helperText,
   placeholder,
   preview,
   sentence,
@@ -150,6 +179,8 @@ function SlotField({
 }: {
   label: string;
   slot: Slot;
+  uploadLabel: string;
+  helperText: string;
   placeholder: string;
   preview: string | null;
   sentence: string;
@@ -164,18 +195,16 @@ function SlotField({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="mt-3 relative block aspect-square w-full overflow-hidden journal-card hover:border-accent/60"
+          className="mt-4 relative block aspect-square w-full overflow-hidden journal-card upload-card hover:border-accent/60"
         >
           {preview ? (
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-muted-foreground">
-              <EmptyPhotoIllustration className="h-11 w-11 opacity-70" />
-              <span className="text-xs uppercase tracking-[0.18em]">Choose a memory</span>
-              <p className="text-center text-[10px] leading-relaxed text-muted-foreground/60">
-                A meal shared. A quiet sunset.
-                <br />
-                A walk home. A little kindness.
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-muted-foreground">
+              <EmptyPhotoIllustration className="h-11 w-11 opacity-60" />
+              <span className="text-xs uppercase tracking-[0.18em]">{uploadLabel}</span>
+              <p className="max-w-[18ch] text-center text-[11px] leading-relaxed text-muted-foreground/65">
+                {helperText}
               </p>
             </div>
           )}
@@ -197,7 +226,7 @@ function SlotField({
           placeholder={placeholder}
           maxLength={240}
           rows={5}
-          className="mt-3 flex-1 resize-none border-0 border-b border-border/80 bg-transparent pb-3 font-serif text-[1.35rem] leading-relaxed italic text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none"
+          className="mt-4 flex-1 resize-none border-0 border-b border-border/80 bg-transparent pb-3 font-serif text-[1.35rem] leading-relaxed italic text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none"
         />
         <p className="mt-2 text-right text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">
           {sentence.length} / 240
