@@ -72,21 +72,20 @@ function HomePage() {
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>
-          <h1 className="font-serif text-[2.9rem] leading-[0.98] text-balance sm:text-6xl">
-            Every story begins
-            <br />
+          <h1 className="font-serif text-[2.5rem] leading-[1.05] text-balance sm:text-6xl sm:leading-[0.98]">
+            Every story begins{" "}
             <span className="italic font-normal text-accent">with one small moment.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:max-w-md sm:text-lg">
             One photo. One feeling. One story waiting to be told.
           </p>
         </header>
 
         <BrandPromise />
 
-        <div className="mt-12 h-px w-full bg-border" />
+        <div className="mt-10 h-px w-full bg-border sm:mt-12" />
 
-        <form onSubmit={onSubmit} className="mt-14 grid gap-20">
+        <form onSubmit={onSubmit} className="mt-12 grid gap-14 sm:mt-14 sm:gap-20">
           <SlotField
             label="THE FIRST MOMENT"
             slot="one"
@@ -149,17 +148,17 @@ function HomePage() {
 function BrandPromise() {
   return (
     <section className="mt-10 text-center">
-      <h2 className="mx-auto max-w-md font-serif text-[1.8rem] leading-[1.2] text-balance sm:text-[2.25rem]">
+      <h2 className="mx-auto max-w-md font-serif text-[1.7rem] leading-[1.18] text-balance sm:text-[2.25rem] sm:leading-[1.2]">
         Every moment you share
         <br />
         becomes a story only
         <br />
         Ripple Studio could tell.
       </h2>
-      <p className="mt-7 text-sm leading-relaxed text-muted-foreground sm:text-base">
+      <p className="mt-6 text-sm leading-relaxed text-muted-foreground sm:mt-7 sm:text-base">
         No two stories are ever directed the same way.
       </p>
-      <p className="mt-6 text-[11px] uppercase tracking-[0.25em] text-muted-foreground/70">
+      <p className="mt-5 text-[11px] uppercase tracking-[0.25em] text-muted-foreground/70 sm:mt-6">
         Story · Director · Artwork · Memory
       </p>
     </section>
@@ -189,21 +188,21 @@ function SlotField({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <section className="grid gap-6 sm:grid-cols-[1fr_1.2fr] sm:gap-10">
+    <section className="grid gap-8 sm:grid-cols-[1fr_1.2fr] sm:gap-10">
       <div>
         <p className="eyebrow">{label}</p>
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="mt-4 relative block aspect-square w-full overflow-hidden journal-card upload-card hover:border-accent/60"
+          className="mt-5 relative block aspect-[4/5] w-full overflow-hidden journal-card upload-card hover:border-accent/60 sm:mt-4 sm:aspect-square"
         >
           {preview ? (
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-muted-foreground">
-              <EmptyPhotoIllustration className="h-11 w-11 opacity-60" />
+            <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-muted-foreground sm:gap-3">
+              <EmptyPhotoIllustration className="h-12 w-12 opacity-60 sm:h-11 sm:w-11" />
               <span className="text-xs uppercase tracking-[0.18em]">{uploadLabel}</span>
-              <p className="max-w-[18ch] text-center text-[11px] leading-relaxed text-muted-foreground/65">
+              <p className="max-w-[24ch] text-center text-xs leading-relaxed text-muted-foreground/65 sm:max-w-[18ch] sm:text-[11px]">
                 {helperText}
               </p>
             </div>
@@ -219,14 +218,14 @@ function SlotField({
         />
       </div>
       <div className="flex flex-col">
-        <p className="eyebrow text-sm">What stayed with you?</p>
+        <p className="eyebrow">What stayed with you?</p>
         <textarea
           value={sentence}
           onChange={(e) => onSentence(e.target.value)}
           placeholder={placeholder}
           maxLength={240}
           rows={5}
-          className="mt-4 flex-1 resize-none border-0 border-b border-border/80 bg-transparent pb-3 font-serif text-[1.35rem] leading-relaxed italic text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none"
+          className="mt-5 flex-1 resize-none border-0 border-b border-border/80 bg-transparent pb-3 font-serif text-[1.25rem] leading-relaxed italic text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none sm:mt-4 sm:text-[1.35rem]"
         />
         <p className="mt-2 text-right text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">
           {sentence.length} / 240
