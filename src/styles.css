@@ -599,17 +599,17 @@
 
 /* Water ripple between the two pages — gentle blue droplet, ink-soft diffusion */
 @keyframes water-ring {
-  0% { transform: translate(-50%, -50%) scale(0.15); opacity: 0; border-width: 1.2px; }
-  18% { opacity: 0.55; }
-  55% { opacity: 0.35; }
-  100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; border-width: 0.4px; }
+  0% { transform: translate(-50%, -50%) scale(0.18); opacity: 0; border-width: 1.4px; }
+  18% { opacity: 0.65; }
+  55% { opacity: 0.32; }
+  100% { transform: translate(-50%, -50%) scale(3.6); opacity: 0; border-width: 0.4px; }
 }
 .water-ring {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 64px;
-  height: 16px;
+  width: 38px;
+  height: 38px;
   border-radius: 9999px;
   border: 1.2px solid color-mix(in oklab, oklch(0.62 0.12 235) 55%, transparent);
   box-shadow:
@@ -626,16 +626,16 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 8px;
-  height: 11px;
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
   background:
     radial-gradient(circle at 32% 28%, oklch(0.97 0.015 235) 0%, oklch(0.82 0.06 235) 45%, oklch(0.58 0.12 235) 100%);
   box-shadow:
     0 0 10px color-mix(in oklab, oklch(0.66 0.10 235) 45%, transparent),
     0 0 22px color-mix(in oklab, oklch(0.78 0.06 235) 28%, transparent),
     inset 0 1px 1px oklch(1 0 0 / 0.55);
-  transform: translate(-50%, -50%) rotate(-45deg);
+  transform: translate(-50%, -50%);
   animation: water-drop 3.2s ease-in-out infinite;
 }
 
