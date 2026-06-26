@@ -1,6 +1,14 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getMoment } from "@/lib/moments.functions";
+
+const CLOSING_LINES = [
+  "Every ripple begins with one act of kindness.",
+  "Stories travel further than meals.",
+  "Kindness always leaves something behind.",
+  "Someone remembered because someone shared.",
+  "A small moment, carried quietly into the world.",
+];
 
 export const Route = createFileRoute("/m/$id")({
   loader: async ({ params }) => {
