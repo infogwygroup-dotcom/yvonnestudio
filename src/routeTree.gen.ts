@@ -9,14 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
   id: '/api/create-moment',
   path: '/api/create-moment',
@@ -24,40 +18,29 @@ const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/create-moment'
+  fullPaths: '/api/create-moment'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/create-moment'
-  id: '__root__' | '/' | '/api/create-moment'
+  to: '/api/create-moment'
+  id: '__root__' | '/api/create-moment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   ApiCreateMomentRoute: typeof ApiCreateMomentRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/create-moment': {
       id: '/api/create-moment'
       path: '/api/create-moment'
@@ -69,7 +52,6 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   ApiCreateMomentRoute: ApiCreateMomentRoute,
 }
 export const routeTree = rootRouteImport
