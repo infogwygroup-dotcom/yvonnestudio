@@ -331,17 +331,17 @@ function Envelope({ opened }: { opened: boolean }) {
         {/* deckled edges via inner shadow */}
         <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_28px_oklch(0.66_0.07_55/0.28),inset_0_0_2px_oklch(0.6_0.06_55/0.5)] rounded-[3px]" />
 
-        {/* handwritten script — left aligned, lower half (visible under flap) */}
-        <div className="absolute left-[7%] right-[34%] top-[42%] -translate-y-1/2">
-          <p className="font-hand text-[15px] italic leading-[1.5] text-[oklch(0.4_0.06_45)] opacity-90 sm:text-[18px]">
+        {/* handwritten script — lower body, safely below the flap (flap = 44%) */}
+        <div className="absolute left-[8%] right-[36%] top-[72%] -translate-y-1/2">
+          <p className="font-hand text-[14px] italic leading-[1.45] text-[oklch(0.38_0.07_45)] opacity-95 sm:text-[17px]">
             Every Ripple begins
             <br />
             with two hearts that never met.
           </p>
         </div>
 
-        {/* small botanical illustration — right side */}
-        <BotanicalSprig className="absolute right-[5%] top-[15%] h-[70%] w-auto text-[oklch(0.55_0.10_140)] opacity-55" />
+        {/* small botanical illustration — lower right, below flap */}
+        <BotanicalSprig className="absolute right-[6%] bottom-[8%] h-[44%] w-auto text-[oklch(0.5_0.10_140)] opacity-55" />
 
         {/* envelope flap (shallow trapezoid at top) */}
         <div
@@ -374,7 +374,23 @@ function Envelope({ opened }: { opened: boolean }) {
           }}
         />
 
-        {/* wax seal — vintage burgundy, embossed monogram */}
+        {/* wax shard burst — appears the instant the seal cracks */}
+        {opened && (
+          <div className="pointer-events-none absolute left-1/2 top-[44%] z-30 -translate-x-1/2 -translate-y-1/2">
+            {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => (
+              <span
+                key={deg}
+                className="wax-shard"
+                style={{
+                  ['--shard-deg' as never]: `${deg}deg`,
+                  animationDelay: `${i * 18}ms`,
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* wax seal — vintage burgundy stamp, deeply embossed */}
         <div
           className={
             "absolute left-1/2 top-[44%] z-20 -translate-x-1/2 -translate-y-1/2 " +
@@ -384,6 +400,16 @@ function Envelope({ opened }: { opened: boolean }) {
         >
           <WaxSeal />
         </div>
+
+        {/* folded letter peeking out as the flap opens */}
+        {opened && (
+          <div className="paper-peek pointer-events-none absolute left-1/2 top-[46%] z-10 h-[70%] w-[86%] -translate-x-1/2 rounded-[2px]"
+            style={{
+              background: "linear-gradient(180deg, oklch(0.985 0.01 85) 0%, oklch(0.955 0.014 80) 100%)",
+              boxShadow: "0 12px 28px -16px oklch(0.2 0.04 40 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.6)",
+            }}
+          />
+        )}
       </div>
     </div>
   );
@@ -392,56 +418,97 @@ function Envelope({ opened }: { opened: boolean }) {
 function WaxSeal() {
   return (
     <div
-      className="relative h-[38px] w-[38px] sm:h-[44px] sm:w-[44px]"
+      className="relative h-[44px] w-[44px] sm:h-[52px] sm:w-[52px]"
       style={{ transform: "rotate(-9deg)" }}
     >
       {/* drip blobs underneath — irregular molten edge */}
       <span
-        className="absolute -bottom-[3px] left-[4px] h-[10px] w-[10px] rounded-full opacity-90"
-        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.5 0.16 28) 0%, oklch(0.3 0.10 22) 100%)" }}
+        className="absolute -bottom-[4px] left-[5px] h-[11px] w-[12px] rounded-full opacity-90"
+        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.48 0.16 28) 0%, oklch(0.26 0.10 22) 100%)" }}
       />
       <span
-        className="absolute -top-[2px] right-[2px] h-[7px] w-[7px] rounded-full opacity-80"
-        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.5 0.16 28) 0%, oklch(0.3 0.10 22) 100%)" }}
+        className="absolute -top-[3px] right-[3px] h-[8px] w-[9px] rounded-full opacity-85"
+        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.48 0.16 28) 0%, oklch(0.26 0.10 22) 100%)" }}
+      />
+      <span
+        className="absolute bottom-[2px] right-[1px] h-[9px] w-[7px] rounded-full opacity-75"
+        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.46 0.15 28) 0%, oklch(0.24 0.09 22) 100%)" }}
       />
       {/* main wax body */}
       <div
-        className="relative flex h-full w-full items-center justify-center font-serif text-[14px] italic sm:text-[16px]"
+        className="relative flex h-full w-full items-center justify-center font-serif text-[16px] italic sm:text-[20px]"
         style={{
           background:
-            "radial-gradient(circle at 28% 24%, oklch(0.72 0.17 32) 0%, oklch(0.5 0.17 30) 35%, oklch(0.34 0.13 25) 75%, oklch(0.22 0.07 22) 100%)",
+            "radial-gradient(circle at 26% 22%, oklch(0.68 0.17 32) 0%, oklch(0.46 0.18 28) 35%, oklch(0.30 0.13 24) 75%, oklch(0.18 0.06 22) 100%)",
           borderRadius: "46% 54% 44% 56% / 52% 46% 54% 48%",
           boxShadow:
-            "0 3px 6px oklch(0.18 0.04 40 / 0.55), 0 1px 0 oklch(1 0 0 / 0.08), inset 0 -2px 3px oklch(0.18 0.04 40 / 0.55), inset 0 2px 2px oklch(1 0 0 / 0.22), inset 0 0 8px oklch(0.25 0.07 22 / 0.5)",
-          color: "oklch(0.32 0.08 25)",
+            "0 4px 9px oklch(0.16 0.04 40 / 0.6), 0 1px 0 oklch(1 0 0 / 0.1), inset 0 -3px 4px oklch(0.14 0.04 40 / 0.6), inset 0 2px 2px oklch(1 0 0 / 0.25), inset 0 0 10px oklch(0.22 0.07 22 / 0.55)",
+          color: "oklch(0.26 0.08 25)",
           textShadow:
-            "0 1px 0 oklch(1 0 0 / 0.22), 0 -1px 0 oklch(0.18 0.04 40 / 0.5)",
+            "0 1px 0 oklch(1 0 0 / 0.28), 0 -1px 0 oklch(0.14 0.04 40 / 0.55), inset 0 -1px 0 oklch(0.12 0.04 40 / 0.6)",
         }}
       >
         {/* speckled wax grain */}
         <span
-          className="pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 opacity-55 mix-blend-overlay"
           style={{
             background:
-              "radial-gradient(circle at 70% 80%, oklch(0.18 0.04 40 / 0.7) 0%, transparent 35%), radial-gradient(circle at 20% 70%, oklch(0.9 0.02 60 / 0.3) 0%, transparent 25%)",
+              "radial-gradient(circle at 70% 80%, oklch(0.14 0.04 40 / 0.75) 0%, transparent 32%), radial-gradient(circle at 18% 72%, oklch(0.92 0.02 60 / 0.35) 0%, transparent 22%), radial-gradient(circle at 82% 28%, oklch(0.9 0.04 30 / 0.25) 0%, transparent 22%)",
             borderRadius: "inherit",
           }}
         />
-        {/* embossed inner ring */}
+        {/* fine wax pitting texture */}
+        <span
+          className="pointer-events-none absolute inset-0 opacity-40 mix-blend-multiply"
+          style={{
+            backgroundImage:
+              "radial-gradient(oklch(0.12 0.04 22) 0.4px, transparent 0.6px), radial-gradient(oklch(0.18 0.05 22) 0.3px, transparent 0.5px)",
+            backgroundSize: "3px 3px, 5px 5px",
+            backgroundPosition: "0 0, 1px 2px",
+            borderRadius: "inherit",
+          }}
+        />
+        {/* embossed inner ring + outer rope border */}
         <span
           className="pointer-events-none absolute inset-[3px] rounded-[inherit]"
           style={{
             boxShadow:
-              "inset 0 1px 1px oklch(0.18 0.04 40 / 0.45), inset 0 -1px 1px oklch(1 0 0 / 0.18)",
+              "inset 0 1.5px 1.5px oklch(0.14 0.04 40 / 0.55), inset 0 -1.5px 1.5px oklch(1 0 0 / 0.22), inset 0 0 0 0.5px oklch(0.18 0.05 25 / 0.4)",
           }}
         />
-        <span className="relative">R</span>
+        {/* dotted rope ring around monogram */}
+        <span
+          className="pointer-events-none absolute inset-[5px] rounded-[inherit] opacity-60"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, oklch(0.16 0.04 22 / 0.7) 0.6px, transparent 0.9px)",
+            backgroundSize: "4px 4px",
+            WebkitMaskImage:
+              "radial-gradient(circle, transparent 58%, black 60%, black 78%, transparent 80%)",
+            maskImage:
+              "radial-gradient(circle, transparent 58%, black 60%, black 78%, transparent 80%)",
+          }}
+        />
+        <span
+          className="relative"
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontWeight: 600,
+            letterSpacing: "0.02em",
+            filter: "drop-shadow(0 0.5px 0 oklch(1 0 0 / 0.25)) drop-shadow(0 -0.5px 0 oklch(0.14 0.04 40 / 0.55))",
+          }}
+        >
+          R
+        </span>
       </div>
       {/* highlight gloss */}
       <span
         className="pointer-events-none absolute left-[18%] top-[14%] h-[28%] w-[34%] rounded-full opacity-50 blur-[1px]"
         style={{ background: "radial-gradient(ellipse, oklch(1 0 0 / 0.5) 0%, transparent 70%)" }}
       />
+      {/* tiny wax bubbles for realism */}
+      <span className="pointer-events-none absolute right-[28%] top-[58%] h-[3px] w-[3px] rounded-full" style={{ background: "oklch(0.16 0.05 22)", opacity: 0.7 }} />
+      <span className="pointer-events-none absolute left-[36%] bottom-[22%] h-[2px] w-[2px] rounded-full" style={{ background: "oklch(0.16 0.05 22)", opacity: 0.6 }} />
     </div>
   );
 }
