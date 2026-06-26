@@ -1,5 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
+
+const checkNextEnabled = createServerFn({ method: "GET" }).handler(async () => {
+  return { disabled: process.env.DISABLE_V_NEXT === "true" };
+});
 
 export const Route = createFileRoute("/v/next")({
   head: () => ({
@@ -17,6 +22,32 @@ export const Route = createFileRoute("/v/next")({
       },
     ],
   }),
+  loader: async () => {
+    const { disabled } = await checkNextEnabled();
+    if (disabled) {
+      throw redirect({ to: "/v/beta1" });
+    }
+  },
+  errorComponent: ({ error, reset }) => (
+    <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <p className="eyebrow">Something went wrong</p>
+      <p className="mt-4 text-sm text-muted-foreground">
+        {error instanceof Error ? error.message : "Please try again."}
+      </p>
+      <button
+        onClick={() => reset?.()}
+        className="mt-6 btn-journal px-6 py-2 text-xs uppercase tracking-[0.18em]"
+      >
+        Retry
+      </button>
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <p className="eyebrow">Not found</p>
+      <p className="mt-4 text-sm text-muted-foreground">This page does not exist.</p>
+    </div>
+  ),
   component: HomePage,
 });
 
