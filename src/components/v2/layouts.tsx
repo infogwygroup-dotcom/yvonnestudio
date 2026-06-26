@@ -34,6 +34,8 @@ function FormattedDate({ iso }: { iso: string }) {
 /* 1. CINEMA POSTER                                              */
 /* ============================================================ */
 export function CinemaPosterLayout({ moment }: Props) {
+  const year = new Date(moment.created_at).getFullYear();
+  const release = new Date(moment.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
   return (
     <PageShell moment={moment}>
       <p className="eyebrow text-center">A Ripple Studio Picture</p>
@@ -44,17 +46,30 @@ export function CinemaPosterLayout({ moment }: Props) {
           <div className="absolute inset-x-0 bottom-0 px-6 pb-8 text-center text-white">
             <p className="text-[10px] uppercase tracking-[0.32em] opacity-80">{moment.narrative_device || moment.genre}</p>
             <h1 className="mt-3 font-serif text-4xl leading-tight italic sm:text-5xl">{moment.tagline}</h1>
-            <p className="mt-5 text-[10px] uppercase tracking-[0.28em] opacity-75">
-              Directed by Ripple Studio · {moment.mood}
+            <p className="mt-5 text-[9px] uppercase tracking-[0.28em] opacity-75">
+              An Original Ripple Picture · In Selected Memory · {year}
             </p>
           </div>
-          <div className="absolute left-4 top-4 flex gap-2">
-            <span className="rounded-sm border border-white/40 px-2 py-0.5 text-[8px] uppercase tracking-[0.3em] text-white/80">
-              Official Selection
-            </span>
+          <div className="absolute left-4 top-4 flex flex-col gap-1 text-white/80">
+            <span className="rounded-sm border border-white/40 px-2 py-0.5 text-[8px] uppercase tracking-[0.3em]">Official Selection</span>
+            <span className="rounded-sm border border-white/40 px-2 py-0.5 text-[8px] uppercase tracking-[0.3em]">Festival Laureate</span>
+          </div>
+          <div className="absolute right-4 top-4 text-right text-[8px] uppercase tracking-[0.3em] text-white/70">
+            <p>Ripple Studio</p>
+            <p>presents</p>
           </div>
         </div>
-        <p className="mt-6 text-center font-serif italic text-muted-foreground">{moment.interpretation}</p>
+        <div className="mt-6 border-t border-foreground/15 pt-4 text-center">
+          <p className="text-[9px] uppercase tracking-[0.32em] text-muted-foreground">
+            Releasing {release}
+          </p>
+          <p className="mt-3 font-serif text-[11px] leading-relaxed text-foreground/75">
+            <span className="uppercase tracking-[0.18em] text-muted-foreground">Featuring </span>
+            two strangers · <span className="uppercase tracking-[0.18em] text-muted-foreground">Scene </span>
+            {moment.giver_location || "elsewhere"} & {moment.receiver_location || "elsewhere"}
+          </p>
+          <p className="mx-auto mt-4 max-w-md font-serif italic text-muted-foreground">{moment.interpretation}</p>
+        </div>
       </div>
     </PageShell>
   );
