@@ -222,10 +222,10 @@ function LetterSection({
 
   useEffect(() => {
     const beats: Record<number, number> = {
-      1: 1700, // wax crack + flap unfold (slow)
-      2: 900,  // letter slide
-      3: 1300, // pause then ripple
-      4: 1100, // ripple fully formed
+      1: 2700, // wax crack + flap unfolds slowly (3 stages)
+      2: 1100, // letter slides up
+      3: 1500, // pause, then ripple
+      4: 1400, // ripple fully formed
     };
     const ms = beats[stage];
     if (!ms) return;
@@ -311,19 +311,25 @@ function Envelope({ opened }: { opened: boolean }) {
         className={"relative aspect-[3/1] w-full " + (opened ? "env-slow-lift" : "env-breathe")}
         style={{
           background:
-            "linear-gradient(168deg, oklch(0.965 0.018 82) 0%, oklch(0.935 0.025 76) 100%)",
+            "linear-gradient(168deg, oklch(0.97 0.02 84) 0%, oklch(0.93 0.03 76) 60%, oklch(0.905 0.035 72) 100%)",
           boxShadow:
-            "0 22px 50px -28px oklch(0.2 0.04 40 / 0.4), 0 2px 5px oklch(0.2 0.04 40 / 0.08), inset 0 0 0 1px oklch(0.84 0.025 70 / 0.55)",
+            "0 26px 60px -30px oklch(0.18 0.04 40 / 0.5), 0 3px 6px oklch(0.2 0.04 40 / 0.1), inset 0 0 0 1px oklch(0.82 0.03 70 / 0.55), inset 0 0 60px oklch(0.6 0.06 55 / 0.06)",
           borderRadius: "3px",
           transformStyle: "preserve-3d",
         }}
       >
-        {/* handmade fiber texture */}
-        <div className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(oklch(0.4_0.05_55)_0.5px,transparent_0.6px),radial-gradient(oklch(0.45_0.04_55)_0.35px,transparent_0.35px),repeating-linear-gradient(112deg,transparent_0_3px,oklch(0.5_0.04_55/0.07)_3px_3.6px)] [background-size:5px_5px,7px_7px,auto] [background-position:0_0,2px_3px,0_0]" />
-        {/* aged corner vignette */}
-        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(120%_120%_at_50%_40%,transparent_55%,oklch(0.74_0.06_55/0.4)_100%)] rounded-[3px]" />
+        {/* handmade fiber texture — denser cotton paper grain */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.55px,transparent_0.7px),radial-gradient(oklch(0.46_0.04_55)_0.32px,transparent_0.4px),radial-gradient(oklch(0.5_0.03_55)_0.25px,transparent_0.3px)] [background-size:4px_4px,6px_6px,9px_9px] [background-position:0_0,2px_3px,1px_4px]" />
+        {/* laid lines — subtle horizontal weave of handmade paper */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.10] mix-blend-multiply [background-image:repeating-linear-gradient(0deg,transparent_0_2px,oklch(0.35_0.04_55/0.5)_2px_2.3px),repeating-linear-gradient(90deg,transparent_0_18px,oklch(0.35_0.04_55/0.3)_18px_18.4px)]" />
+        {/* soft cotton fiber streaks */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-multiply [background-image:repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px),repeating-linear-gradient(-72deg,transparent_0_5px,oklch(0.5_0.03_55/0.12)_5px_5.7px)]" />
+        {/* aged warm vignette */}
+        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(130%_120%_at_50%_45%,transparent_50%,oklch(0.7_0.07_55/0.45)_100%)] rounded-[3px]" />
+        {/* tea stain blush — top right */}
+        <div className="pointer-events-none absolute -top-[8%] right-[6%] h-[55%] w-[28%] rounded-full opacity-30 mix-blend-multiply" style={{ background: "radial-gradient(circle, oklch(0.7 0.08 55 / 0.6) 0%, transparent 70%)" }} />
         {/* deckled edges via inner shadow */}
-        <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_24px_oklch(0.72_0.06_55/0.18)]" />
+        <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_28px_oklch(0.66_0.07_55/0.28),inset_0_0_2px_oklch(0.6_0.06_55/0.5)] rounded-[3px]" />
 
         {/* handwritten script — left aligned, lower half (visible under flap) */}
         <div className="absolute left-[7%] right-[34%] top-[42%] -translate-y-1/2">
@@ -341,44 +347,101 @@ function Envelope({ opened }: { opened: boolean }) {
         <div
           className={"absolute inset-x-0 top-0 origin-top " + (opened ? "env-flap-slow" : "")}
           style={{
-            height: "40%",
+            height: "44%",
             background:
-              "linear-gradient(180deg, oklch(0.955 0.02 80) 0%, oklch(0.92 0.028 76) 100%)",
+              "linear-gradient(180deg, oklch(0.96 0.022 82) 0%, oklch(0.92 0.03 76) 70%, oklch(0.88 0.035 72) 100%)",
             clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)",
             transformStyle: "preserve-3d",
             backfaceVisibility: "hidden",
-            boxShadow: opened ? "0 8px 20px oklch(0.2 0.04 40 / 0.22)" : "none",
+            boxShadow: opened
+              ? "0 12px 28px oklch(0.2 0.04 40 / 0.28), inset 0 -1px 2px oklch(0.6 0.06 55 / 0.25)"
+              : "inset 0 -1px 2px oklch(0.6 0.06 55 / 0.18)",
           }}
         />
         {/* flap fiber texture */}
         <div
-          className={"pointer-events-none absolute inset-x-0 top-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(oklch(0.4_0.05_55)_0.5px,transparent_0.6px)] [background-size:5px_5px] origin-top " + (opened ? "env-flap-slow" : "")}
-          style={{ height: "40%", clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)" }}
+          className={"pointer-events-none absolute inset-x-0 top-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.5px,transparent_0.6px),repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px)] [background-size:4px_4px,auto] origin-top " + (opened ? "env-flap-slow" : "")}
+          style={{ height: "44%", clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)" }}
+        />
+        {/* flap crease shadow at base */}
+        <div
+          className="pointer-events-none absolute inset-x-0 opacity-50"
+          style={{
+            top: "calc(44% - 1px)",
+            height: "2px",
+            background: "linear-gradient(180deg, oklch(0.55 0.06 55 / 0.35), transparent)",
+            clipPath: "polygon(30% 0, 70% 0, 70% 100%, 30% 100%)",
+          }}
         />
 
-        {/* wax seal — small, centered just below flap edge */}
+        {/* wax seal — vintage burgundy, embossed monogram */}
         <div
           className={
-            "absolute left-1/2 top-[40%] z-20 -translate-x-1/2 -translate-y-1/2 " +
+            "absolute left-1/2 top-[44%] z-20 -translate-x-1/2 -translate-y-1/2 " +
             (opened ? "wax-crack" : "wax-resting")
           }
           aria-hidden
         >
-          <div
-            className="flex h-[30px] w-[30px] items-center justify-center font-serif text-[11px] italic text-[oklch(0.95_0.02_70)] sm:h-[34px] sm:w-[34px] sm:text-[12px]"
-            style={{
-              background:
-                "radial-gradient(circle at 30% 26%, oklch(0.66 0.16 35) 0%, oklch(0.44 0.14 28) 55%, oklch(0.28 0.08 22) 100%)",
-              borderRadius: "47% 53% 44% 56% / 52% 46% 54% 48%",
-              transform: "rotate(-9deg)",
-              boxShadow:
-                "0 2px 4px oklch(0.2 0.04 40 / 0.45), inset 0 -1px 1.5px oklch(0.2 0.04 40 / 0.5), inset 0 1px 1px oklch(1 0 0 / 0.3)",
-            }}
-          >
-            R
-          </div>
+          <WaxSeal />
         </div>
       </div>
+    </div>
+  );
+}
+
+function WaxSeal() {
+  return (
+    <div
+      className="relative h-[38px] w-[38px] sm:h-[44px] sm:w-[44px]"
+      style={{ transform: "rotate(-9deg)" }}
+    >
+      {/* drip blobs underneath — irregular molten edge */}
+      <span
+        className="absolute -bottom-[3px] left-[4px] h-[10px] w-[10px] rounded-full opacity-90"
+        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.5 0.16 28) 0%, oklch(0.3 0.10 22) 100%)" }}
+      />
+      <span
+        className="absolute -top-[2px] right-[2px] h-[7px] w-[7px] rounded-full opacity-80"
+        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.5 0.16 28) 0%, oklch(0.3 0.10 22) 100%)" }}
+      />
+      {/* main wax body */}
+      <div
+        className="relative flex h-full w-full items-center justify-center font-serif text-[14px] italic sm:text-[16px]"
+        style={{
+          background:
+            "radial-gradient(circle at 28% 24%, oklch(0.72 0.17 32) 0%, oklch(0.5 0.17 30) 35%, oklch(0.34 0.13 25) 75%, oklch(0.22 0.07 22) 100%)",
+          borderRadius: "46% 54% 44% 56% / 52% 46% 54% 48%",
+          boxShadow:
+            "0 3px 6px oklch(0.18 0.04 40 / 0.55), 0 1px 0 oklch(1 0 0 / 0.08), inset 0 -2px 3px oklch(0.18 0.04 40 / 0.55), inset 0 2px 2px oklch(1 0 0 / 0.22), inset 0 0 8px oklch(0.25 0.07 22 / 0.5)",
+          color: "oklch(0.32 0.08 25)",
+          textShadow:
+            "0 1px 0 oklch(1 0 0 / 0.22), 0 -1px 0 oklch(0.18 0.04 40 / 0.5)",
+        }}
+      >
+        {/* speckled wax grain */}
+        <span
+          className="pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay"
+          style={{
+            background:
+              "radial-gradient(circle at 70% 80%, oklch(0.18 0.04 40 / 0.7) 0%, transparent 35%), radial-gradient(circle at 20% 70%, oklch(0.9 0.02 60 / 0.3) 0%, transparent 25%)",
+            borderRadius: "inherit",
+          }}
+        />
+        {/* embossed inner ring */}
+        <span
+          className="pointer-events-none absolute inset-[3px] rounded-[inherit]"
+          style={{
+            boxShadow:
+              "inset 0 1px 1px oklch(0.18 0.04 40 / 0.45), inset 0 -1px 1px oklch(1 0 0 / 0.18)",
+          }}
+        />
+        <span className="relative">R</span>
+      </div>
+      {/* highlight gloss */}
+      <span
+        className="pointer-events-none absolute left-[18%] top-[14%] h-[28%] w-[34%] rounded-full opacity-50 blur-[1px]"
+        style={{ background: "radial-gradient(ellipse, oklch(1 0 0 / 0.5) 0%, transparent 70%)" }}
+      />
     </div>
   );
 }
