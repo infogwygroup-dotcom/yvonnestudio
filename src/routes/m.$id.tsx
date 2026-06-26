@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getMoment } from "@/lib/moments.functions";
 
 const CLOSING_LINES = [
@@ -144,32 +144,13 @@ function MomentPage() {
         )}
 
         {/* 3. The Moments That Started This Story */}
-        <section className="mt-32">
-          <div className="text-center">
-            <p className="eyebrow">Origins</p>
-            <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
-              The moments that started this story
-            </h2>
-          </div>
-
-          <div className="mt-14 flex flex-col items-center gap-8">
-            <RippleNote
-              role="Giver"
-              sentence={moment.sentence_one}
-              photo={moment.photo_one_url}
-              tilt={-2}
-              date={moment.created_at}
-            />
-            <RippleConnector />
-            <RippleNote
-              role="Receiver"
-              sentence={moment.sentence_two}
-              photo={moment.photo_two_url}
-              tilt={2}
-              date={moment.created_at}
-            />
-          </div>
-        </section>
+        <GiftSection
+          giverSentence={moment.sentence_one}
+          giverPhoto={moment.photo_one_url}
+          receiverSentence={moment.sentence_two}
+          receiverPhoto={moment.photo_two_url}
+          date={moment.created_at}
+        />
 
         {/* 5. Ending Quote */}
         <section className="mt-40 mb-32 px-2 text-center">
@@ -205,22 +186,191 @@ function MomentPage() {
   );
 }
 
-function RippleConnector() {
+function GiftSection({
+  giverSentence,
+  giverPhoto,
+  receiverSentence,
+  receiverPhoto,
+  date,
+}: {
+  giverSentence: string;
+  giverPhoto: string;
+  receiverSentence: string;
+  receiverPhoto: string;
+  date: string;
+}) {
+  // stages: 0 = sealed gift, 1 = giver opening, 2 = ripple, 3 = receiver opening, 4 = settled
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    if (stage === 1) {
+      const t = setTimeout(() => setStage(2), 1100);
+      return () => clearTimeout(t);
+    }
+    if (stage === 2) {
+      const t = setTimeout(() => setStage(3), 1600);
+      return () => clearTimeout(t);
+    }
+    if (stage === 3) {
+      const t = setTimeout(() => setStage(4), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [stage]);
+
+  function tap() {
+    if (stage === 0) setStage(1);
+  }
+
+  return (
+    <section className="mt-32">
+      {stage === 0 ? (
+        <button
+          type="button"
+          onClick={tap}
+          className="group mx-auto flex w-full max-w-md flex-col items-center text-center focus:outline-none"
+        >
+          <span className="text-5xl transition-transform duration-500 group-hover:-translate-y-1 group-active:scale-95">
+            🎁
+          </span>
+          <p className="eyebrow mt-6">Origins</p>
+          <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
+            The moments that started this story
+          </h2>
+          <p className="mt-4 max-w-sm text-sm text-muted-foreground">
+            Two small moments created one unforgettable story.
+          </p>
+          <SealedCard />
+          <span className="mt-8 text-xs uppercase tracking-[0.22em] text-accent">
+            Tap to begin
+          </span>
+        </button>
+      ) : (
+        <div className="mx-auto flex max-w-md flex-col items-center text-center">
+          <p className="eyebrow">Origins</p>
+          <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
+            The moments that started this story
+          </h2>
+
+          <div className="mt-10 flex w-full flex-col items-center">
+            <div className={stage >= 4 ? "gift-float" : undefined}>
+              <OpenedCard
+                role="Giver"
+                sentence={giverSentence}
+                photo={giverPhoto}
+                date={date}
+                tilt={-2}
+              />
+            </div>
+
+            {/* 24px gap, then ripple acts as the connector */}
+            <div className="relative my-6 h-[120px] w-full">
+              {stage >= 2 && stage < 4 && <DownwardRipple />}
+            </div>
+
+            {stage >= 3 ? (
+              <div className={stage >= 4 ? "unseal gift-float" : "unseal"}>
+                <OpenedCard
+                  role="Receiver"
+                  sentence={receiverSentence}
+                  photo={receiverPhoto}
+                  date={date}
+                  tilt={2}
+                />
+              </div>
+            ) : (
+              <SealedCard small role="Receiver" />
+            )}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function SealedCard({ role = "Giver", small = false }: { role?: string; small?: boolean }) {
   return (
     <div
       aria-hidden
-      className="relative h-24 w-24"
+      className={
+        (small ? "mt-0 max-w-[240px] " : "mt-10 max-w-[260px] ") +
+        "relative w-full overflow-hidden rounded-lg bg-card p-3 shadow-[0_18px_40px_-22px_oklch(0.2_0.04_40/0.5)] ring-1 ring-border/60"
+      }
     >
-      <span className="ripple-ring" />
-      <span className="ripple-ring" style={{ animationDelay: "1.2s" }} />
-      <span className="ripple-ring" style={{ animationDelay: "2.4s" }} />
-      <span
-        className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/80 shadow-[0_0_18px_oklch(0.62_0.14_35/0.7)]"
-      />
-      <span className="ripple-dust" style={{ left: "30%", animationDelay: "0.4s" }} />
-      <span className="ripple-dust" style={{ left: "55%", animationDelay: "1.6s" }} />
-      <span className="ripple-dust" style={{ left: "72%", animationDelay: "2.8s" }} />
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md bg-[oklch(0.93_0.018_75)]">
+        {/* envelope-style cross seal */}
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,oklch(0.95_0.015_75)_0%,oklch(0.9_0.02_70)_100%)]" />
+        <div className="absolute inset-0">
+          <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-border/70" />
+          <div className="absolute bottom-0 left-1/2 top-0 w-px -translate-x-1/2 bg-border/70" />
+          <div className="absolute left-1/2 top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/85 shadow-[0_0_22px_oklch(0.62_0.14_35/0.55)]" />
+        </div>
+      </div>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="eyebrow text-accent">{role}</span>
+        <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          Sealed
+        </span>
+      </div>
+      <p className="mt-2 h-5 rounded bg-muted/60" />
     </div>
+  );
+}
+
+function DownwardRipple() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-full">
+      <span className="ripple-ring-down" />
+      <span className="ripple-ring-down" style={{ animationDelay: "0.7s" }} />
+      <span className="ripple-ring-down" style={{ animationDelay: "1.4s" }} />
+      <span className="ripple-drop" />
+      <span className="ripple-drop" style={{ animationDelay: "0.5s" }} />
+      <span className="ripple-drop" style={{ animationDelay: "1s" }} />
+    </div>
+  );
+}
+
+function OpenedCard({
+  role,
+  sentence,
+  photo,
+  date,
+  tilt = 0,
+}: {
+  role: "Giver" | "Receiver";
+  sentence: string;
+  photo: string;
+  date: string;
+  tilt?: number;
+}) {
+  const formatted = new Date(date).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  return (
+    <article
+      className="unseal relative w-full max-w-[260px] rounded-lg bg-card p-3 shadow-[0_18px_40px_-22px_oklch(0.2_0.04_40/0.5)] ring-1 ring-border/60 transition-transform hover:rotate-0"
+      style={{ transform: `rotate(${tilt}deg)` }}
+    >
+      <span className="sparkle" style={{ top: -6, right: -6 }} />
+      <div className="overflow-hidden rounded-md">
+        <img
+          src={photo}
+          alt=""
+          className="block aspect-[4/3] w-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="eyebrow text-accent">{role}</span>
+        <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          {formatted}
+        </span>
+      </div>
+      <p className="type-in mt-2 font-serif text-sm italic leading-snug">
+        &ldquo;{sentence}&rdquo;
+      </p>
+    </article>
   );
 }
 
