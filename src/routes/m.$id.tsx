@@ -280,7 +280,7 @@ function LetterSection({
 
           {stage >= 4 && (
             <div className="relative h-[64px] w-full max-w-3xl">
-              <GoldenRipple />
+              <WaterRipple />
             </div>
           )}
 
@@ -407,19 +407,19 @@ function BotanicalSprig({ className = "" }: { className?: string }) {
   );
 }
 
-function GoldenRipple() {
+function WaterRipple() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
-      {/* glowing drop center */}
-      <span className="gold-drop" />
-      <span className="gold-ring" />
-      <span className="gold-ring" style={{ animationDelay: "0.7s" }} />
-      <span className="gold-ring" style={{ animationDelay: "1.4s" }} />
-      {[0.1, 0.5, 0.9, 1.3, 1.7, 2.1].map((d, i) => (
+      {/* glossy water droplet centre */}
+      <span className="water-drop" />
+      <span className="water-ring" />
+      <span className="water-ring" style={{ animationDelay: "0.7s" }} />
+      <span className="water-ring" style={{ animationDelay: "1.4s" }} />
+      {[0.1, 0.4, 0.7, 1.0, 1.3, 1.6, 2.0].map((d, i) => (
         <span
           key={i}
-          className="gold-particle"
-          style={{ animationDelay: `${d}s`, left: `${42 + (i % 4) * 5}%` }}
+          className="water-splash"
+          style={{ animationDelay: `${d}s`, left: `${40 + (i % 5) * 5}%` }}
         />
       ))}
     </div>
