@@ -222,7 +222,7 @@ function LetterSection({
 
   useEffect(() => {
     const beats: Record<number, number> = {
-      1: 900,  // wax cracks · envelope lifts & dissolves
+      1: 1800, // wax melts warmly · envelope drifts upward
       2: 200,  // tiny breath before letters arrive
       3: 1200, // pause, then ripple
       4: 1300, // ripple fully formed
@@ -435,19 +435,29 @@ function Envelope({ opened }: { opened: boolean }) {
           style={{ background: "linear-gradient(270deg, oklch(0.55 0.06 55 / 0.45), transparent)" }}
         />
 
-        {/* wax shard burst — appears the instant the seal cracks */}
+        {/* warm golden dust — gentle motes rising like sunlit pollen */}
         {opened && (
-          <div className="pointer-events-none absolute left-1/2 top-[38%] z-30 -translate-x-1/2 -translate-y-1/2">
-            {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => (
-              <span
-                key={deg}
-                className="wax-shard"
-                style={{
-                  ['--shard-deg' as never]: `${deg}deg`,
-                  animationDelay: `${i * 18}ms`,
-                }}
-              />
-            ))}
+          <div className="pointer-events-none absolute inset-0 z-30 overflow-visible">
+            {Array.from({ length: 14 }).map((_, i) => {
+              const left = 18 + (i * 67) % 64;
+              const delay = (i * 90) % 800;
+              const drift = (i % 2 === 0 ? -1 : 1) * (6 + (i % 4) * 4);
+              const size = 3 + (i % 3);
+              return (
+                <span
+                  key={i}
+                  className="warm-mote"
+                  style={{
+                    left: `${left}%`,
+                    bottom: "30%",
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    ['--drift' as never]: `${drift}px`,
+                    animationDelay: `${delay}ms`,
+                  }}
+                />
+              );
+            })}
           </div>
         )}
 
@@ -458,7 +468,7 @@ function Envelope({ opened }: { opened: boolean }) {
           onPointerLeave={handleSealLeave}
           className={
             "absolute left-1/2 top-[38%] z-20 -translate-x-1/2 -translate-y-1/2 " +
-            (opened ? "wax-crack" : "wax-resting")
+            (opened ? "wax-melt" : "wax-resting")
           }
           aria-hidden
         >
