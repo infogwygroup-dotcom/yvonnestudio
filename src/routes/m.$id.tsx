@@ -144,7 +144,7 @@ function MomentPage() {
         )}
 
         {/* 3. The Moments That Started This Story */}
-        <EnvelopeSection
+        <LetterSection
           giverSentence={moment.sentence_one}
           giverPhoto={moment.photo_one_url}
           receiverSentence={moment.sentence_two}
