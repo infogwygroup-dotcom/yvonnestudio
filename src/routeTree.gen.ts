@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MIdRoute = MIdRouteImport.update({
+  id: '/m/$id',
+  path: '/m/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
@@ -26,27 +32,31 @@ const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
+  '/m/$id': typeof MIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
+  '/m/$id': typeof MIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
+  '/m/$id': typeof MIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/create-moment'
+  fullPaths: '/' | '/api/create-moment' | '/m/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/create-moment'
-  id: '__root__' | '/' | '/api/create-moment'
+  to: '/' | '/api/create-moment' | '/m/$id'
+  id: '__root__' | '/' | '/api/create-moment' | '/m/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiCreateMomentRoute: typeof ApiCreateMomentRoute
+  MIdRoute: typeof MIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/m/$id': {
+      id: '/m/$id'
+      path: '/m/$id'
+      fullPath: '/m/$id'
+      preLoaderRoute: typeof MIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/create-moment': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiCreateMomentRoute: ApiCreateMomentRoute,
+  MIdRoute: MIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
