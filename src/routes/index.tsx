@@ -69,27 +69,25 @@ function HomePage() {
 
   return (
     <main className="paper min-h-screen">
-      <div className="mx-auto max-w-3xl px-6 pt-14 pb-24 sm:pt-24">
+      <div className="mx-auto max-w-3xl px-6 pt-16 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">Vol. 01 · A small kindness</p>
-          <h1 className="mt-6 text-5xl leading-[0.95] sm:text-7xl">
-            Ripple
-            <span className="italic font-normal text-accent"> Moment</span>
+          <h1 className="mt-7 text-[2.75rem] leading-[0.95] sm:text-6xl">
+            Every Ripple
+            <span className="italic font-normal text-accent"> begins here</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-            Two strangers. Two photos. Two sentences.
-            <br />
-            Kept forever as one memory.
+          <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+            One photo. One feeling. One story waiting to happen.
           </p>
         </header>
 
-        <div className="mt-14 h-px w-full bg-border" />
+        <div className="mt-16 h-px w-full bg-border" />
 
-        <form onSubmit={onSubmit} className="mt-14 grid gap-12">
+        <form onSubmit={onSubmit} className="mt-16 grid gap-14">
           <SlotField
             label="The first hand"
             slot="one"
-            placeholder="A line about what you gave, or what you saw…"
+            placeholder="“I only wrote two words today…”"
             preview={previews.one}
             sentence={sentences.one}
             onFile={(f) => setSlotFile("one", f)}
@@ -105,7 +103,7 @@ function HomePage() {
           <SlotField
             label="The other hand"
             slot="two"
-            placeholder="A line about what you received, or what you felt…"
+            placeholder="What would you want someone to remember?"
             preview={previews.two}
             sentence={sentences.two}
             onFile={(f) => setSlotFile("two", f)}
@@ -116,13 +114,13 @@ function HomePage() {
 
           <button
             type="submit"
-            className="group mx-auto mt-6 inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground transition hover:bg-accent"
+            className="group btn-journal mx-auto mt-8 inline-flex items-center gap-3 px-10 py-4 text-sm font-medium uppercase tracking-[0.18em]"
           >
             Compose the memory
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </button>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-xs text-muted-foreground/80">
             We don't ask for your name. The memory is the point.
           </p>
         </form>
@@ -156,14 +154,19 @@ function SlotField({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="mt-3 relative block aspect-square w-full overflow-hidden rounded-sm border border-border bg-card transition hover:border-accent"
+          className="mt-3 relative block aspect-square w-full overflow-hidden rounded-lg border border-border/80 bg-card transition hover:border-accent/60 hover:shadow-md"
         >
           {preview ? (
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
-              <span className="font-serif text-4xl italic">+</span>
-              <span className="text-xs uppercase tracking-[0.18em]">Add a photo</span>
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-4 text-muted-foreground">
+              <EmptyPhotoIllustration className="h-12 w-12 opacity-70" />
+              <span className="text-xs uppercase tracking-[0.18em]">Choose a memory</span>
+              <p className="text-center text-[10px] leading-relaxed text-muted-foreground/60">
+                A meal shared. A quiet sunset.
+                <br />
+                A walk home. A little kindness.
+              </p>
             </div>
           )}
         </button>
@@ -177,20 +180,61 @@ function SlotField({
         />
       </div>
       <div className="flex flex-col">
-        <p className="eyebrow">A single sentence</p>
+        <p className="eyebrow text-sm">What stayed with you?</p>
         <textarea
           value={sentence}
           onChange={(e) => onSentence(e.target.value)}
           placeholder={placeholder}
           maxLength={240}
           rows={5}
-          className="mt-3 flex-1 resize-none border-0 border-b border-border bg-transparent pb-3 font-serif text-2xl leading-snug italic text-foreground placeholder:text-muted-foreground/60 focus:border-accent focus:outline-none"
+          className="mt-3 flex-1 resize-none border-0 border-b border-border/80 bg-transparent pb-3 font-serif text-[1.35rem] leading-relaxed italic text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none"
         />
-        <p className="mt-2 text-right text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="mt-2 text-right text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">
           {sentence.length} / 240
         </p>
       </div>
     </section>
+  );
+}
+
+function EmptyPhotoIllustration({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect
+        x="10"
+        y="14"
+        width="36"
+        height="28"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <rect
+        x="15"
+        y="21"
+        width="26"
+        height="18"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <path
+        d="M40 18c-2 0-3.5 1.5-3.5 3.5s1.5 3.5 3.5 3.5 3.5-1.5 3.5-3.5S42 18 40 18z"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <path
+        d="M40 25v6M37 27c-1.5-1.5-3-1-4 0M43 27c1.5-1.5 3-1 4 0"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
