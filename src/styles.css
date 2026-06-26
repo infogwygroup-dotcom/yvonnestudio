@@ -174,3 +174,45 @@
       var(--color-background);
   }
 }
+
+/* Ripple connection animations */
+@keyframes ripple-pulse {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.55;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple-drift {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translateY(-60px) scale(0.4); opacity: 0; }
+}
+
+.ripple-ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 60%, transparent);
+  animation: ripple-pulse 3.6s ease-out infinite;
+}
+
+.ripple-dust {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent) 70%, transparent);
+  animation: ripple-drift 4.8s ease-in-out infinite;
+}
