@@ -154,13 +154,13 @@ function SlotField({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="mt-3 relative block aspect-square w-full overflow-hidden rounded-lg border border-border/80 bg-card transition hover:border-accent/60 hover:shadow-md"
+          className="mt-3 relative block aspect-square w-full overflow-hidden journal-card hover:border-accent/60"
         >
           {preview ? (
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-4 text-muted-foreground">
-              <EmptyPhotoIllustration className="h-12 w-12 opacity-70" />
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-muted-foreground">
+              <EmptyPhotoIllustration className="h-11 w-11 opacity-70" />
               <span className="text-xs uppercase tracking-[0.18em]">Choose a memory</span>
               <p className="text-center text-[10px] leading-relaxed text-muted-foreground/60">
                 A meal shared. A quiet sunset.
