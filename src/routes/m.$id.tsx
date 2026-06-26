@@ -421,33 +421,66 @@ function WaxSeal() {
       className="relative h-[44px] w-[44px] sm:h-[52px] sm:w-[52px]"
       style={{ transform: "rotate(-9deg)" }}
     >
-      {/* drip blobs underneath — irregular molten edge */}
+      {/* drip blobs underneath — irregular molten edge with shading */}
       <span
-        className="absolute -bottom-[4px] left-[5px] h-[11px] w-[12px] rounded-full opacity-90"
-        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.48 0.16 28) 0%, oklch(0.26 0.10 22) 100%)" }}
+        className="absolute -bottom-[5px] left-[4px] h-[13px] w-[14px] opacity-95"
+        style={{
+          background:
+            "radial-gradient(circle at 30% 28%, oklch(0.72 0.16 32) 0%, oklch(0.46 0.18 28) 38%, oklch(0.22 0.08 22) 100%)",
+          borderRadius: "58% 42% 62% 38% / 60% 50% 50% 40%",
+          boxShadow:
+            "0 2px 3px oklch(0.12 0.04 28 / 0.55), inset 0 1px 1px oklch(1 0 0 / 0.22), inset 0 -1px 2px oklch(0.14 0.04 28 / 0.6)",
+        }}
       />
       <span
-        className="absolute -top-[3px] right-[3px] h-[8px] w-[9px] rounded-full opacity-85"
-        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.48 0.16 28) 0%, oklch(0.26 0.10 22) 100%)" }}
+        className="absolute -top-[4px] right-[2px] h-[9px] w-[10px] opacity-90"
+        style={{
+          background:
+            "radial-gradient(circle at 30% 28%, oklch(0.70 0.16 32) 0%, oklch(0.44 0.18 28) 40%, oklch(0.22 0.08 22) 100%)",
+          borderRadius: "52% 48% 40% 60% / 50% 60% 40% 50%",
+          boxShadow:
+            "0 1px 2px oklch(0.12 0.04 28 / 0.5), inset 0 1px 1px oklch(1 0 0 / 0.2), inset 0 -1px 2px oklch(0.14 0.04 28 / 0.55)",
+        }}
       />
       <span
-        className="absolute bottom-[2px] right-[1px] h-[9px] w-[7px] rounded-full opacity-75"
-        style={{ background: "radial-gradient(circle at 35% 30%, oklch(0.46 0.15 28) 0%, oklch(0.24 0.09 22) 100%)" }}
+        className="absolute bottom-[1px] -right-[1px] h-[10px] w-[8px] opacity-80"
+        style={{
+          background:
+            "radial-gradient(circle at 32% 30%, oklch(0.66 0.15 30) 0%, oklch(0.42 0.17 26) 40%, oklch(0.20 0.07 22) 100%)",
+          borderRadius: "60% 40% 50% 50% / 55% 45% 55% 45%",
+          boxShadow: "0 1px 2px oklch(0.12 0.04 28 / 0.5), inset 0 -1px 2px oklch(0.14 0.04 28 / 0.5)",
+        }}
       />
       {/* main wax body */}
       <div
-        className="relative flex h-full w-full items-center justify-center font-serif text-[16px] italic sm:text-[20px]"
+        className="wax-body relative flex h-full w-full items-center justify-center font-serif text-[16px] italic sm:text-[20px]"
         style={{
           background:
-            "radial-gradient(circle at 26% 22%, oklch(0.68 0.17 32) 0%, oklch(0.46 0.18 28) 35%, oklch(0.30 0.13 24) 75%, oklch(0.18 0.06 22) 100%)",
+            "radial-gradient(circle at 28% 22%, oklch(0.74 0.16 34) 0%, oklch(0.56 0.18 30) 22%, oklch(0.40 0.18 28) 48%, oklch(0.26 0.11 24) 78%, oklch(0.15 0.06 22) 100%)",
           borderRadius: "46% 54% 44% 56% / 52% 46% 54% 48%",
           boxShadow:
-            "0 4px 9px oklch(0.16 0.04 40 / 0.6), 0 1px 0 oklch(1 0 0 / 0.1), inset 0 -3px 4px oklch(0.14 0.04 40 / 0.6), inset 0 2px 2px oklch(1 0 0 / 0.25), inset 0 0 10px oklch(0.22 0.07 22 / 0.55)",
+            "0 5px 12px oklch(0.14 0.04 40 / 0.55), 0 2px 4px oklch(0.16 0.05 40 / 0.45), 0 1px 0 oklch(1 0 0 / 0.12), inset 0 -3.5px 5px oklch(0.12 0.04 40 / 0.62), inset 0 2.5px 3px oklch(1 0 0 / 0.32), inset 0 0 12px oklch(0.20 0.07 22 / 0.55), inset 0 0 0 0.6px oklch(0.10 0.03 22 / 0.5)",
           color: "oklch(0.26 0.08 25)",
           textShadow:
             "0 1px 0 oklch(1 0 0 / 0.28), 0 -1px 0 oklch(0.14 0.04 40 / 0.55), inset 0 -1px 0 oklch(0.12 0.04 40 / 0.6)",
         }}
       >
+        {/* deep ambient occlusion around the edge */}
+        <span
+          className="pointer-events-none absolute inset-0 rounded-[inherit]"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 55%, transparent 48%, oklch(0.12 0.04 22 / 0.45) 92%)",
+          }}
+        />
+        {/* warm rim light from lower-right (counter-light) */}
+        <span
+          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-70 mix-blend-screen"
+          style={{
+            background:
+              "radial-gradient(circle at 78% 82%, oklch(0.78 0.14 38 / 0.55) 0%, transparent 32%)",
+          }}
+        />
         {/* speckled wax grain */}
         <span
           className="pointer-events-none absolute inset-0 opacity-55 mix-blend-overlay"
@@ -468,12 +501,21 @@ function WaxSeal() {
             borderRadius: "inherit",
           }}
         />
+        {/* micro crater pits — pressed wax imperfections */}
+        <span
+          className="pointer-events-none absolute inset-0 opacity-45"
+          style={{
+            background:
+              "radial-gradient(circle at 22% 38%, oklch(0.12 0.04 22 / 0.55) 0 0.6px, transparent 1.2px), radial-gradient(circle at 64% 30%, oklch(0.10 0.03 22 / 0.5) 0 0.5px, transparent 1.1px), radial-gradient(circle at 38% 72%, oklch(0.12 0.04 22 / 0.5) 0 0.5px, transparent 1.1px), radial-gradient(circle at 76% 60%, oklch(0.94 0.03 60 / 0.45) 0 0.4px, transparent 0.9px)",
+            borderRadius: "inherit",
+          }}
+        />
         {/* embossed inner ring + outer rope border */}
         <span
           className="pointer-events-none absolute inset-[3px] rounded-[inherit]"
           style={{
             boxShadow:
-              "inset 0 1.5px 1.5px oklch(0.14 0.04 40 / 0.55), inset 0 -1.5px 1.5px oklch(1 0 0 / 0.22), inset 0 0 0 0.5px oklch(0.18 0.05 25 / 0.4)",
+              "inset 0 1.5px 1.5px oklch(0.14 0.04 40 / 0.55), inset 0 -1.5px 1.5px oklch(1 0 0 / 0.24), inset 0 0 0 0.5px oklch(0.18 0.05 25 / 0.5), inset 0 0 6px oklch(0.10 0.03 22 / 0.35)",
           }}
         />
         {/* dotted rope ring around monogram */}
@@ -500,15 +542,37 @@ function WaxSeal() {
         >
           R
         </span>
+        {/* animated specular highlight — drifts as if light shifts across the seal */}
+        <span
+          className="wax-specular pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen"
+          style={{
+            background:
+              "radial-gradient(ellipse 40% 30% at 30% 22%, oklch(1 0 0 / 0.55) 0%, oklch(0.96 0.02 60 / 0.18) 35%, transparent 70%)",
+          }}
+        />
+        {/* anisotropic streak — subtle wax sheen line */}
+        <span
+          className="wax-streak pointer-events-none absolute inset-0 rounded-[inherit] opacity-40 mix-blend-overlay"
+          style={{
+            background:
+              "linear-gradient(118deg, transparent 38%, oklch(1 0 0 / 0.5) 50%, transparent 62%)",
+          }}
+        />
       </div>
-      {/* highlight gloss */}
+      {/* primary highlight gloss — small bright catchlight */}
       <span
-        className="pointer-events-none absolute left-[18%] top-[14%] h-[28%] w-[34%] rounded-full opacity-50 blur-[1px]"
-        style={{ background: "radial-gradient(ellipse, oklch(1 0 0 / 0.5) 0%, transparent 70%)" }}
+        className="pointer-events-none absolute left-[20%] top-[14%] h-[22%] w-[26%] rounded-full opacity-80 blur-[0.6px]"
+        style={{ background: "radial-gradient(ellipse, oklch(1 0 0 / 0.85) 0%, oklch(1 0 0 / 0.25) 45%, transparent 75%)" }}
+      />
+      {/* secondary catchlight — tiny specular pinpoint */}
+      <span
+        className="pointer-events-none absolute left-[28%] top-[20%] h-[6%] w-[7%] rounded-full opacity-90"
+        style={{ background: "oklch(1 0 0 / 0.95)", filter: "blur(0.3px)" }}
       />
       {/* tiny wax bubbles for realism */}
       <span className="pointer-events-none absolute right-[28%] top-[58%] h-[3px] w-[3px] rounded-full" style={{ background: "oklch(0.16 0.05 22)", opacity: 0.7 }} />
       <span className="pointer-events-none absolute left-[36%] bottom-[22%] h-[2px] w-[2px] rounded-full" style={{ background: "oklch(0.16 0.05 22)", opacity: 0.6 }} />
+      <span className="pointer-events-none absolute right-[40%] bottom-[34%] h-[1.5px] w-[1.5px] rounded-full" style={{ background: "oklch(0.92 0.04 60)", opacity: 0.55 }} />
     </div>
   );
 }
