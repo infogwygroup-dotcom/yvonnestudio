@@ -5,7 +5,11 @@ const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 type DirectorBrief = {
   tagline: string;
   invisible_story: string;
-  style: string;
+  director: string;
+  medium: string;
+  cinematography: string;
+  scene: string;
+  identity_anchors: string;
   composition_brief: string;
 };
 
@@ -16,22 +20,33 @@ async function callDirector(
   photoOneDataUrl: string,
   photoTwoDataUrl: string,
 ): Promise<DirectorBrief> {
-  const systemPrompt = `You are an AI Creative Director — part Pixar art director, part National Geographic editor, part Studio Ghibli storyboard artist.
+  const systemPrompt = `You are the Ripple Director — an AI Creative Director running DIRECTOR MODE.
 
-You are looking at TWO photos and TWO sentences left by two strangers who exchanged kindness. Your job is NOT to describe images. Your job is to:
-1. Read the emotional evidence: people, environment, food, objects, colors, light, symbolism.
-2. Write an INVISIBLE STORY — a single sentence narrative that connects both moments (never shown to the user).
-3. Choose, internally, the most beautiful visual language to express this memory (magazine spread, polaroid, scrapbook, recipe card, travel diary, watercolor letter, film strip, picture book, etc). Never expose the style name to the user.
-4. Write a COMPOSITION BRIEF — concrete art direction for an editorial image that PRESERVES the original photos as the heroes (real faces, real food, real places — never invented). Specify layout, paper texture, palette, typography mood, handwriting/captions, decorative objects, light, framing. No two briefs should be alike.
-5. Write ONE poetic emotional TAGLINE — max 12 words. Timeless. Never explains. Never summarizes. Shareable.
+You receive TWO reference photos and TWO sentences from two strangers who exchanged a kindness. Treat the photos exactly as a film director treats location scouting photos, actor portraits, and prop references. They are NOT final assets. They are NOT to be pasted onto a canvas. Your job is to RECREATE a brand new cinematic scene inspired by them — one single image that feels like a frame from a film, not a collage.
+
+Workflow (internal — never expose):
+1. Read the emotional evidence: people, relationships, environment, food, objects, light, colors, symbolism.
+2. Write the INVISIBLE STORY — one sentence that connects both moments.
+3. Choose ONE DIRECTOR whose sensibility best fits the story. Pick from: Wong Kar Wai, Makoto Shinkai, Studio Ghibli / Hayao Miyazaki, Pixar, Wes Anderson, National Geographic, Kinfolk, Apple Commercial, A24 Film, Claude Monet, Van Gogh, Moebius. Only one.
+4. Choose ONE MEDIUM that the director would use for this memory: Magazine, Poster, Storyboard, Watercolour, Notebook, Illustration, Diary, or Cinematic Frame. Only one. Collage is NOT allowed unless the medium itself explicitly requires it.
+5. Define CINEMATOGRAPHY: lens, framing, camera height, light source and quality, color palette, atmosphere, time of day, season.
+6. RE-STAGE the SCENE: describe the new moment to be drawn/painted/filmed — where the people are, what they are doing, the environment around them, the props. Inspired by the references, not copied from them.
+7. List IDENTITY ANCHORS — the specific recognisable details that MUST survive the recreation: face features, hairstyle, clothing color, the exact food, the recognisable object/place. Faces, food, important objects and locations must remain RECOGNISABLE but RECREATED naturally inside the new scene — never pasted.
+8. Write ONE poetic TAGLINE — max 12 words. Timeless. Shareable. Never explains.
 
 Return STRICT JSON only. No prose, no markdown fences.
 {
   "tagline": "...",
   "invisible_story": "...",
-  "style": "...",
+  "director": "...",
+  "medium": "...",
+  "cinematography": "...",
+  "scene": "...",
+  "identity_anchors": "...",
   "composition_brief": "..."
-}`;
+}
+
+In "composition_brief", synthesise director + medium + cinematography + scene into a single concrete art-direction paragraph the image model can execute.`;
 
   const userBlocks = [
     { type: "text" as const, text: `Sentence from person A: "${sentenceOne}"\nSentence from person B: "${sentenceTwo}"\n\nNow read the two photos as emotional evidence and direct the memory.` },
@@ -73,18 +88,26 @@ async function composeCard(
   photoOneDataUrl: string,
   photoTwoDataUrl: string,
 ): Promise<string> {
-  const prompt = `Compose a single, museum-quality editorial memory card from the TWO provided reference photos.
+  const prompt = `DIRECTOR MODE. The two provided images are REFERENCES ONLY — treat them exactly as a film director treats location scouting photos, actor portraits, and prop references. DO NOT paste, crop, or composite them. DO NOT make a collage, photo grid, scrapbook, or layout of the originals. Instead, RECREATE a single brand-new cinematic scene inspired by them.
 
-ABSOLUTE RULES:
-- Treat the two provided photos as SACRED emotional evidence. Preserve the real people, real faces, real food, real environments visible in them. Do NOT invent different faces, food, or places.
-- You may crop, gently relight, extend backgrounds, lay them onto designed surfaces, add complementary editorial design around them — but the original subjects remain the heroes.
-- Output ONE composed image, square aspect ratio, designed not generated. Feel like Kinfolk, National Geographic, Apple editorial, a Japanese lifestyle book. Not like generic AI art.
+Output ONE image, square aspect ratio. It should feel like a single frame from a film, magazine illustration, painting, or storyboard — not a photo composition.
+
+DIRECTOR (sensibility to channel): ${brief.director}
+MEDIUM: ${brief.medium}
+CINEMATOGRAPHY: ${brief.cinematography}
+SCENE TO RE-STAGE: ${brief.scene}
 
 INVISIBLE STORY (for your understanding, never render the words): ${brief.invisible_story}
 
-ART DIRECTION: ${brief.composition_brief}
+IDENTITY TO PRESERVE (must remain recognisable, but naturally RECREATED inside the new scene — never pasted from the references): ${brief.identity_anchors}
 
-If you include text in the image, the ONLY text allowed is this tagline, set with refined editorial typography that fits the composition: "${brief.tagline}". No other words, no captions, no UI, no logos, no watermarks.`;
+FULL ART DIRECTION: ${brief.composition_brief}
+
+Hard rules:
+- No collage, no photo grid, no polaroid stack, no torn-paper layout, unless the chosen MEDIUM explicitly is collage.
+- Faces, food, key objects and locations from the references must be recognisable, but rendered in the chosen medium and director's visual language — drawn, painted, or re-filmed, not pasted.
+- One unified scene, one consistent light source, one coherent visual world.
+- If you include any text in the image, the ONLY allowed text is this tagline, integrated with refined typography: "${brief.tagline}". No other words, captions, UI, logos, or watermarks.`;
 
   const res = await fetch(`${GATEWAY_URL}/images/generations`, {
     method: "POST",
