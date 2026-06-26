@@ -134,9 +134,9 @@ function MomentPage() {
           <section className="mx-auto mt-32 max-w-xl">
             <p className="eyebrow text-center">Director's Interpretation</p>
             <div className="mt-8 space-y-5 font-serif text-lg leading-[1.75] text-foreground/85 sm:text-xl">
-              {moment.interpretation
+              {String(moment.interpretation)
                 .split(/\n+/)
-                .map((line, i) => (
+                .map((line: string, i: number) => (
                   <p key={i}>{line.trim()}</p>
                 ))}
             </div>
