@@ -3,6 +3,47 @@ import { z } from "zod";
 
 const InputSchema = z.object({ id: z.string().uuid() });
 
+export type MomentSummary = {
+  id: string;
+  tagline: string;
+  card_image_url: string;
+  created_at: string;
+  ripple_number: number | null;
+  rarity: "common" | "rare" | "epic" | "legendary";
+  genre: string;
+  mood: string;
+  format: string;
+};
+
+export const listMoments = createServerFn({ method: "GET" }).handler(
+  async (): Promise<MomentSummary[]> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("moments")
+      .select("id, tagline, card_image_path, created_at, ripple_number, rarity, genre, mood, format")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    if (!rows || rows.length === 0) return [];
+    const paths = rows.map((r) => r.card_image_path).filter(Boolean);
+    const { data: signed } = await supabaseAdmin.storage
+      .from("moments")
+      .createSignedUrls(paths, 60 * 60 * 24 * 7);
+    const urlFor = (p: string) => signed?.find((s) => s.path === p)?.signedUrl ?? "";
+    return rows.map((r) => ({
+      id: r.id,
+      tagline: r.tagline,
+      card_image_url: urlFor(r.card_image_path),
+      created_at: r.created_at,
+      ripple_number: r.ripple_number ?? null,
+      rarity: (r.rarity ?? "common") as MomentSummary["rarity"],
+      genre: r.genre ?? "",
+      mood: r.mood ?? "",
+      format: r.format ?? "",
+    }));
+  },
+);
+
 export type MomentView = {
   id: string;
   tagline: string;
