@@ -116,22 +116,32 @@ function MomentPage() {
           </figcaption>
         </figure>
 
+        {moment.interpretation && (
+          <section className="mx-auto mt-20 max-w-xl text-center">
+            <p className="eyebrow">✨ Director's Interpretation</p>
+            <p className="mt-5 font-serif text-lg leading-relaxed text-foreground/85 sm:text-xl">
+              {moment.interpretation}
+            </p>
+          </section>
+        )}
+
         <section className="mt-20">
           <div className="text-center">
-            <p className="eyebrow">Original Ripple Notes</p>
-            <h2 className="mt-3 font-serif text-2xl italic sm:text-3xl">
+            <p className="eyebrow">Story Origins</p>
+            <h2 className="mt-3 font-serif text-xl italic sm:text-2xl">
               The moments that started this story
             </h2>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
+          <div className="mt-10 flex flex-col items-center gap-6">
             <RippleNote
               role="Giver"
               sentence={moment.sentence_one}
               photo={moment.photo_one_url}
-              tilt={-2.5}
+              tilt={-2}
               date={moment.created_at}
             />
+            <RippleConnector />
             <RippleNote
               role="Receiver"
               sentence={moment.sentence_two}
@@ -141,6 +151,10 @@ function MomentPage() {
             />
           </div>
         </section>
+
+        <p className="mx-auto mt-20 max-w-md text-center font-serif text-base italic text-muted-foreground">
+          {closingLine}
+        </p>
 
         <div className="mt-16 flex flex-col items-center gap-4">
           <button
@@ -190,10 +204,10 @@ function RippleNote({
     : "";
   return (
     <article
-      className="mx-auto w-full max-w-sm rounded-md bg-card p-4 shadow-[0_18px_40px_-22px_oklch(0.2_0.04_40/0.45)] ring-1 ring-border/60 rotate-[var(--tilt)] transition-transform hover:rotate-0"
+      className="w-full max-w-[260px] rounded-lg bg-card p-3 shadow-[0_14px_32px_-18px_oklch(0.2_0.04_40/0.45)] ring-1 ring-border/60 rotate-[var(--tilt)] transition-transform hover:rotate-0"
       style={{ ["--tilt" as string]: `${tilt}deg` }}
     >
-      <div className="overflow-hidden rounded-sm">
+      <div className="overflow-hidden rounded-md">
         <img
           src={photo}
           alt=""
@@ -201,7 +215,7 @@ function RippleNote({
           loading="lazy"
         />
       </div>
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-3 flex items-center justify-between">
         <span className="eyebrow text-accent">{role}</span>
         {formatted && (
           <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -209,7 +223,7 @@ function RippleNote({
           </span>
         )}
       </div>
-      <p className="mt-3 font-serif text-lg italic leading-snug">
+      <p className="mt-2 font-serif text-sm italic leading-snug">
         &ldquo;{sentence}&rdquo;
       </p>
     </article>
