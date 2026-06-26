@@ -620,10 +620,10 @@
 .wax-body .wax-specular {
   background:
     radial-gradient(
-      ellipse 40% 30% at var(--mx) var(--my),
-      oklch(1 0 0 / calc(0.55 + var(--light) * 0.35)) 0%,
-      oklch(0.96 0.02 60 / 0.18) 35%,
-      transparent 70%
+      ellipse 42% 34% at var(--mx) var(--my),
+      transparent 20%,
+      oklch(1 0 0 / calc(0.18 + var(--light) * 0.25)) 40%,
+      transparent 62%
     ) !important;
   transition: background 200ms ease;
 }
