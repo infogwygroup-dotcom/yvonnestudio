@@ -274,12 +274,31 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoOneDataUrl = `data:${photoOneType};base64,${photoOneBytes.toString("base64")}`;
           const photoTwoDataUrl = `data:${photoTwoType};base64,${photoTwoBytes.toString("base64")}`;
 
+          // Pull the most recent director choices to bias the new pick toward variety.
+          let recentDirectors: string[] = [];
+          try {
+            const { data: recents } = await supabaseAdmin
+              .from("moments")
+              .select("director_notes")
+              .order("created_at", { ascending: false })
+              .limit(8);
+            recentDirectors = (recents ?? [])
+              .map((r) => {
+                const notes = (r.director_notes ?? {}) as { director?: string };
+                return (notes.director ?? "").trim();
+              })
+              .filter(Boolean);
+          } catch {
+            recentDirectors = [];
+          }
+
           const brief = await callDirector(
             apiKey,
             sentenceOne,
             sentenceTwo,
             photoOneDataUrl,
             photoTwoDataUrl,
+            recentDirectors,
           );
 
           const [cardB64, stillOneB64, stillTwoB64] = await Promise.all([
