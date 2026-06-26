@@ -116,20 +116,31 @@ function MomentPage() {
           </figcaption>
         </figure>
 
-        <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2">
-          <Halfsheet
-            label="One person wrote"
-            sentence={moment.sentence_one}
-            photo={moment.photo_one_url}
-            tilt={-3}
-          />
-          <Halfsheet
-            label="The other answered"
-            sentence={moment.sentence_two}
-            photo={moment.photo_two_url}
-            tilt={2.5}
-          />
-        </div>
+        <section className="mt-20">
+          <div className="text-center">
+            <p className="eyebrow">Original Ripple Notes</p>
+            <h2 className="mt-3 font-serif text-2xl italic sm:text-3xl">
+              The moments that started this story
+            </h2>
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <RippleNote
+              role="Giver"
+              sentence={moment.sentence_one}
+              photo={moment.photo_one_url}
+              tilt={-2.5}
+              date={moment.created_at}
+            />
+            <RippleNote
+              role="Receiver"
+              sentence={moment.sentence_two}
+              photo={moment.photo_two_url}
+              tilt={2}
+              date={moment.created_at}
+            />
+          </div>
+        </section>
 
         <div className="mt-16 flex flex-col items-center gap-4">
           <button
@@ -157,34 +168,48 @@ function MomentPage() {
   );
 }
 
-function Halfsheet({
-  label,
+function RippleNote({
+  role,
   sentence,
   photo,
   tilt = 0,
+  date,
 }: {
-  label: string;
+  role: "Giver" | "Receiver";
   sentence: string;
   photo: string;
   tilt?: number;
+  date?: string;
 }) {
+  const formatted = date
+    ? new Date(date).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "";
   return (
-    <article className="flex flex-col items-center gap-5 pt-6">
-      <div
-        className="bg-white pt-3 pr-3 pl-3 pb-10 shadow-[0_18px_40px_-18px_oklch(0.2_0.04_40/0.45)] rotate-[var(--tilt)] transition-transform hover:rotate-0"
-        style={{ ["--tilt" as string]: `${tilt}deg` }}
-      >
+    <article
+      className="mx-auto w-full max-w-sm rounded-md bg-card p-4 shadow-[0_18px_40px_-22px_oklch(0.2_0.04_40/0.45)] ring-1 ring-border/60 rotate-[var(--tilt)] transition-transform hover:rotate-0"
+      style={{ ["--tilt" as string]: `${tilt}deg` }}
+    >
+      <div className="overflow-hidden rounded-sm">
         <img
           src={photo}
           alt=""
-          className="block h-48 w-48 object-cover sm:h-56 sm:w-56"
+          className="block aspect-[4/3] w-full object-cover"
           loading="lazy"
         />
-        <p className="mt-3 text-center font-serif text-sm italic text-neutral-700">
-          {label}
-        </p>
       </div>
-      <p className="max-w-xs text-center font-serif text-lg italic leading-snug">
+      <div className="mt-4 flex items-center justify-between">
+        <span className="eyebrow text-accent">{role}</span>
+        {formatted && (
+          <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            {formatted}
+          </span>
+        )}
+      </div>
+      <p className="mt-3 font-serif text-lg italic leading-snug">
         &ldquo;{sentence}&rdquo;
       </p>
     </article>
