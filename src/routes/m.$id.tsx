@@ -129,10 +129,10 @@ function MomentPage() {
           </figcaption>
         </figure>
 
-        {/* 2. Director's Interpretation */}
+        {/* 2. Why This Scene Exists */}
         {moment.interpretation && (
           <section className="mx-auto mt-32 max-w-xl">
-            <p className="eyebrow text-center">Director's Interpretation</p>
+            <p className="eyebrow text-center">Why This Scene Exists</p>
             <div className="mt-8 space-y-5 font-serif text-lg leading-[1.75] text-foreground/85 sm:text-xl">
               {String(moment.interpretation)
                 .split(/\n+/)
