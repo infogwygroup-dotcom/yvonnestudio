@@ -72,7 +72,8 @@ function MomentPage() {
   const { moment } = Route.useLoaderData();
   const [copied, setCopied] = useState(false);
   const closingLine = useMemo(() => {
-    const sum = Array.from(moment.id).reduce((a, c) => a + c.charCodeAt(0), 0);
+    let sum = 0;
+    for (const c of moment.id) sum += c.charCodeAt(0);
     return CLOSING_LINES[sum % CLOSING_LINES.length];
   }, [moment.id]);
 
@@ -195,6 +196,8 @@ function MomentPage() {
 }
 
 function RippleNote({
+  ...rest
+}: never): never;
   role,
   sentence,
   photo,
