@@ -24,6 +24,8 @@ export type Database = {
           photo_two_path: string
           sentence_one: string
           sentence_two: string
+          still_one_path: string | null
+          still_two_path: string | null
           tagline: string
         }
         Insert: {
@@ -35,6 +37,8 @@ export type Database = {
           photo_two_path: string
           sentence_one: string
           sentence_two: string
+          still_one_path?: string | null
+          still_two_path?: string | null
           tagline: string
         }
         Update: {
@@ -46,6 +50,8 @@ export type Database = {
           photo_two_path?: string
           sentence_one?: string
           sentence_two?: string
+          still_one_path?: string | null
+          still_two_path?: string | null
           tagline?: string
         }
         Relationships: []

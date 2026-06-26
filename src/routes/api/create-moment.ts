@@ -11,6 +11,16 @@ type DirectorBrief = {
   scene: string;
   identity_anchors: string;
   composition_brief: string;
+  giver_location: string;
+  giver_merchant: string;
+  giver_meal: string;
+  giver_caption: string;
+  giver_still_brief: string;
+  receiver_location: string;
+  receiver_merchant: string;
+  receiver_meal: string;
+  receiver_caption: string;
+  receiver_still_brief: string;
 };
 
 async function callDirector(
@@ -34,6 +44,13 @@ Workflow (internal — never expose to the viewer):
 7. List IDENTITY ANCHORS — the specific recognisable details that MUST survive the recreation: face features, hairstyle, clothing color, the exact food, the recognisable object/place. Faces, food, important objects and locations must remain RECOGNISABLE but RECREATED naturally inside the new scene — never pasted.
 8. Write ONE poetic TAGLINE — max 12 words. Timeless. Shareable. Never explains.
 
+9. For EACH of the two people (giver = person A, receiver = person B), extract or gently infer from their photo and sentence:
+   - location (one short place phrase, e.g. "Sydney", "Tokyo at dusk", "a small kitchen"). If truly unknown, write a poetic place like "somewhere quiet".
+   - merchant (a venue/brand if visible; otherwise a soft poetic placeholder like "a corner table", "her apartment kitchen"). Never invent a real brand name that isn't visible.
+   - meal (the dish/object in the photo, or the central object if no food).
+   - caption: ONE short editorial line (max 14 words) that frames their gesture. Never quote their sentence back.
+   - still_brief: a short cinematic still description (max 40 words) — a single film-still frame INSPIRED by their photo but never copying it. Instead of a selfie → a figure by the window. Instead of food → that dish on a warm wooden table. Instead of a place → that place at golden hour. No people-recognition specifics; just mood, framing, light, palette. Match the chosen DIRECTOR's sensibility.
+
 Return STRICT JSON only. No prose, no markdown fences.
 {
   "tagline": "...",
@@ -43,7 +60,17 @@ Return STRICT JSON only. No prose, no markdown fences.
   "cinematography": "...",
   "scene": "...",
   "identity_anchors": "...",
-  "composition_brief": "..."
+  "composition_brief": "...",
+  "giver_location": "...",
+  "giver_merchant": "...",
+  "giver_meal": "...",
+  "giver_caption": "...",
+  "giver_still_brief": "...",
+  "receiver_location": "...",
+  "receiver_merchant": "...",
+  "receiver_meal": "...",
+  "receiver_caption": "...",
+  "receiver_still_brief": "..."
 }
 
 In "composition_brief", synthesise director + medium + cinematography + scene into a single concrete art-direction paragraph the image model can execute.`;
@@ -142,6 +169,47 @@ Hard rules:
   return b64;
 }
 
+async function composeStill(
+  apiKey: string,
+  brief: DirectorBrief,
+  stillBrief: string,
+): Promise<string> {
+  const prompt = `One cinematic still frame. Landscape 3:2. ${brief.director} sensibility, ${brief.medium} medium. ${brief.cinematography}.
+
+SCENE: ${stillBrief}
+
+Rules:
+- No text, no captions, no UI, no watermark, no borders, no logos.
+- No collage, no split-frame, no polaroid edge — one unified cinematic frame only.
+- Quiet, editorial, painterly. Like a single still pulled from a short film.
+- Soft natural light, intimate atmosphere, generous negative space.`;
+
+  const res = await fetch(`${GATEWAY_URL}/images/generations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Lovable-API-Key": apiKey,
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-image-2",
+      prompt,
+      size: "1536x1024",
+      quality: "low",
+      n: 1,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Still compose failed (${res.status}): ${text.slice(0, 400)}`);
+  }
+
+  const json = (await res.json()) as { data?: Array<{ b64_json?: string }> };
+  const b64 = json.data?.[0]?.b64_json;
+  if (!b64) throw new Error("Still compose returned no image data");
+  return b64;
+}
+
 function b64ToBuffer(b64: string) {
   return Buffer.from(b64, "base64");
 }
@@ -192,13 +260,14 @@ export const Route = createFileRoute("/api/create-moment")({
             photoTwoDataUrl,
           );
 
-          const cardB64 = await composeCard(
-            apiKey,
-            brief,
-            photoOneDataUrl,
-            photoTwoDataUrl,
-          );
+          const [cardB64, stillOneB64, stillTwoB64] = await Promise.all([
+            composeCard(apiKey, brief, photoOneDataUrl, photoTwoDataUrl),
+            composeStill(apiKey, brief, brief.giver_still_brief),
+            composeStill(apiKey, brief, brief.receiver_still_brief),
+          ]);
           const cardBytes = b64ToBuffer(cardB64);
+          const stillOneBytes = b64ToBuffer(stillOneB64);
+          const stillTwoBytes = b64ToBuffer(stillTwoB64);
 
           const id = crypto.randomUUID();
           const ext1 = photoOneType.includes("png") ? "png" : "jpg";
@@ -206,6 +275,8 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoOnePath = `${id}/photo-one.${ext1}`;
           const photoTwoPath = `${id}/photo-two.${ext2}`;
           const cardPath = `${id}/card.png`;
+          const stillOnePath = `${id}/still-one.png`;
+          const stillTwoPath = `${id}/still-two.png`;
 
           const uploadFile = async (path: string, bytes: Buffer, contentType: string) => {
             const { error } = await supabaseAdmin.storage
@@ -218,6 +289,8 @@ export const Route = createFileRoute("/api/create-moment")({
             uploadFile(photoOnePath, photoOneBytes, photoOneType),
             uploadFile(photoTwoPath, photoTwoBytes, photoTwoType),
             uploadFile(cardPath, cardBytes, "image/png"),
+            uploadFile(stillOnePath, stillOneBytes, "image/png"),
+            uploadFile(stillTwoPath, stillTwoBytes, "image/png"),
           ]);
 
           const { data: inserted, error: insertError } = await supabaseAdmin
@@ -230,6 +303,8 @@ export const Route = createFileRoute("/api/create-moment")({
               photo_one_path: photoOnePath,
               photo_two_path: photoTwoPath,
               card_image_path: cardPath,
+              still_one_path: stillOnePath,
+              still_two_path: stillTwoPath,
               director_notes: {
                 invisible_story: brief.invisible_story,
                 director: brief.director,
@@ -237,6 +312,14 @@ export const Route = createFileRoute("/api/create-moment")({
                 cinematography: brief.cinematography,
                 scene: brief.scene,
                 identity_anchors: brief.identity_anchors,
+                giver_location: brief.giver_location,
+                giver_merchant: brief.giver_merchant,
+                giver_meal: brief.giver_meal,
+                giver_caption: brief.giver_caption,
+                receiver_location: brief.receiver_location,
+                receiver_merchant: brief.receiver_merchant,
+                receiver_meal: brief.receiver_meal,
+                receiver_caption: brief.receiver_caption,
               },
             })
             .select("id")

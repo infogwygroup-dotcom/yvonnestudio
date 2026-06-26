@@ -454,3 +454,79 @@
   box-shadow: 0 0 8px oklch(0.85 0.14 70 / 0.9), 0 0 14px oklch(0.78 0.13 60 / 0.5);
   animation: spark-fall 2.2s ease-in-out infinite;
 }
+
+/* === New letter / envelope sequence (slow, book-like) === */
+@keyframes env-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.env-breathe { animation: env-breathe 5s ease-in-out infinite; }
+
+@keyframes env-slow-lift {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-10px) scale(1.01); }
+}
+.env-slow-lift { animation: env-slow-lift 1600ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+
+@keyframes wax-resting-glow {
+  0%, 100% { filter: drop-shadow(0 1px 1px oklch(0.2 0.04 40 / 0.45)); }
+  50% { filter: drop-shadow(0 0 6px oklch(0.72 0.14 50 / 0.35)); }
+}
+.wax-resting { animation: wax-resting-glow 4.5s ease-in-out infinite; }
+
+@keyframes wax-crack {
+  0% { transform: translate(-50%, -50%) rotate(-7deg) scale(1); opacity: 1; filter: drop-shadow(0 1px 1px oklch(0.2 0.04 40 / 0.45)); }
+  35% { transform: translate(-50%, -50%) rotate(-7deg) scale(1.06); filter: drop-shadow(0 0 18px oklch(0.78 0.16 55 / 0.85)); }
+  65% { transform: translate(-52%, -48%) rotate(-12deg) scale(0.96); opacity: 0.85; filter: blur(0.6px) drop-shadow(0 0 10px oklch(0.72 0.14 50 / 0.5)); }
+  100% { transform: translate(-58%, -38%) rotate(-22deg) scale(0.5); opacity: 0; filter: blur(2px); }
+}
+.wax-crack { animation: wax-crack 1500ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+@keyframes env-flap-slow {
+  0% { transform: rotateX(0deg); }
+  18% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-176deg); }
+}
+.env-flap-slow { animation: env-flap-slow 1500ms cubic-bezier(0.5, 0, 0.2, 1) 350ms forwards; }
+
+/* Story page reveal — slow editorial fade */
+@keyframes letter-page-in {
+  0% { opacity: 0; transform: translateY(36px); filter: blur(8px); }
+  60% { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.letter-page-in { animation: letter-page-in 1300ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+.letter-page-in-slow { animation: letter-page-in 1600ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+
+/* Warm golden ripple between the two pages */
+@keyframes gold-ring {
+  0% { transform: translate(-50%, -50%) scale(0.15); opacity: 0; border-width: 2px; }
+  20% { opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; border-width: 1px; }
+}
+.gold-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 80px;
+  height: 22px;
+  border-radius: 9999px;
+  border: 1.5px solid color-mix(in oklab, oklch(0.78 0.13 70) 80%, transparent);
+  animation: gold-ring 3s ease-out infinite;
+}
+
+@keyframes gold-particle {
+  0% { transform: translate(-50%, -28px) scale(0.4); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translate(-50%, 30px) scale(0.2); opacity: 0; }
+}
+.gold-particle {
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: oklch(0.92 0.13 80);
+  box-shadow: 0 0 8px oklch(0.85 0.14 70 / 0.9), 0 0 14px oklch(0.78 0.13 60 / 0.5);
+  animation: gold-particle 2.5s ease-in-out infinite;
+}
