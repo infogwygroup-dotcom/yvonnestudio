@@ -328,14 +328,22 @@ function Envelope({ opened }: { opened: boolean }) {
       className={"envelope-interactive relative mx-auto w-[340px] sm:w-[480px] " + (opened ? "env-dissolve" : "")}
       style={{ perspective: "1200px" }}
     >
+      {/* top centerpiece ornament — small copper diamond with horizontal lines */}
+      <div className="pointer-events-none mx-auto mb-3 flex items-center justify-center gap-2 opacity-70 sm:mb-4 sm:gap-3">
+        <span className="block h-px w-10 sm:w-14" style={{ background: "linear-gradient(90deg, transparent, oklch(0.55 0.12 38 / 0.7), transparent)" }} />
+        <svg width="10" height="10" viewBox="0 0 10 10" className="text-[oklch(0.55_0.12_38)]" aria-hidden>
+          <path d="M5 0 L10 5 L5 10 L0 5 Z" fill="currentColor" opacity="0.85" />
+        </svg>
+        <span className="block h-px w-10 sm:w-14" style={{ background: "linear-gradient(90deg, transparent, oklch(0.55 0.12 38 / 0.7), transparent)" }} />
+      </div>
       <div
-        className={"relative aspect-[2.6/1] w-full " + (opened ? "" : "env-breathe")}
+        className={"relative aspect-[2.4/1] w-full " + (opened ? "" : "env-breathe")}
         style={{
           background:
-            "linear-gradient(168deg, oklch(0.97 0.02 84) 0%, oklch(0.93 0.03 76) 60%, oklch(0.905 0.035 72) 100%)",
+            "linear-gradient(170deg, oklch(0.965 0.015 82) 0%, oklch(0.935 0.022 78) 55%, oklch(0.91 0.028 74) 100%)",
           boxShadow:
-            "0 30px 60px -28px oklch(0.18 0.04 40 / 0.5), 0 4px 8px oklch(0.2 0.04 40 / 0.12), inset 0 0 0 1px oklch(0.82 0.03 70 / 0.55), inset 0 0 60px oklch(0.6 0.06 55 / 0.06)",
-          borderRadius: "4px",
+            "0 30px 60px -28px oklch(0.18 0.04 40 / 0.45), 0 6px 14px oklch(0.2 0.04 40 / 0.10), inset 0 0 0 1px oklch(0.82 0.03 70 / 0.45), inset 0 0 60px oklch(0.6 0.06 55 / 0.05)",
+          borderRadius: "3px",
           transformStyle: "preserve-3d",
         }}
       >
@@ -354,77 +362,46 @@ function Envelope({ opened }: { opened: boolean }) {
         {/* deckled edges via inner shadow */}
         <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_28px_oklch(0.66_0.07_55/0.28),inset_0_0_2px_oklch(0.6_0.06_55/0.5)] rounded-[4px]" />
 
-        {/* corner postmark — tiny vintage round stamp, lower-right corner */}
-        <div
-          className="pointer-events-none absolute right-[4%] top-[58%] z-[5] flex h-[34px] w-[34px] items-center justify-center rounded-full opacity-70 sm:h-[40px] sm:w-[40px]"
-          style={{
-            transform: "rotate(-14deg)",
-            border: "1px solid oklch(0.42 0.10 30 / 0.55)",
-            color: "oklch(0.42 0.10 30 / 0.7)",
-            boxShadow: "inset 0 0 0 3px oklch(0.97 0.02 84 / 0), inset 0 0 0 4px oklch(0.42 0.10 30 / 0.25)",
-          }}
-        >
-          <div className="text-center font-serif" style={{ fontSize: "6px", letterSpacing: "0.1em", lineHeight: 1.1 }}>
-            <div style={{ fontStyle: "italic", fontSize: "9px" }}>R · M</div>
-            <div className="mt-[1px]">RIPPLE</div>
-            <div>MOMENT</div>
-          </div>
-        </div>
-
-        {/* horizontal ruled line under handwritten text — like an address line */}
-        <div
-          className="pointer-events-none absolute left-[8%] right-[36%] opacity-25"
-          style={{
-            top: "88%",
-            height: "1px",
-            background: "repeating-linear-gradient(90deg, oklch(0.42 0.06 50 / 0.5) 0 4px, transparent 4px 7px)",
-          }}
-        />
-
-        {/* handwritten script — fully visible from the start, below the flap (flap ends 38%) */}
-        <div className="absolute left-[8%] right-[34%] top-[50%]">
-          <p className="font-hand text-[15px] leading-[1.35] text-[oklch(0.36_0.08_42)] opacity-95 sm:text-[19px]" style={{ transform: "rotate(-1.5deg)", transformOrigin: "left top" }}>
+        {/* handwritten script — top-left, fully visible above the bottom flap */}
+        <div className="absolute left-[7%] right-[38%] top-[18%]">
+          <p className="font-hand text-[16px] leading-[1.5] text-[oklch(0.36_0.08_42)] opacity-95 sm:text-[22px]" style={{ transform: "rotate(-1deg)", transformOrigin: "left top" }}>
             Every Ripple begins
             <br />
-            with two hearts
-            <br />
-            that never met.
+            with two hearts that never met.
           </p>
         </div>
 
-        {/* botanical illustration — right side, gracefully arching down */}
-        <BotanicalSprig className="absolute right-[8%] top-[44%] h-[52%] w-auto text-[oklch(0.46_0.10_140)] opacity-60" />
+        {/* botanical illustration — top-right, delicate berry sprig */}
+        <BotanicalSprig className="absolute right-[6%] top-[12%] h-[68%] w-auto text-[oklch(0.58_0.10_50)] opacity-70" />
 
-        {/* envelope flap (shallow trapezoid at top — shortened so script/sprig stay clear) */}
+        {/* bottom front flap — covers ~50% with a shallow downward V meeting at center seal */}
         <div
-          className="absolute inset-x-0 top-0 origin-top"
+          className="absolute inset-x-0 bottom-0"
           style={{
-            height: "38%",
+            height: "52%",
             background:
-              "linear-gradient(180deg, oklch(0.96 0.022 82) 0%, oklch(0.92 0.03 76) 70%, oklch(0.88 0.035 72) 100%)",
-            clipPath: "polygon(0 0, 100% 0, 62% 100%, 38% 100%)",
-            transformStyle: "preserve-3d",
-            backfaceVisibility: "hidden",
-            boxShadow: opened
-              ? "0 12px 28px oklch(0.2 0.04 40 / 0.28), inset 0 -1px 2px oklch(0.6 0.06 55 / 0.25)"
-              : "inset 0 -1px 2px oklch(0.6 0.06 55 / 0.18)",
+              "linear-gradient(180deg, oklch(0.935 0.022 78) 0%, oklch(0.915 0.026 75) 40%, oklch(0.895 0.030 72) 100%)",
+            clipPath: "polygon(0 8%, 50% 22%, 100% 8%, 100% 100%, 0 100%)",
+            boxShadow: "inset 0 2px 3px oklch(0.6 0.06 55 / 0.16)",
           }}
         />
-        {/* flap fiber texture */}
+        {/* flap fiber overlay matching the body grain */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.5px,transparent_0.6px),repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px)] [background-size:4px_4px,auto] origin-top"
-          style={{ height: "38%", clipPath: "polygon(0 0, 100% 0, 62% 100%, 38% 100%)" }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.5px,transparent_0.6px),repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px)] [background-size:4px_4px,auto]"
+          style={{ height: "52%", clipPath: "polygon(0 8%, 50% 22%, 100% 8%, 100% 100%, 0 100%)" }}
         />
-        {/* flap crease shadow at base */}
-        <div
-          className="pointer-events-none absolute inset-x-0 opacity-50"
-          style={{
-            top: "calc(38% - 1px)",
-            height: "2px",
-            background: "linear-gradient(180deg, oklch(0.55 0.06 55 / 0.35), transparent)",
-            clipPath: "polygon(38% 0, 62% 0, 62% 100%, 38% 100%)",
-          }}
-        />
+        {/* soft shadow line along the top edge of the flap — the fold */}
+        <svg
+          className="pointer-events-none absolute inset-x-0"
+          style={{ top: "44%", height: "12%", overflow: "visible" }}
+          viewBox="0 0 100 10"
+          preserveAspectRatio="none"
+          aria-hidden
+        >
+          <path d="M 0 1 L 50 4 L 100 1" stroke="oklch(0.55 0.06 55 / 0.45)" strokeWidth="0.5" fill="none" />
+          <path d="M 0 2 L 50 5 L 100 2" stroke="oklch(0.55 0.06 55 / 0.18)" strokeWidth="1.5" fill="none" />
+        </svg>
+
         {/* side flap shadows — left/right folds give the envelope depth */}
         <div
           className="pointer-events-none absolute inset-y-0 left-0 w-[18%] opacity-[0.16] mix-blend-multiply"
@@ -461,13 +438,13 @@ function Envelope({ opened }: { opened: boolean }) {
           </div>
         )}
 
-        {/* wax seal — sits on the flap point, doesn't overlap script/sprig */}
+        {/* wax seal — sits centered on the front-flap V, the focal point */}
         <div
           ref={sealRef}
           onPointerMove={handleSealMove}
           onPointerLeave={handleSealLeave}
           className={
-            "absolute left-1/2 top-[38%] z-20 -translate-x-1/2 -translate-y-1/2 " +
+            "absolute left-1/2 top-[60%] z-20 -translate-x-1/2 -translate-y-1/2 " +
             (opened ? "wax-melt" : "wax-resting")
           }
           aria-hidden
@@ -493,51 +470,51 @@ function Envelope({ opened }: { opened: boolean }) {
 function WaxSeal() {
   return (
     <div
-      className="relative h-[44px] w-[44px] sm:h-[52px] sm:w-[52px]"
-      style={{ transform: "rotate(-9deg)" }}
+      className="relative h-[58px] w-[58px] sm:h-[72px] sm:w-[72px]"
+      style={{ transform: "rotate(-6deg)" }}
     >
       {/* drip blobs underneath — irregular molten edge with shading */}
       <span
-        className="absolute -bottom-[5px] left-[4px] h-[13px] w-[14px] opacity-95"
+        className="absolute -bottom-[6px] left-[6px] h-[14px] w-[16px] opacity-95"
         style={{
           background:
-            "radial-gradient(circle at 30% 28%, oklch(0.72 0.16 32) 0%, oklch(0.46 0.18 28) 38%, oklch(0.22 0.08 22) 100%)",
+            "radial-gradient(circle at 30% 28%, oklch(0.66 0.14 38) 0%, oklch(0.48 0.15 34) 42%, oklch(0.30 0.10 30) 100%)",
           borderRadius: "58% 42% 62% 38% / 60% 50% 50% 40%",
           boxShadow:
-            "0 2px 3px oklch(0.12 0.04 28 / 0.55), inset 0 1px 1px oklch(1 0 0 / 0.22), inset 0 -1px 2px oklch(0.14 0.04 28 / 0.6)",
+            "0 2px 3px oklch(0.18 0.06 32 / 0.45), inset 0 1px 1px oklch(1 0 0 / 0.22), inset 0 -1px 2px oklch(0.22 0.08 30 / 0.55)",
         }}
       />
       <span
-        className="absolute -top-[4px] right-[2px] h-[9px] w-[10px] opacity-90"
+        className="absolute -top-[5px] right-[8px] h-[10px] w-[11px] opacity-90"
         style={{
           background:
-            "radial-gradient(circle at 30% 28%, oklch(0.70 0.16 32) 0%, oklch(0.44 0.18 28) 40%, oklch(0.22 0.08 22) 100%)",
+            "radial-gradient(circle at 30% 28%, oklch(0.64 0.14 38) 0%, oklch(0.46 0.15 34) 42%, oklch(0.28 0.10 30) 100%)",
           borderRadius: "52% 48% 40% 60% / 50% 60% 40% 50%",
           boxShadow:
-            "0 1px 2px oklch(0.12 0.04 28 / 0.5), inset 0 1px 1px oklch(1 0 0 / 0.2), inset 0 -1px 2px oklch(0.14 0.04 28 / 0.55)",
+            "0 1px 2px oklch(0.18 0.06 32 / 0.4), inset 0 1px 1px oklch(1 0 0 / 0.2), inset 0 -1px 2px oklch(0.22 0.08 30 / 0.5)",
         }}
       />
       <span
-        className="absolute bottom-[1px] -right-[1px] h-[10px] w-[8px] opacity-80"
+        className="absolute -bottom-[2px] right-[10px] h-[10px] w-[9px] opacity-80"
         style={{
           background:
-            "radial-gradient(circle at 32% 30%, oklch(0.66 0.15 30) 0%, oklch(0.42 0.17 26) 40%, oklch(0.20 0.07 22) 100%)",
+            "radial-gradient(circle at 32% 30%, oklch(0.62 0.13 38) 0%, oklch(0.44 0.14 34) 42%, oklch(0.26 0.09 30) 100%)",
           borderRadius: "60% 40% 50% 50% / 55% 45% 55% 45%",
-          boxShadow: "0 1px 2px oklch(0.12 0.04 28 / 0.5), inset 0 -1px 2px oklch(0.14 0.04 28 / 0.5)",
+          boxShadow: "0 1px 2px oklch(0.18 0.06 32 / 0.4), inset 0 -1px 2px oklch(0.22 0.08 30 / 0.45)",
         }}
       />
       {/* main wax body */}
       <div
-        className="wax-body relative flex h-full w-full items-center justify-center font-serif text-[16px] italic sm:text-[20px]"
+        className="wax-body relative flex h-full w-full items-center justify-center font-serif text-[28px] italic sm:text-[36px]"
         style={{
           background:
-            "radial-gradient(circle at 28% 22%, oklch(0.74 0.16 34) 0%, oklch(0.56 0.18 30) 22%, oklch(0.40 0.18 28) 48%, oklch(0.26 0.11 24) 78%, oklch(0.15 0.06 22) 100%)",
-          borderRadius: "46% 54% 44% 56% / 52% 46% 54% 48%",
+            "radial-gradient(circle at 30% 24%, oklch(0.72 0.14 42) 0%, oklch(0.56 0.15 36) 28%, oklch(0.44 0.15 32) 55%, oklch(0.30 0.10 28) 85%, oklch(0.20 0.07 26) 100%)",
+          borderRadius: "48% 52% 46% 54% / 50% 48% 52% 50%",
           boxShadow:
-            "0 5px 12px oklch(0.14 0.04 40 / 0.55), 0 2px 4px oklch(0.16 0.05 40 / 0.45), 0 1px 0 oklch(1 0 0 / 0.12), inset 0 -3.5px 5px oklch(0.12 0.04 40 / 0.62), inset 0 2.5px 3px oklch(1 0 0 / 0.32), inset 0 0 12px oklch(0.20 0.07 22 / 0.55), inset 0 0 0 0.6px oklch(0.10 0.03 22 / 0.5)",
-          color: "oklch(0.26 0.08 25)",
+            "0 6px 14px oklch(0.18 0.06 40 / 0.5), 0 2px 4px oklch(0.18 0.06 40 / 0.4), 0 1px 0 oklch(1 0 0 / 0.15), inset 0 -4px 6px oklch(0.16 0.05 38 / 0.55), inset 0 3px 4px oklch(1 0 0 / 0.28), inset 0 0 14px oklch(0.22 0.08 28 / 0.45), inset 0 0 0 0.6px oklch(0.14 0.05 28 / 0.5)",
+          color: "oklch(0.92 0.05 60)",
           textShadow:
-            "0 1px 0 oklch(1 0 0 / 0.28), 0 -1px 0 oklch(0.14 0.04 40 / 0.55), inset 0 -1px 0 oklch(0.12 0.04 40 / 0.6)",
+            "0 1px 1px oklch(0.18 0.06 32 / 0.85), 0 -1px 0 oklch(0.24 0.10 32 / 0.6)",
         }}
       >
         {/* deep ambient occlusion around the edge */}
@@ -654,24 +631,31 @@ function WaxSeal() {
 
 function BotanicalSprig({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 80" className={className} fill="none" stroke="currentColor" strokeWidth="0.7" strokeLinecap="round" aria-hidden>
-      <path d="M24 4 C 25 26, 22 52, 24 78" />
-      {[14, 26, 38, 50, 62].map((y, i) => {
-        const dir = i % 2 === 0 ? 1 : -1;
+    <svg viewBox="0 0 48 80" className={className} fill="none" stroke="currentColor" strokeWidth="0.55" strokeLinecap="round" aria-hidden>
+      {/* main stem — curves gently */}
+      <path d="M22 2 C 26 18, 18 38, 24 58 C 27 68, 24 76, 22 78" />
+      {/* side branches with berry clusters */}
+      {[
+        { y: 14, dir: 1, len: 13 },
+        { y: 22, dir: -1, len: 11 },
+        { y: 32, dir: 1, len: 15 },
+        { y: 42, dir: -1, len: 12 },
+        { y: 52, dir: 1, len: 10 },
+        { y: 62, dir: -1, len: 13 },
+      ].map(({ y, dir, len }, i) => {
+        const tipX = 24 + dir * len;
+        const tipY = y - 3;
         return (
-          <g key={y}>
-            <path d={`M24 ${y} C ${24 + dir * 6} ${y - 3}, ${24 + dir * 12} ${y - 1}, ${24 + dir * 15} ${y + 4}`} />
-            <ellipse cx={24 + dir * 15} cy={y + 4} rx="2.6" ry="1.3" transform={`rotate(${dir * 35} ${24 + dir * 15} ${y + 4})`} fill="currentColor" opacity="0.4" />
+          <g key={i}>
+            <path d={`M24 ${y} Q ${24 + dir * (len * 0.55)} ${y - 1}, ${tipX} ${tipY}`} />
+            {/* berry cluster at the tip — 3 small round dots */}
+            <circle cx={tipX} cy={tipY} r="1.6" fill="currentColor" opacity="0.7" stroke="none" />
+            <circle cx={tipX + dir * 2.3} cy={tipY - 1.4} r="1.3" fill="currentColor" opacity="0.65" stroke="none" />
+            <circle cx={tipX - dir * 1} cy={tipY - 2.8} r="1.1" fill="currentColor" opacity="0.55" stroke="none" />
+            <circle cx={tipX + dir * 1.4} cy={tipY + 1.8} r="1" fill="currentColor" opacity="0.5" stroke="none" />
           </g>
         );
       })}
-      {/* tiny flower top-left */}
-      <g opacity="0.85" transform="translate(12 8)">
-        {[0, 72, 144, 216, 288].map((deg) => (
-          <ellipse key={deg} cx="0" cy="-3" rx="1.4" ry="2.4" transform={`rotate(${deg})`} fill="currentColor" opacity="0.55" />
-        ))}
-        <circle cx="0" cy="0" r="0.9" fill="currentColor" />
-      </g>
     </svg>
   );
 }
