@@ -4,13 +4,13 @@ import { useRef, useState } from "react";
 export const Route = createFileRoute("/v/beta1")({
   head: () => ({
     meta: [
-      { title: "Ripple Studio — Turn a small kindness into a memory" },
+      { title: "Ripple Studio · Beta 1.0 — Gujjiu" },
       {
         name: "description",
         content:
           "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
       },
-      { property: "og:title", content: "Ripple Studio" },
+      { property: "og:title", content: "Ripple Studio · Beta 1.0" },
       {
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
