@@ -232,7 +232,11 @@ export const Route = createFileRoute("/api/create-moment")({
               card_image_path: cardPath,
               director_notes: {
                 invisible_story: brief.invisible_story,
-                style: brief.style,
+                director: brief.director,
+                medium: brief.medium,
+                cinematography: brief.cinematography,
+                scene: brief.scene,
+                identity_anchors: brief.identity_anchors,
               },
             })
             .select("id")
