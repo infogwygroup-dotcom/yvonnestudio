@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 
@@ -124,23 +123,12 @@ function b64ToBuffer(b64: string) {
   return Buffer.from(b64, "base64");
 }
 
-async function uploadFile(
-  bucket: string,
-  path: string,
-  bytes: Buffer,
-  contentType: string,
-) {
-  const { error } = await supabaseAdmin.storage
-    .from(bucket)
-    .upload(path, bytes, { contentType, upsert: true });
-  if (error) throw new Error(`Upload failed for ${path}: ${error.message}`);
-}
-
 export const Route = createFileRoute("/api/create-moment")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const apiKey = process.env.LOVABLE_API_KEY;
           if (!apiKey) {
             return Response.json({ error: "Missing LOVABLE_API_KEY" }, { status: 500 });
@@ -196,10 +184,17 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoTwoPath = `${id}/photo-two.${ext2}`;
           const cardPath = `${id}/card.png`;
 
+          const uploadFile = async (path: string, bytes: Buffer, contentType: string) => {
+            const { error } = await supabaseAdmin.storage
+              .from("moments")
+              .upload(path, bytes, { contentType, upsert: true });
+            if (error) throw new Error(`Upload failed for ${path}: ${error.message}`);
+          };
+
           await Promise.all([
-            uploadFile("moments", photoOnePath, photoOneBytes, photoOneType),
-            uploadFile("moments", photoTwoPath, photoTwoBytes, photoTwoType),
-            uploadFile("moments", cardPath, cardBytes, "image/png"),
+            uploadFile(photoOnePath, photoOneBytes, photoOneType),
+            uploadFile(photoTwoPath, photoTwoBytes, photoTwoType),
+            uploadFile(cardPath, cardBytes, "image/png"),
           ]);
 
           const { data: inserted, error: insertError } = await supabaseAdmin
