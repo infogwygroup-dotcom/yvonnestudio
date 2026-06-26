@@ -299,14 +299,19 @@ export const Route = createFileRoute("/api/create-moment")({
             recentDirectors,
           );
 
+          const safeStill = (b: string) =>
+            composeStill(apiKey, brief, b).catch((e) => {
+              console.warn("[create-moment] still fallback:", e instanceof Error ? e.message : e);
+              return null;
+            });
           const [cardB64, stillOneB64, stillTwoB64] = await Promise.all([
             composeCard(apiKey, brief, photoOneDataUrl, photoTwoDataUrl),
-            composeStill(apiKey, brief, brief.giver_still_brief),
-            composeStill(apiKey, brief, brief.receiver_still_brief),
+            safeStill(brief.giver_still_brief),
+            safeStill(brief.receiver_still_brief),
           ]);
           const cardBytes = b64ToBuffer(cardB64);
-          const stillOneBytes = b64ToBuffer(stillOneB64);
-          const stillTwoBytes = b64ToBuffer(stillTwoB64);
+          const stillOneBytes = stillOneB64 ? b64ToBuffer(stillOneB64) : null;
+          const stillTwoBytes = stillTwoB64 ? b64ToBuffer(stillTwoB64) : null;
 
           const id = crypto.randomUUID();
           const ext1 = photoOneType.includes("png") ? "png" : "jpg";
@@ -314,8 +319,8 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoOnePath = `${id}/photo-one.${ext1}`;
           const photoTwoPath = `${id}/photo-two.${ext2}`;
           const cardPath = `${id}/card.png`;
-          const stillOnePath = `${id}/still-one.png`;
-          const stillTwoPath = `${id}/still-two.png`;
+          const stillOnePath = stillOneBytes ? `${id}/still-one.png` : null;
+          const stillTwoPath = stillTwoBytes ? `${id}/still-two.png` : null;
 
           const uploadFile = async (path: string, bytes: Buffer, contentType: string) => {
             const { error } = await supabaseAdmin.storage
@@ -328,8 +333,12 @@ export const Route = createFileRoute("/api/create-moment")({
             uploadFile(photoOnePath, photoOneBytes, photoOneType),
             uploadFile(photoTwoPath, photoTwoBytes, photoTwoType),
             uploadFile(cardPath, cardBytes, "image/png"),
-            uploadFile(stillOnePath, stillOneBytes, "image/png"),
-            uploadFile(stillTwoPath, stillTwoBytes, "image/png"),
+            stillOnePath && stillOneBytes
+              ? uploadFile(stillOnePath, stillOneBytes, "image/png")
+              : Promise.resolve(),
+            stillTwoPath && stillTwoBytes
+              ? uploadFile(stillTwoPath, stillTwoBytes, "image/png")
+              : Promise.resolve(),
           ]);
 
           const { data: inserted, error: insertError } = await supabaseAdmin
