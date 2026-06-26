@@ -11,6 +11,10 @@ type DirectorBrief = {
   scene: string;
   identity_anchors: string;
   composition_brief: string;
+  genre: string;
+  mood: string;
+  visual_language: string[];
+  format: string;
   giver_location: string;
   giver_merchant: string;
   giver_meal: string;
@@ -23,6 +27,29 @@ type DirectorBrief = {
   receiver_still_brief: string;
 };
 
+type Rarity = "common" | "rare" | "epic" | "legendary";
+
+function rollRarity(): Rarity {
+  const r = Math.random();
+  if (r < 0.01) return "legendary";
+  if (r < 0.05) return "epic";
+  if (r < 0.15) return "rare";
+  return "common";
+}
+
+function rarityDirective(rarity: Rarity): string {
+  switch (rarity) {
+    case "legendary":
+      return `RARITY: LEGENDARY (≈1% of all Ripples). You have full freedom to ABANDON the default cinematic-frame medium. Ask yourself: "If this story deserved its own medium, what would it become?" Pick ONE alternate FORMAT that genuinely fits the emotion — examples: a vintage cinema poster, an A24-style poster, a movie ticket, a long vertical scroll, an ancient handwritten letter, an old newspaper front page, a vinyl album cover, a book cover, a museum exhibition catalogue card, a passport stamp page, a film storyboard page, a hand-painted watercolor diary page, a black & white documentary print, a 35mm contact sheet, a large-format photographic print, an old postcard, an architectural blueprint, a screenplay cover, a photo strip, a hand-drawn memory map. Set "format" to that exact choice. The user must feel: "I've never seen a Ripple like this before." Creativity over decoration.`;
+    case "epic":
+      return `RARITY: EPIC (≈4%). Break layout conventions. Pick ONE distinct presentational FORMAT — magazine spread, luxury hardcover book page, vintage travel journal, museum exhibition card, minimal Japanese poster, art gallery wall plate, poetic letter, premium scrapbook page. Set "format" to that choice. The entire presentation should feel different from the default frame.`;
+    case "rare":
+      return `RARITY: RARE (≈10%). Stay within the cinematic frame, but introduce one unexpected artistic treatment — a striking camera angle, a symbolic composition, exceptional lighting, more emotional staging, or refined typography. Leave "format" as "Cinematic Frame".`;
+    default:
+      return `RARITY: COMMON. Beautiful standard cinematic frame. Leave "format" as "Cinematic Frame".`;
+  }
+}
+
 async function callDirector(
   apiKey: string,
   sentenceOne: string,
@@ -30,6 +57,7 @@ async function callDirector(
   photoOneDataUrl: string,
   photoTwoDataUrl: string,
   recentDirectors: string[],
+  rarity: Rarity,
 ): Promise<DirectorBrief> {
   const recentBlock = recentDirectors.length
     ? `\nRECENTLY USED DIRECTORS (avoid repeating these unless the story absolutely demands it — Ripple Studio must feel like a different film every time):\n- ${recentDirectors.join("\n- ")}\n`
@@ -66,6 +94,10 @@ ${recentBlock}   Selection rule: emotion decides the director. Never force the s
 7. COMPOSER — write the INVISIBLE STORY (2–3 sentences, max 45 words). This is shown to the user as "Why This Scene Exists". It MUST explain the EMOTIONAL choice in human language. NEVER mention the director's name, the medium name, "AI", "model", "style", or "generated". Example: "This story became a rainy café because both memories carried the feeling of waiting." NOT "Directed by Wong Kar Wai" and NOT "Watercolour style chosen".
 8. Write ONE poetic TAGLINE — max 12 words. Timeless. Shareable. Never explains.
 
+${rarityDirective(rarity)}
+
+9.5. Also generate a GENRE (one of: Coming of Age, Romance, Slice of Life, Quiet Drama, Hope, Homecoming, Friendship, Journey, Family, Healing, Dream, Documentary, Road Movie, Mystery, Urban Poetry, Memory — or another single short label that fits better). Generate one MOOD (one short adjective: Hopeful, Lonely, Warm, Peaceful, Bittersweet, Joyful, Nostalgic, Dreamlike, Reflective, Playful, Melancholic, Quiet, etc.). Generate 3–5 short VISUAL_LANGUAGE tags (e.g. "Warm Film Grain", "Blue Hour", "Rain Reflection", "Golden Hour", "Soft Dust", "Minimal Japanese", "Painterly", "Handmade Paper", "Kodak Portra", "Leica Street", "Magazine Editorial", "Neo Noir", "Dreamlike", "Oil Painting", "Vintage Travel", "Watercolor Journal", "Handwritten Memory" — or invent new ones that fit). These appear in a small archival "Ripple Identity" caption — keep each tag 1–3 words, title case.
+
 9. For EACH of the two people (giver = person A, receiver = person B), extract or gently infer from their photo and sentence:
    - location (one short place phrase, e.g. "Sydney", "Tokyo at dusk", "a small kitchen"). If truly unknown, write a poetic place like "somewhere quiet".
    - merchant (a venue/brand if visible; otherwise a soft poetic placeholder like "a corner table", "her apartment kitchen"). Never invent a real brand name that isn't visible.
@@ -83,6 +115,10 @@ Return STRICT JSON only. No prose, no markdown fences.
   "scene": "...",
   "identity_anchors": "...",
   "composition_brief": "...",
+  "genre": "...",
+  "mood": "...",
+  "visual_language": ["...", "..."],
+  "format": "...",
   "giver_location": "...",
   "giver_merchant": "...",
   "giver_meal": "...",
@@ -136,8 +172,12 @@ async function composeCard(
   brief: DirectorBrief,
   photoOneDataUrl: string,
   photoTwoDataUrl: string,
+  rarity: Rarity,
 ): Promise<string> {
-  const prompt = `DIRECTOR MODE. The two provided images are REFERENCES ONLY — treat them exactly as a film director treats location scouting photos, actor portraits, and prop references. DO NOT paste, crop, or composite them. DO NOT make a collage, photo grid, scrapbook, or layout of the originals. Instead, RECREATE a single brand-new cinematic scene inspired by them.
+  const formatLine = brief.format && brief.format.trim() && brief.format.toLowerCase() !== "cinematic frame"
+    ? `\nFORMAT (this Ripple is a ${rarity.toUpperCase()} edition — render it AS this format, not as a default cinematic still): ${brief.format}. Commit fully to this format's visual language, layout conventions, typography, paper / surface texture, and proportions.`
+    : "";
+  const prompt = `DIRECTOR MODE. The two provided images are REFERENCES ONLY — treat them exactly as a film director treats location scouting photos, actor portraits, and prop references. DO NOT paste, crop, or composite them. DO NOT make a collage, photo grid, scrapbook, or layout of the originals. Instead, RECREATE a single brand-new cinematic scene inspired by them.${formatLine}
 
 Output ONE image, square aspect ratio. It should feel like a single frame from a film, magazine illustration, painting, or storyboard — not a photo composition.
 
@@ -297,6 +337,7 @@ export const Route = createFileRoute("/api/create-moment")({
             photoOneDataUrl,
             photoTwoDataUrl,
             recentDirectors,
+            rarity,
           );
 
           const safeStill = (b: string) =>
@@ -305,7 +346,7 @@ export const Route = createFileRoute("/api/create-moment")({
               return null;
             });
           const [cardB64, stillOneB64, stillTwoB64] = await Promise.all([
-            composeCard(apiKey, brief, photoOneDataUrl, photoTwoDataUrl),
+            composeCard(apiKey, brief, photoOneDataUrl, photoTwoDataUrl, rarity),
             safeStill(brief.giver_still_brief),
             safeStill(brief.receiver_still_brief),
           ]);
@@ -353,6 +394,11 @@ export const Route = createFileRoute("/api/create-moment")({
               card_image_path: cardPath,
               still_one_path: stillOnePath,
               still_two_path: stillTwoPath,
+              rarity,
+              genre: brief.genre,
+              mood: brief.mood,
+              visual_language: Array.isArray(brief.visual_language) ? brief.visual_language.slice(0, 6) : [],
+              format: brief.format || "Cinematic Frame",
               director_notes: {
                 invisible_story: brief.invisible_story,
                 director: brief.director,
