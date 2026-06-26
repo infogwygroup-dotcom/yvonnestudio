@@ -304,11 +304,11 @@ function Envelope({ opened }: { opened: boolean }) {
   return (
     <div
       aria-hidden
-      className="relative mx-auto w-[320px] sm:w-[420px]"
+      className="relative mx-auto w-[340px] sm:w-[460px]"
       style={{ perspective: "1200px" }}
     >
       <div
-        className={"relative aspect-[3/2] w-full " + (opened ? "env-slow-lift" : "env-breathe")}
+        className={"relative aspect-[3/1] w-full " + (opened ? "env-slow-lift" : "env-breathe")}
         style={{
           background:
             "linear-gradient(168deg, oklch(0.965 0.018 82) 0%, oklch(0.935 0.025 76) 100%)",
@@ -325,28 +325,26 @@ function Envelope({ opened }: { opened: boolean }) {
         {/* deckled edges via inner shadow */}
         <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_24px_oklch(0.72_0.06_55/0.18)]" />
 
-        {/* handwritten script — centered */}
-        <div className="absolute inset-x-0 top-[28%] flex flex-col items-center px-8 text-center">
-          <p className="font-hand text-[20px] leading-[1.25] text-[oklch(0.4_0.06_45)] opacity-85 sm:text-[24px]">
+        {/* handwritten script — left aligned, lower half (visible under flap) */}
+        <div className="absolute left-[7%] right-[34%] top-[42%] -translate-y-1/2">
+          <p className="font-hand text-[15px] italic leading-[1.5] text-[oklch(0.4_0.06_45)] opacity-90 sm:text-[18px]">
             Every Ripple begins
             <br />
-            with two hearts
-            <br />
-            that never met.
+            with two hearts that never met.
           </p>
         </div>
 
-        {/* small botanical illustration — upper right */}
-        <BotanicalSprig className="absolute right-[8%] top-[8%] h-[28%] w-auto text-[oklch(0.55_0.10_140)] opacity-65" />
+        {/* small botanical illustration — right side */}
+        <BotanicalSprig className="absolute right-[5%] top-[15%] h-[70%] w-auto text-[oklch(0.55_0.10_140)] opacity-55" />
 
-        {/* envelope flap (top triangle) */}
+        {/* envelope flap (shallow trapezoid at top) */}
         <div
           className={"absolute inset-x-0 top-0 origin-top " + (opened ? "env-flap-slow" : "")}
           style={{
-            height: "62%",
+            height: "40%",
             background:
               "linear-gradient(180deg, oklch(0.955 0.02 80) 0%, oklch(0.92 0.028 76) 100%)",
-            clipPath: "polygon(0 0, 100% 0, 50% 100%)",
+            clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)",
             transformStyle: "preserve-3d",
             backfaceVisibility: "hidden",
             boxShadow: opened ? "0 8px 20px oklch(0.2 0.04 40 / 0.22)" : "none",
@@ -355,26 +353,26 @@ function Envelope({ opened }: { opened: boolean }) {
         {/* flap fiber texture */}
         <div
           className={"pointer-events-none absolute inset-x-0 top-0 opacity-[0.18] mix-blend-multiply [background-image:radial-gradient(oklch(0.4_0.05_55)_0.5px,transparent_0.6px)] [background-size:5px_5px] origin-top " + (opened ? "env-flap-slow" : "")}
-          style={{ height: "62%", clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
+          style={{ height: "40%", clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)" }}
         />
 
-        {/* wax seal — centered on flap edge, slightly off-axis, imperfect */}
+        {/* wax seal — small, centered just below flap edge */}
         <div
           className={
-            "absolute left-1/2 top-[55%] z-20 -translate-x-1/2 -translate-y-1/2 " +
+            "absolute left-1/2 top-[40%] z-20 -translate-x-1/2 -translate-y-1/2 " +
             (opened ? "wax-crack" : "wax-resting")
           }
           aria-hidden
         >
           <div
-            className="flex h-[44px] w-[44px] items-center justify-center font-serif text-[15px] italic text-[oklch(0.95_0.02_70)]"
+            className="flex h-[30px] w-[30px] items-center justify-center font-serif text-[11px] italic text-[oklch(0.95_0.02_70)] sm:h-[34px] sm:w-[34px] sm:text-[12px]"
             style={{
               background:
                 "radial-gradient(circle at 30% 26%, oklch(0.66 0.16 35) 0%, oklch(0.44 0.14 28) 55%, oklch(0.28 0.08 22) 100%)",
               borderRadius: "47% 53% 44% 56% / 52% 46% 54% 48%",
-              transform: "rotate(-7deg)",
+              transform: "rotate(-9deg)",
               boxShadow:
-                "0 3px 6px oklch(0.2 0.04 40 / 0.5), inset 0 -1px 2px oklch(0.2 0.04 40 / 0.55), inset 0 1px 1px oklch(1 0 0 / 0.28)",
+                "0 2px 4px oklch(0.2 0.04 40 / 0.45), inset 0 -1px 1.5px oklch(0.2 0.04 40 / 0.5), inset 0 1px 1px oklch(1 0 0 / 0.3)",
             }}
           >
             R
@@ -412,14 +410,16 @@ function BotanicalSprig({ className = "" }: { className?: string }) {
 function GoldenRipple() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
+      {/* glowing drop center */}
+      <span className="gold-drop" />
       <span className="gold-ring" />
-      <span className="gold-ring" style={{ animationDelay: "0.6s" }} />
-      <span className="gold-ring" style={{ animationDelay: "1.2s" }} />
-      {[0.1, 0.5, 0.9, 1.3, 1.7].map((d, i) => (
+      <span className="gold-ring" style={{ animationDelay: "0.7s" }} />
+      <span className="gold-ring" style={{ animationDelay: "1.4s" }} />
+      {[0.1, 0.5, 0.9, 1.3, 1.7, 2.1].map((d, i) => (
         <span
           key={i}
           className="gold-particle"
-          style={{ animationDelay: `${d}s`, left: `${46 + (i % 3) * 4}%` }}
+          style={{ animationDelay: `${d}s`, left: `${42 + (i % 4) * 5}%` }}
         />
       ))}
     </div>
