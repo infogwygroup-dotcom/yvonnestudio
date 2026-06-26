@@ -222,10 +222,10 @@ function LetterSection({
 
   useEffect(() => {
     const beats: Record<number, number> = {
-      1: 2700, // wax crack + flap unfolds slowly (3 stages)
-      2: 1100, // letter slides up
-      3: 1500, // pause, then ripple
-      4: 1400, // ripple fully formed
+      1: 900,  // wax cracks · envelope lifts & dissolves
+      2: 200,  // tiny breath before letters arrive
+      3: 1200, // pause, then ripple
+      4: 1300, // ripple fully formed
     };
     const ms = beats[stage];
     if (!ms) return;
@@ -249,7 +249,7 @@ function LetterSection({
       </div>
 
       {stage < 3 && (
-        <div className="mt-16 flex flex-col items-center">
+        <div className="relative mt-16 flex h-[200px] flex-col items-center sm:h-[240px]">
           <button
             type="button"
             onClick={() => stage === 0 && setStage(1)}
@@ -260,7 +260,7 @@ function LetterSection({
             <Envelope opened={opened} />
           </button>
           {!opened && (
-            <p className="mt-10 font-serif text-base italic text-accent">
+            <p className="mt-10 font-serif text-base italic text-accent animate-pulse">
               Open their memories
             </p>
           )}
