@@ -301,10 +301,31 @@ function LetterSection({
 }
 
 function Envelope({ opened }: { opened: boolean }) {
+  const sealRef = useRef<HTMLDivElement | null>(null);
+  const handleSealMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = sealRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    // clamp to inside the seal so the catchlight stays believable
+    const mx = Math.max(10, Math.min(85, x));
+    const my = Math.max(8, Math.min(80, y));
+    el.style.setProperty("--mx", `${mx}%`);
+    el.style.setProperty("--my", `${my}%`);
+    el.style.setProperty("--light", "1");
+  };
+  const handleSealLeave = () => {
+    const el = sealRef.current;
+    if (!el) return;
+    el.style.setProperty("--mx", "30%");
+    el.style.setProperty("--my", "22%");
+    el.style.setProperty("--light", "0");
+  };
   return (
     <div
       aria-hidden
-      className="relative mx-auto w-[340px] sm:w-[480px]"
+      className="envelope-interactive relative mx-auto w-[340px] sm:w-[480px]"
       style={{ perspective: "1200px" }}
     >
       <div
@@ -432,6 +453,9 @@ function Envelope({ opened }: { opened: boolean }) {
 
         {/* wax seal — sits on the flap point, doesn't overlap script/sprig */}
         <div
+          ref={sealRef}
+          onPointerMove={handleSealMove}
+          onPointerLeave={handleSealLeave}
           className={
             "absolute left-1/2 top-[38%] z-20 -translate-x-1/2 -translate-y-1/2 " +
             (opened ? "wax-crack" : "wax-resting")
