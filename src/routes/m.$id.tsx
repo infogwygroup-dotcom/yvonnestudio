@@ -3,11 +3,11 @@ import { useMemo, useState } from "react";
 import { getMoment } from "@/lib/moments.functions";
 
 const CLOSING_LINES = [
-  "Every ripple begins with one act of kindness.",
-  "Stories travel further than meals.",
-  "Kindness always leaves something behind.",
-  "Someone remembered because someone shared.",
-  "A small moment, carried quietly into the world.",
+  "Kindness always travels farther than expected.",
+  "Some strangers only meet once. Some memories stay forever.",
+  "Every ripple begins with one quiet act.",
+  "Two moments. One story the world now remembers.",
+  "Stories travel further than the people inside them.",
 ];
 
 export const Route = createFileRoute("/m/$id")({
@@ -98,7 +98,7 @@ function MomentPage() {
 
   return (
     <main className="paper min-h-screen">
-      <div className="mx-auto max-w-3xl px-6 pt-10 pb-24 sm:pt-16">
+      <div className="mx-auto max-w-3xl px-6 pt-8 pb-24 sm:pt-12">
         <header className="flex items-center justify-between">
           <Link to="/" className="eyebrow hover:text-accent">
             ← Ripple Moment
@@ -112,8 +112,9 @@ function MomentPage() {
           </p>
         </header>
 
-        <figure className="mt-12">
-          <div className="overflow-hidden rounded-sm border border-border bg-card shadow-[0_30px_80px_-30px_oklch(0.2_0.04_40/0.35)]">
+        {/* 1. Hero Story — the movie poster */}
+        <figure className="mt-16 sm:mt-24">
+          <div className="overflow-hidden rounded-sm border border-border bg-card shadow-[0_40px_100px_-30px_oklch(0.2_0.04_40/0.45)]">
             <img
               src={moment.card_image_url}
               alt={moment.tagline}
@@ -121,32 +122,37 @@ function MomentPage() {
               loading="eager"
             />
           </div>
-          <figcaption className="mt-10 text-center">
-            <p className="eyebrow">The line that remained</p>
-            <p className="mx-auto mt-4 max-w-2xl font-serif text-3xl italic leading-tight sm:text-4xl">
+          <figcaption className="mt-12 text-center">
+            <p className="mx-auto max-w-2xl font-serif text-3xl italic leading-[1.2] sm:text-4xl">
               &ldquo;{moment.tagline}&rdquo;
             </p>
           </figcaption>
         </figure>
 
+        {/* 2. Director's Interpretation */}
         {moment.interpretation && (
-          <section className="mx-auto mt-20 max-w-xl text-center">
-            <p className="eyebrow">✨ Director's Interpretation</p>
-            <p className="mt-5 font-serif text-lg leading-relaxed text-foreground/85 sm:text-xl">
-              {moment.interpretation}
-            </p>
+          <section className="mx-auto mt-32 max-w-xl">
+            <p className="eyebrow text-center">Director's Interpretation</p>
+            <div className="mt-8 space-y-5 font-serif text-lg leading-[1.75] text-foreground/85 sm:text-xl">
+              {moment.interpretation
+                .split(/\n+/)
+                .map((line, i) => (
+                  <p key={i}>{line.trim()}</p>
+                ))}
+            </div>
           </section>
         )}
 
-        <section className="mt-20">
+        {/* 3. The Moments That Started This Story */}
+        <section className="mt-32">
           <div className="text-center">
-            <p className="eyebrow">Story Origins</p>
-            <h2 className="mt-3 font-serif text-xl italic sm:text-2xl">
+            <p className="eyebrow">Origins</p>
+            <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
               The moments that started this story
             </h2>
           </div>
 
-          <div className="mt-10 flex flex-col items-center gap-6">
+          <div className="mt-14 flex flex-col items-center gap-8">
             <RippleNote
               role="Giver"
               sentence={moment.sentence_one}
@@ -165,11 +171,15 @@ function MomentPage() {
           </div>
         </section>
 
-        <p className="mx-auto mt-20 max-w-md text-center font-serif text-base italic text-muted-foreground">
-          {closingLine}
-        </p>
+        {/* 5. Ending Quote */}
+        <section className="mt-40 mb-32 px-2 text-center">
+          <p className="mx-auto max-w-2xl font-serif text-3xl italic leading-[1.3] text-foreground/90 sm:text-4xl">
+            &ldquo;{closingLine}&rdquo;
+          </p>
+        </section>
 
-        <div className="mt-16 flex flex-col items-center gap-4">
+        {/* 6. Share */}
+        <div className="flex flex-col items-center gap-5">
           <button
             onClick={share}
             className="rounded-full bg-primary px-8 py-4 text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground transition hover:bg-accent"
@@ -199,11 +209,17 @@ function RippleConnector() {
   return (
     <div
       aria-hidden
-      className="flex flex-col items-center gap-1.5 py-1"
+      className="relative h-24 w-24"
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-accent/70" />
-      <span className="h-10 w-px bg-gradient-to-b from-accent/60 via-accent/30 to-transparent" />
-      <span className="h-1.5 w-1.5 rounded-full bg-accent/40" />
+      <span className="ripple-ring" />
+      <span className="ripple-ring" style={{ animationDelay: "1.2s" }} />
+      <span className="ripple-ring" style={{ animationDelay: "2.4s" }} />
+      <span
+        className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/80 shadow-[0_0_18px_oklch(0.62_0.14_35/0.7)]"
+      />
+      <span className="ripple-dust" style={{ left: "30%", animationDelay: "0.4s" }} />
+      <span className="ripple-dust" style={{ left: "55%", animationDelay: "1.6s" }} />
+      <span className="ripple-dust" style={{ left: "72%", animationDelay: "2.8s" }} />
     </div>
   );
 }
