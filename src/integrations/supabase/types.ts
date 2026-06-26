@@ -19,40 +19,58 @@ export type Database = {
           card_image_path: string
           created_at: string
           director_notes: Json | null
+          format: string | null
+          genre: string | null
           id: string
+          mood: string | null
           photo_one_path: string
           photo_two_path: string
+          rarity: string
+          ripple_number: number | null
           sentence_one: string
           sentence_two: string
           still_one_path: string | null
           still_two_path: string | null
           tagline: string
+          visual_language: string[] | null
         }
         Insert: {
           card_image_path: string
           created_at?: string
           director_notes?: Json | null
+          format?: string | null
+          genre?: string | null
           id?: string
+          mood?: string | null
           photo_one_path: string
           photo_two_path: string
+          rarity?: string
+          ripple_number?: number | null
           sentence_one: string
           sentence_two: string
           still_one_path?: string | null
           still_two_path?: string | null
           tagline: string
+          visual_language?: string[] | null
         }
         Update: {
           card_image_path?: string
           created_at?: string
           director_notes?: Json | null
+          format?: string | null
+          genre?: string | null
           id?: string
+          mood?: string | null
           photo_one_path?: string
           photo_two_path?: string
+          rarity?: string
+          ripple_number?: number | null
           sentence_one?: string
           sentence_two?: string
           still_one_path?: string | null
           still_two_path?: string | null
           tagline?: string
+          visual_language?: string[] | null
         }
         Relationships: []
       }
