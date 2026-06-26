@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getMoment } from "@/lib/moments.functions";
+import type { MomentView } from "@/lib/moments.functions";
 
 const CLOSING_LINES = [
   "Kindness always travels farther than expected.",
