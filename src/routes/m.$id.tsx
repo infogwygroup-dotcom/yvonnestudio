@@ -304,17 +304,17 @@ function Envelope({ opened }: { opened: boolean }) {
   return (
     <div
       aria-hidden
-      className="relative mx-auto w-[340px] sm:w-[460px]"
+      className="relative mx-auto w-[340px] sm:w-[480px]"
       style={{ perspective: "1200px" }}
     >
       <div
-        className={"relative aspect-[3/1] w-full " + (opened ? "env-slow-lift" : "env-breathe")}
+        className={"relative aspect-[2.6/1] w-full " + (opened ? "env-slow-lift" : "env-breathe")}
         style={{
           background:
             "linear-gradient(168deg, oklch(0.97 0.02 84) 0%, oklch(0.93 0.03 76) 60%, oklch(0.905 0.035 72) 100%)",
           boxShadow:
-            "0 26px 60px -30px oklch(0.18 0.04 40 / 0.5), 0 3px 6px oklch(0.2 0.04 40 / 0.1), inset 0 0 0 1px oklch(0.82 0.03 70 / 0.55), inset 0 0 60px oklch(0.6 0.06 55 / 0.06)",
-          borderRadius: "3px",
+            "0 30px 60px -28px oklch(0.18 0.04 40 / 0.5), 0 4px 8px oklch(0.2 0.04 40 / 0.12), inset 0 0 0 1px oklch(0.82 0.03 70 / 0.55), inset 0 0 60px oklch(0.6 0.06 55 / 0.06)",
+          borderRadius: "4px",
           transformStyle: "preserve-3d",
         }}
       >
@@ -325,32 +325,63 @@ function Envelope({ opened }: { opened: boolean }) {
         {/* soft cotton fiber streaks */}
         <div className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-multiply [background-image:repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px),repeating-linear-gradient(-72deg,transparent_0_5px,oklch(0.5_0.03_55/0.12)_5px_5.7px)]" />
         {/* aged warm vignette */}
-        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(130%_120%_at_50%_45%,transparent_50%,oklch(0.7_0.07_55/0.45)_100%)] rounded-[3px]" />
+        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(130%_120%_at_50%_45%,transparent_50%,oklch(0.7_0.07_55/0.45)_100%)] rounded-[4px]" />
         {/* tea stain blush — top right */}
         <div className="pointer-events-none absolute -top-[8%] right-[6%] h-[55%] w-[28%] rounded-full opacity-30 mix-blend-multiply" style={{ background: "radial-gradient(circle, oklch(0.7 0.08 55 / 0.6) 0%, transparent 70%)" }} />
+        {/* second tea stain — lower left, asymmetric aging */}
+        <div className="pointer-events-none absolute bottom-[2%] left-[18%] h-[36%] w-[22%] rounded-full opacity-20 mix-blend-multiply" style={{ background: "radial-gradient(circle, oklch(0.66 0.09 50 / 0.55) 0%, transparent 70%)" }} />
         {/* deckled edges via inner shadow */}
-        <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_28px_oklch(0.66_0.07_55/0.28),inset_0_0_2px_oklch(0.6_0.06_55/0.5)] rounded-[3px]" />
+        <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_0_28px_oklch(0.66_0.07_55/0.28),inset_0_0_2px_oklch(0.6_0.06_55/0.5)] rounded-[4px]" />
 
-        {/* handwritten script — lower body, safely below the flap (flap = 44%) */}
-        <div className="absolute left-[8%] right-[36%] top-[72%] -translate-y-1/2">
-          <p className="font-hand text-[14px] italic leading-[1.45] text-[oklch(0.38_0.07_45)] opacity-95 sm:text-[17px]">
+        {/* corner postmark — tiny vintage round stamp, lower-right corner */}
+        <div
+          className="pointer-events-none absolute right-[4%] top-[58%] z-[5] flex h-[34px] w-[34px] items-center justify-center rounded-full opacity-70 sm:h-[40px] sm:w-[40px]"
+          style={{
+            transform: "rotate(-14deg)",
+            border: "1px solid oklch(0.42 0.10 30 / 0.55)",
+            color: "oklch(0.42 0.10 30 / 0.7)",
+            boxShadow: "inset 0 0 0 3px oklch(0.97 0.02 84 / 0), inset 0 0 0 4px oklch(0.42 0.10 30 / 0.25)",
+          }}
+        >
+          <div className="text-center font-serif" style={{ fontSize: "6px", letterSpacing: "0.1em", lineHeight: 1.1 }}>
+            <div style={{ fontStyle: "italic", fontSize: "9px" }}>R · M</div>
+            <div className="mt-[1px]">RIPPLE</div>
+            <div>MOMENT</div>
+          </div>
+        </div>
+
+        {/* horizontal ruled line under handwritten text — like an address line */}
+        <div
+          className="pointer-events-none absolute left-[8%] right-[36%] opacity-25"
+          style={{
+            top: "88%",
+            height: "1px",
+            background: "repeating-linear-gradient(90deg, oklch(0.42 0.06 50 / 0.5) 0 4px, transparent 4px 7px)",
+          }}
+        />
+
+        {/* handwritten script — fully visible from the start, below the flap (flap ends 38%) */}
+        <div className="absolute left-[8%] right-[34%] top-[50%]">
+          <p className="font-hand text-[15px] leading-[1.35] text-[oklch(0.36_0.08_42)] opacity-95 sm:text-[19px]" style={{ transform: "rotate(-1.5deg)", transformOrigin: "left top" }}>
             Every Ripple begins
             <br />
-            with two hearts that never met.
+            with two hearts
+            <br />
+            that never met.
           </p>
         </div>
 
-        {/* small botanical illustration — lower right, below flap */}
-        <BotanicalSprig className="absolute right-[6%] bottom-[8%] h-[44%] w-auto text-[oklch(0.5_0.10_140)] opacity-55" />
+        {/* botanical illustration — right side, gracefully arching down */}
+        <BotanicalSprig className="absolute right-[8%] top-[44%] h-[52%] w-auto text-[oklch(0.46_0.10_140)] opacity-60" />
 
-        {/* envelope flap (shallow trapezoid at top) */}
+        {/* envelope flap (shallow trapezoid at top — shortened so script/sprig stay clear) */}
         <div
           className={"absolute inset-x-0 top-0 origin-top " + (opened ? "env-flap-slow" : "")}
           style={{
-            height: "44%",
+            height: "38%",
             background:
               "linear-gradient(180deg, oklch(0.96 0.022 82) 0%, oklch(0.92 0.03 76) 70%, oklch(0.88 0.035 72) 100%)",
-            clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)",
+            clipPath: "polygon(0 0, 100% 0, 62% 100%, 38% 100%)",
             transformStyle: "preserve-3d",
             backfaceVisibility: "hidden",
             boxShadow: opened
@@ -361,22 +392,31 @@ function Envelope({ opened }: { opened: boolean }) {
         {/* flap fiber texture */}
         <div
           className={"pointer-events-none absolute inset-x-0 top-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.5px,transparent_0.6px),repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px)] [background-size:4px_4px,auto] origin-top " + (opened ? "env-flap-slow" : "")}
-          style={{ height: "44%", clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)" }}
+          style={{ height: "38%", clipPath: "polygon(0 0, 100% 0, 62% 100%, 38% 100%)" }}
         />
         {/* flap crease shadow at base */}
         <div
           className="pointer-events-none absolute inset-x-0 opacity-50"
           style={{
-            top: "calc(44% - 1px)",
+            top: "calc(38% - 1px)",
             height: "2px",
             background: "linear-gradient(180deg, oklch(0.55 0.06 55 / 0.35), transparent)",
-            clipPath: "polygon(30% 0, 70% 0, 70% 100%, 30% 100%)",
+            clipPath: "polygon(38% 0, 62% 0, 62% 100%, 38% 100%)",
           }}
+        />
+        {/* side flap shadows — left/right folds give the envelope depth */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 w-[18%] opacity-[0.16] mix-blend-multiply"
+          style={{ background: "linear-gradient(90deg, oklch(0.55 0.06 55 / 0.45), transparent)" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 w-[18%] opacity-[0.16] mix-blend-multiply"
+          style={{ background: "linear-gradient(270deg, oklch(0.55 0.06 55 / 0.45), transparent)" }}
         />
 
         {/* wax shard burst — appears the instant the seal cracks */}
         {opened && (
-          <div className="pointer-events-none absolute left-1/2 top-[44%] z-30 -translate-x-1/2 -translate-y-1/2">
+          <div className="pointer-events-none absolute left-1/2 top-[38%] z-30 -translate-x-1/2 -translate-y-1/2">
             {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => (
               <span
                 key={deg}
@@ -390,10 +430,10 @@ function Envelope({ opened }: { opened: boolean }) {
           </div>
         )}
 
-        {/* wax seal — vintage burgundy stamp, deeply embossed */}
+        {/* wax seal — sits on the flap point, doesn't overlap script/sprig */}
         <div
           className={
-            "absolute left-1/2 top-[44%] z-20 -translate-x-1/2 -translate-y-1/2 " +
+            "absolute left-1/2 top-[38%] z-20 -translate-x-1/2 -translate-y-1/2 " +
             (opened ? "wax-crack" : "wax-resting")
           }
           aria-hidden
@@ -403,7 +443,7 @@ function Envelope({ opened }: { opened: boolean }) {
 
         {/* folded letter peeking out as the flap opens */}
         {opened && (
-          <div className="paper-peek pointer-events-none absolute left-1/2 top-[46%] z-10 h-[70%] w-[86%] -translate-x-1/2 rounded-[2px]"
+          <div className="paper-peek pointer-events-none absolute left-1/2 top-[40%] z-10 h-[70%] w-[86%] -translate-x-1/2 rounded-[2px]"
             style={{
               background: "linear-gradient(180deg, oklch(0.985 0.01 85) 0%, oklch(0.955 0.014 80) 100%)",
               boxShadow: "0 12px 28px -16px oklch(0.2 0.04 40 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.6)",
