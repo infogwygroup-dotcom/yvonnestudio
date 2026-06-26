@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -124,6 +124,16 @@ function HomePage() {
             We don't ask for your name. The memory is the point.
           </p>
         </form>
+
+        <div className="mt-16 flex flex-col items-center gap-2 text-center">
+          <div className="h-px w-16 bg-border" />
+          <Link
+            to="/collection"
+            className="text-xs uppercase tracking-[0.3em] text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Open the Archive →
+          </Link>
+        </div>
       </div>
     </main>
   );
