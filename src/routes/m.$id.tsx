@@ -199,112 +199,102 @@ function LetterSection({
   receiverPhoto: string;
   date: string;
 }) {
-  // stages: 0 = folded letter sealed, 1 = unfolding, 2 = first page revealed,
-  //         3 = ripple travelling, 4 = second page revealed, 5 = settled
+  // 0=sealed, 1=wax breaking + flap opening, 2=giver rising,
+  // 3=ripple flowing, 4=receiver rising, 5=settled
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
     if (stage === 1) {
-      const t = setTimeout(() => setStage(2), 1400);
+      const t = setTimeout(() => setStage(2), 1100);
       return () => clearTimeout(t);
     }
     if (stage === 2) {
-      const t = setTimeout(() => setStage(3), 1100);
+      const t = setTimeout(() => setStage(3), 1200);
       return () => clearTimeout(t);
     }
     if (stage === 3) {
-      const t = setTimeout(() => setStage(4), 1400);
+      const t = setTimeout(() => setStage(4), 1100);
       return () => clearTimeout(t);
     }
     if (stage === 4) {
-      const t = setTimeout(() => setStage(5), 1100);
+      const t = setTimeout(() => setStage(5), 1300);
       return () => clearTimeout(t);
     }
   }, [stage]);
 
-  function tap() {
-    if (stage === 0) setStage(1);
-  }
-
-  const formattedDate = new Date(date).toLocaleDateString(undefined, {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = new Date(date)
+    .toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+    .toUpperCase();
 
   return (
     <section className="mt-32">
-      {stage === 0 ? (
-        <div className="mx-auto flex max-w-md flex-col items-center text-center">
-          <p className="eyebrow">Two moments. One story.</p>
-          <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
-            Where it all began
-          </h2>
+      <div className="mx-auto max-w-md text-center">
+        <p className="eyebrow">Two moments. One story.</p>
+        <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
+          Where it all began
+        </h2>
+      </div>
 
+      {stage === 0 && (
+        <div className="mt-14 flex flex-col items-center">
           <button
             type="button"
-            onClick={tap}
-            aria-label="Unfold the letter"
-            className="group mt-12 flex w-full flex-col items-center focus:outline-none"
+            onClick={() => setStage(1)}
+            aria-label="Open their memories"
+            className="group block focus:outline-none"
           >
-            <FoldedLetter />
-            <span className="mt-8 font-serif text-base italic text-foreground/65">
-              Every Ripple begins with two hearts that never met.
-            </span>
-            <span className="eyebrow mt-4 text-accent">Unfold the letter</span>
+            <Envelope />
           </button>
+          <p className="mt-8 font-serif text-base italic text-accent">
+            Open their memories
+          </p>
+          <svg
+            className="mt-2 text-accent/70"
+            width="14"
+            height="10"
+            viewBox="0 0 14 10"
+            fill="none"
+            aria-hidden
+          >
+            <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
         </div>
-      ) : (
-        <div className="flex flex-col">
-          <div className="mx-auto max-w-md text-center">
-            <p className="eyebrow">Two moments. One story.</p>
-            <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
-              Where it all began
-            </h2>
+      )}
+
+      {stage === 1 && (
+        <div className="mt-14 flex justify-center">
+          <Envelope opening />
+        </div>
+      )}
+
+      {stage >= 2 && (
+        <div className="mt-12 flex flex-col items-center gap-[24px]">
+          <div className={"mem-rise w-full max-w-2xl " + (stage >= 5 ? "mem-settle-down" : "")}>
+            <MemoryCard
+              role="GIVER"
+              date={formattedDate}
+              photo={giverPhoto}
+              quote={giverSentence}
+              caption="When she shared this meal, she wrote only two words."
+              sprigSide="right"
+            />
           </div>
 
-          {stage === 1 && (
-            <div className="mx-auto mt-10">
-              <FoldedLetter opening />
-            </div>
-          )}
-
-          {stage >= 2 && (
-            <div
-              className={
-                "page-unfold mt-20 " + (stage >= 5 ? "page-settle-down" : "")
-              }
-            >
-              <JournalPage
-                index={1}
-                role="The Giver"
-                sentence={giverSentence}
-                photo={giverPhoto}
-                date={formattedDate}
-                align="image-left"
-              />
-            </div>
-          )}
-
           {stage >= 3 && (
-            <div className="relative mx-auto my-8 h-[120px] w-full max-w-md">
-              <DownwardRipple persistent={stage >= 5} />
+            <div className="relative h-[60px] w-full max-w-2xl">
+              <RippleStream />
             </div>
           )}
 
           {stage >= 4 && (
-            <div
-              className={
-                "page-unfold " + (stage >= 5 ? "page-settle-up" : "")
-              }
-            >
-              <JournalPage
-                index={2}
-                role="The Receiver"
-                sentence={receiverSentence}
-                photo={receiverPhoto}
+            <div className={"mem-rise w-full max-w-2xl " + (stage >= 5 ? "mem-settle-up" : "")}>
+              <MemoryCard
+                role="RECEIVER"
                 date={formattedDate}
-                align="image-right"
+                photo={receiverPhoto}
+                quote={receiverSentence}
+                caption="Her reply completed the story."
+                sprigSide="right"
               />
             </div>
           )}
@@ -314,124 +304,204 @@ function LetterSection({
   );
 }
 
-function FoldedLetter({ opening = false }: { opening?: boolean }) {
+function Envelope({ opening = false }: { opening?: boolean }) {
   return (
     <div
       aria-hidden
       className={
-        "relative mx-auto w-[320px] " +
-        (opening
-          ? "letter-lift"
-          : "transition-transform duration-700 hover:-translate-y-[3px]")
+        "relative mx-auto w-[340px] sm:w-[420px] " +
+        (opening ? "" : "transition-transform duration-500 group-hover:-translate-y-[4px]")
       }
+      style={{ perspective: "900px" }}
     >
-      {/* slim folded letter — long horizontal stationery */}
+      {/* envelope body */}
       <div
         className={
-          "letter-paper relative aspect-[16/5] w-full overflow-hidden " +
-          (opening ? "letter-paper-open" : "")
+          "relative aspect-[16/7] w-full overflow-hidden rounded-[10px] " +
+          (opening ? "" : "env-rest")
         }
+        style={{
+          background:
+            "linear-gradient(170deg, oklch(0.965 0.016 82) 0%, oklch(0.945 0.022 78) 100%)",
+          boxShadow:
+            "0 18px 40px -22px oklch(0.2 0.04 40 / 0.35), 0 2px 4px oklch(0.2 0.04 40 / 0.08), inset 0 0 0 1px oklch(0.86 0.02 70 / 0.6)",
+        }}
       >
-        {/* cotton paper base + fibre noise */}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.965_0.018_82)_0%,oklch(0.94_0.022_78)_100%)]" />
-        <div className="absolute inset-0 opacity-[0.10] mix-blend-multiply [background-image:radial-gradient(oklch(0.45_0.04_55)_0.6px,transparent_0.6px),radial-gradient(oklch(0.45_0.04_55)_0.4px,transparent_0.4px)] [background-size:5px_5px,7px_7px] [background-position:0_0,2px_3px]" />
-        {/* aged edges — soft vignette, no border */}
-        <div className="absolute inset-0 [background:radial-gradient(120%_180%_at_50%_50%,transparent_60%,oklch(0.78_0.04_60/0.35)_100%)]" />
-        {/* horizontal fold crease through middle */}
-        <div className="absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-[oklch(0.75_0.03_60/0.45)]" />
-        <div className="absolute inset-x-6 top-[calc(50%-1px)] h-px bg-[oklch(1_0_0/0.4)]" />
+        {/* paper grain */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-multiply [background-image:radial-gradient(oklch(0.45_0.04_55)_0.5px,transparent_0.5px),radial-gradient(oklch(0.45_0.04_55)_0.35px,transparent_0.35px)] [background-size:4px_4px,6px_6px] [background-position:0_0,2px_3px]" />
+        {/* aged vignette */}
+        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(140%_140%_at_50%_30%,transparent_55%,oklch(0.78_0.05_55/0.35)_100%)]" />
 
-        {/* faint handwritten lines suggesting writing inside */}
-        <div className="absolute left-8 right-16 top-[18%] space-y-[7px]">
-          <span className="block h-[2px] w-full bg-[oklch(0.55_0.04_50/0.18)]" />
-          <span className="block h-[2px] w-[88%] bg-[oklch(0.55_0.04_50/0.18)]" />
-          <span className="block h-[2px] w-[72%] bg-[oklch(0.55_0.04_50/0.18)]" />
+        {/* handwritten script — top left */}
+        <div className="absolute left-[7%] top-[18%] right-[42%]">
+          <p className="font-hand text-[22px] leading-[1.15] text-[oklch(0.42_0.06_45)] sm:text-[26px]">
+            Every Ripple begins
+            <br />
+            with two hearts that never met.
+          </p>
         </div>
 
-        {/* small, off-center, imperfect hand-pressed wax dot */}
+        {/* botanical sprig — right side */}
+        <Sprig className="absolute right-[6%] top-[12%] h-[78%] w-auto text-[oklch(0.7_0.08_55)] opacity-80" />
+
+        {/* envelope flap (top triangle) */}
         <div
-          className={
-            "absolute right-[18%] top-[58%] h-6 w-6 -translate-y-1/2 " +
-            (opening ? "wax-dot-break" : "")
-          }
+          className={"absolute inset-x-0 top-0 origin-top " + (opening ? "env-flap-open" : "")}
           style={{
+            height: "55%",
             background:
-              "radial-gradient(circle at 38% 32%, oklch(0.6 0.14 32) 0%, oklch(0.42 0.13 28) 60%, oklch(0.3 0.09 25) 100%)",
-            borderRadius: "48% 52% 46% 54% / 52% 44% 56% 48%",
-            transform: "rotate(-8deg)",
-            boxShadow:
-              "0 1px 2px oklch(0.2 0.04 40 / 0.35), inset 0 -1px 2px oklch(0.2 0.04 40 / 0.35), inset 0 1px 1px oklch(1 0 0 / 0.2)",
+              "linear-gradient(180deg, oklch(0.955 0.018 80) 0%, oklch(0.93 0.024 76) 100%)",
+            clipPath: "polygon(0 0, 100% 0, 50% 100%)",
+            transformStyle: "preserve-3d",
+            backfaceVisibility: "hidden",
+            boxShadow: opening ? "0 6px 16px oklch(0.2 0.04 40 / 0.18)" : "none",
           }}
         />
-      </div>
-    </div>
-  );
-}
 
-function DownwardRipple({ persistent = false }: { persistent?: boolean }) {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-full">
-      <span className="ripple-ring-down" />
-      <span className="ripple-ring-down" style={{ animationDelay: "0.6s" }} />
-      {!persistent && <span className="ripple-ring-down" style={{ animationDelay: "1.2s" }} />}
-      <span className="ripple-drop" />
-      <span className="ripple-drop" style={{ animationDelay: "0.4s" }} />
-      <span className="ripple-drop" style={{ animationDelay: "0.9s" }} />
-    </div>
-  );
-}
-
-function JournalPage({
-  index,
-  role,
-  sentence,
-  photo,
-  date,
-  align,
-}: {
-  index: number;
-  role: string;
-  sentence: string;
-  photo: string;
-  date: string;
-  align: "image-left" | "image-right";
-}) {
-  const imageFirst = align === "image-left";
-  const folio = String(index).padStart(2, "0");
-  return (
-    <article className="grid grid-cols-1 items-center gap-10 sm:grid-cols-12 sm:gap-14">
-      <div
-        className={
-          "sm:col-span-7 " +
-          (imageFirst ? "sm:order-1" : "sm:order-2")
-        }
-      >
-        <img
-          src={photo}
-          alt=""
-          className="block w-full object-cover"
-          style={{ aspectRatio: "4 / 5" }}
-          loading="lazy"
-        />
-      </div>
-      <div
-        className={
-          "sm:col-span-5 " +
-          (imageFirst ? "sm:order-2 sm:pl-2" : "sm:order-1 sm:pr-2")
-        }
-      >
-        <div className="flex items-baseline gap-4">
-          <span className="font-serif text-xs italic text-muted-foreground">
-            — {folio} —
-          </span>
-          <span className="eyebrow">{role}</span>
+        {/* wax seal — small, centered on flap edge */}
+        <div
+          className={
+            "absolute left-1/2 top-[50%] z-10 -translate-x-1/2 -translate-y-1/2 " +
+            (opening ? "env-wax-break" : "")
+          }
+          aria-hidden
+        >
+          <div
+            className="flex h-[34px] w-[34px] items-center justify-center text-[13px] font-serif italic text-[oklch(0.95_0.02_70)]"
+            style={{
+              background:
+                "radial-gradient(circle at 35% 30%, oklch(0.7 0.16 45) 0%, oklch(0.5 0.16 32) 55%, oklch(0.32 0.11 25) 100%)",
+              borderRadius: "48% 52% 46% 54% / 52% 44% 56% 48%",
+              transform: "rotate(-6deg)",
+              boxShadow:
+                "0 2px 3px oklch(0.2 0.04 40 / 0.4), inset 0 -1px 2px oklch(0.2 0.04 40 / 0.4), inset 0 1px 1px oklch(1 0 0 / 0.25)",
+            }}
+          >
+            R
+          </div>
         </div>
-        <p className="type-in mt-6 font-serif text-2xl italic leading-[1.35] text-foreground/90 sm:text-[1.7rem]">
-          &ldquo;{sentence}&rdquo;
+      </div>
+    </div>
+  );
+}
+
+function Sprig({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 60 160"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="0.9"
+      strokeLinecap="round"
+      aria-hidden
+    >
+      <path d="M30 4 C 32 40, 28 90, 30 156" />
+      {Array.from({ length: 7 }).map((_, i) => {
+        const y = 18 + i * 18;
+        const dir = i % 2 === 0 ? 1 : -1;
+        return (
+          <g key={i}>
+            <path d={`M30 ${y} C ${30 + dir * 8} ${y - 4}, ${30 + dir * 18} ${y - 2}, ${30 + dir * 22} ${y + 6}`} />
+            <ellipse
+              cx={30 + dir * 22}
+              cy={y + 6}
+              rx="3"
+              ry="1.6"
+              transform={`rotate(${dir * 35} ${30 + dir * 22} ${y + 6})`}
+              fill="currentColor"
+              opacity="0.35"
+            />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+function RippleStream() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0">
+      <span className="pond-ring" />
+      <span className="pond-ring" style={{ animationDelay: "0.7s" }} />
+      <span className="pond-ring" style={{ animationDelay: "1.4s" }} />
+      <span className="spark-fall" style={{ animationDelay: "0.1s" }} />
+      <span className="spark-fall" style={{ animationDelay: "0.6s", left: "46%" }} />
+      <span className="spark-fall" style={{ animationDelay: "1.0s", left: "54%" }} />
+      <span className="spark-fall" style={{ animationDelay: "1.5s", left: "49%" }} />
+    </div>
+  );
+}
+
+function MemoryCard({
+  role,
+  date,
+  photo,
+  quote,
+  caption,
+  sprigSide = "right",
+}: {
+  role: string;
+  date: string;
+  photo: string;
+  quote: string;
+  caption: string;
+  sprigSide?: "left" | "right";
+}) {
+  return (
+    <article
+      className="relative grid grid-cols-12 items-stretch gap-0 overflow-hidden rounded-[14px]"
+      style={{
+        background:
+          "linear-gradient(180deg, oklch(0.97 0.014 82) 0%, oklch(0.95 0.02 78) 100%)",
+        boxShadow:
+          "0 24px 48px -28px oklch(0.2 0.04 40 / 0.3), 0 2px 4px oklch(0.2 0.04 40 / 0.06), inset 0 0 0 1px oklch(0.88 0.02 70 / 0.55)",
+      }}
+    >
+      {/* paper grain */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.09] mix-blend-multiply [background-image:radial-gradient(oklch(0.45_0.04_55)_0.5px,transparent_0.5px)] [background-size:5px_5px]" />
+
+      {/* image */}
+      <div className="col-span-12 sm:col-span-5">
+        <div className="h-full p-4 sm:p-5">
+          <div className="h-full overflow-hidden rounded-[6px]">
+            <img
+              src={photo}
+              alt=""
+              className="block h-full w-full object-cover"
+              style={{ aspectRatio: "5 / 4" }}
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* text */}
+      <div className="relative col-span-12 flex flex-col justify-center p-6 pt-2 sm:col-span-7 sm:p-8">
+        <div className="flex items-center justify-between">
+          <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/70">
+            {role}
+          </span>
+          <span className="font-sans text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+            {date}
+          </span>
+        </div>
+
+        <p className="mt-5 font-serif text-[28px] italic leading-[1.15] text-foreground sm:text-[32px]">
+          &ldquo;{quote}&rdquo;
         </p>
-        <p className="mt-8 font-serif text-xs italic tracking-wide text-muted-foreground">
-          {date}
+
+        <p className="mt-5 font-serif text-[15px] italic leading-[1.55] text-foreground/65">
+          {caption}
         </p>
+
+        {/* faded botanical sprig behind right edge */}
+        <Sprig
+          className={
+            "pointer-events-none absolute bottom-3 h-[70%] w-auto text-[oklch(0.72_0.07_55)] opacity-30 " +
+            (sprigSide === "right" ? "right-3" : "left-3 scale-x-[-1]")
+          }
+        />
       </div>
     </article>
   );
