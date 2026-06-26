@@ -222,10 +222,10 @@ function LetterSection({
 
   useEffect(() => {
     const beats: Record<number, number> = {
-      1: 2700, // wax crack + flap unfolds slowly (3 stages)
-      2: 1100, // letter slides up
-      3: 1500, // pause, then ripple
-      4: 1400, // ripple fully formed
+      1: 900,  // wax cracks · envelope lifts & dissolves
+      2: 200,  // tiny breath before letters arrive
+      3: 1200, // pause, then ripple
+      4: 1300, // ripple fully formed
     };
     const ms = beats[stage];
     if (!ms) return;
@@ -249,7 +249,7 @@ function LetterSection({
       </div>
 
       {stage < 3 && (
-        <div className="mt-16 flex flex-col items-center">
+        <div className="relative mt-16 flex h-[200px] flex-col items-center sm:h-[240px]">
           <button
             type="button"
             onClick={() => stage === 0 && setStage(1)}
@@ -260,7 +260,7 @@ function LetterSection({
             <Envelope opened={opened} />
           </button>
           {!opened && (
-            <p className="mt-10 font-serif text-base italic text-accent">
+            <p className="mt-10 font-serif text-base italic text-accent animate-pulse">
               Open their memories
             </p>
           )}
@@ -325,11 +325,11 @@ function Envelope({ opened }: { opened: boolean }) {
   return (
     <div
       aria-hidden
-      className="envelope-interactive relative mx-auto w-[340px] sm:w-[480px]"
+      className={"envelope-interactive relative mx-auto w-[340px] sm:w-[480px] " + (opened ? "env-dissolve" : "")}
       style={{ perspective: "1200px" }}
     >
       <div
-        className={"relative aspect-[2.6/1] w-full " + (opened ? "env-slow-lift" : "env-breathe")}
+        className={"relative aspect-[2.6/1] w-full " + (opened ? "" : "env-breathe")}
         style={{
           background:
             "linear-gradient(168deg, oklch(0.97 0.02 84) 0%, oklch(0.93 0.03 76) 60%, oklch(0.905 0.035 72) 100%)",
@@ -397,7 +397,7 @@ function Envelope({ opened }: { opened: boolean }) {
 
         {/* envelope flap (shallow trapezoid at top — shortened so script/sprig stay clear) */}
         <div
-          className={"absolute inset-x-0 top-0 origin-top " + (opened ? "env-flap-slow" : "")}
+          className="absolute inset-x-0 top-0 origin-top"
           style={{
             height: "38%",
             background:
@@ -412,7 +412,7 @@ function Envelope({ opened }: { opened: boolean }) {
         />
         {/* flap fiber texture */}
         <div
-          className={"pointer-events-none absolute inset-x-0 top-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.5px,transparent_0.6px),repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px)] [background-size:4px_4px,auto] origin-top " + (opened ? "env-flap-slow" : "")}
+          className="pointer-events-none absolute inset-x-0 top-0 opacity-[0.22] mix-blend-multiply [background-image:radial-gradient(oklch(0.38_0.05_55)_0.5px,transparent_0.6px),repeating-linear-gradient(108deg,transparent_0_3px,oklch(0.48_0.04_55/0.18)_3px_3.6px)] [background-size:4px_4px,auto] origin-top"
           style={{ height: "38%", clipPath: "polygon(0 0, 100% 0, 62% 100%, 38% 100%)" }}
         />
         {/* flap crease shadow at base */}
@@ -465,12 +465,13 @@ function Envelope({ opened }: { opened: boolean }) {
           <WaxSeal />
         </div>
 
-        {/* folded letter peeking out as the flap opens */}
+        {/* soft glow that blooms outward as the envelope dissolves */}
         {opened && (
-          <div className="paper-peek pointer-events-none absolute left-1/2 top-[40%] z-10 h-[70%] w-[86%] -translate-x-1/2 rounded-[2px]"
+          <div
+            className="env-bloom pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              background: "linear-gradient(180deg, oklch(0.985 0.01 85) 0%, oklch(0.955 0.014 80) 100%)",
-              boxShadow: "0 12px 28px -16px oklch(0.2 0.04 40 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.6)",
+              background:
+                "radial-gradient(circle, oklch(0.96 0.08 60 / 0.55) 0%, oklch(0.92 0.06 55 / 0.2) 40%, transparent 70%)",
             }}
           />
         )}
