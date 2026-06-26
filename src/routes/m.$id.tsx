@@ -505,36 +505,5 @@ function LetterPage({
 }
 
 function _UnusedSprig({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 60 160"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="0.9"
-      strokeLinecap="round"
-      aria-hidden
-    >
-      <path d="M30 4 C 32 40, 28 90, 30 156" />
-      {Array.from({ length: 7 }).map((_, i) => {
-        const y = 18 + i * 18;
-        const dir = i % 2 === 0 ? 1 : -1;
-        return (
-          <g key={i}>
-            <path d={`M30 ${y} C ${30 + dir * 8} ${y - 4}, ${30 + dir * 18} ${y - 2}, ${30 + dir * 22} ${y + 6}`} />
-            <ellipse
-              cx={30 + dir * 22}
-              cy={y + 6}
-              rx="3"
-              ry="1.6"
-              transform={`rotate(${dir * 35} ${30 + dir * 22} ${y + 6})`}
-              fill="currentColor"
-              opacity="0.35"
-            />
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
+_ = _UnusedSprig; // placeholder to satisfy patch parser
 
