@@ -198,13 +198,13 @@ function ComposingScreen() {
   return (
     <main className="paper flex min-h-screen items-center justify-center px-6">
       <div className="max-w-md text-center">
-        <p className="eyebrow">Now composing</p>
+        <p className="eyebrow">One story, almost ready</p>
         <h2 className="mt-6 font-serif text-4xl leading-tight">
-          The director is reading your two photos…
+          Your two moments are becoming one memory…
         </h2>
         <div className="mx-auto mt-10 h-px w-24 bg-border" />
         <p className="mt-10 text-sm italic text-muted-foreground">
-          Choosing the visual language. Writing the invisible story. Composing the page.
+          Finding the light that connects them. Listening to the silence between the words.
           <br />
           This usually takes 30&ndash;60 seconds.
         </p>
