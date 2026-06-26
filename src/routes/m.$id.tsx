@@ -121,11 +121,13 @@ function MomentPage() {
             label="One person wrote"
             sentence={moment.sentence_one}
             photo={moment.photo_one_url}
+            tilt={-3}
           />
           <Halfsheet
             label="The other answered"
             sentence={moment.sentence_two}
             photo={moment.photo_two_url}
+            tilt={2.5}
           />
         </div>
 
@@ -159,18 +161,32 @@ function Halfsheet({
   label,
   sentence,
   photo,
+  tilt = 0,
 }: {
   label: string;
   sentence: string;
   photo: string;
+  tilt?: number;
 }) {
   return (
-    <article className="grid grid-cols-[auto_1fr] gap-4 border-t border-border pt-6">
-      <img src={photo} alt="" className="h-20 w-20 rounded-sm object-cover grayscale opacity-90" />
-      <div>
-        <p className="eyebrow">{label}</p>
-        <p className="mt-2 font-serif text-lg italic leading-snug">&ldquo;{sentence}&rdquo;</p>
+    <article className="flex flex-col items-center gap-5 pt-6">
+      <div
+        className="bg-white pt-3 pr-3 pl-3 pb-10 shadow-[0_18px_40px_-18px_oklch(0.2_0.04_40/0.45)] rotate-[var(--tilt)] transition-transform hover:rotate-0"
+        style={{ ["--tilt" as string]: `${tilt}deg` }}
+      >
+        <img
+          src={photo}
+          alt=""
+          className="block h-48 w-48 object-cover sm:h-56 sm:w-56"
+          loading="lazy"
+        />
+        <p className="mt-3 text-center font-serif text-sm italic text-neutral-700">
+          {label}
+        </p>
       </div>
+      <p className="max-w-xs text-center font-serif text-lg italic leading-snug">
+        &ldquo;{sentence}&rdquo;
+      </p>
     </article>
   );
 }
