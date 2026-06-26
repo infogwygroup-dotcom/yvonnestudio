@@ -12,6 +12,7 @@ export type MomentView = {
   photo_one_url: string;
   photo_two_url: string;
   created_at: string;
+  interpretation: string;
 };
 
 export const getMoment = createServerFn({ method: "GET" })
@@ -22,7 +23,7 @@ export const getMoment = createServerFn({ method: "GET" })
     const { data: row, error } = await supabaseAdmin
       .from("moments")
       .select(
-        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, created_at",
+        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, created_at, director_notes",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -39,6 +40,8 @@ export const getMoment = createServerFn({ method: "GET" })
     const urlFor = (p: string) =>
       signed?.find((s) => s.path === p)?.signedUrl ?? "";
 
+    const notes = (row.director_notes ?? {}) as { invisible_story?: string };
+
     return {
       id: row.id,
       tagline: row.tagline,
@@ -48,5 +51,6 @@ export const getMoment = createServerFn({ method: "GET" })
       photo_one_url: urlFor(row.photo_one_path),
       photo_two_url: urlFor(row.photo_two_path),
       created_at: row.created_at,
+      interpretation: notes.invisible_story ?? "",
     };
   });
