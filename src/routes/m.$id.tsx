@@ -144,7 +144,7 @@ function MomentPage() {
         )}
 
         {/* 3. The Moments That Started This Story */}
-        <GiftSection
+        <EnvelopeSection
           giverSentence={moment.sentence_one}
           giverPhoto={moment.photo_one_url}
           receiverSentence={moment.sentence_two}
@@ -186,7 +186,7 @@ function MomentPage() {
   );
 }
 
-function GiftSection({
+function EnvelopeSection({
   giverSentence,
   giverPhoto,
   receiverSentence,
@@ -199,20 +199,28 @@ function GiftSection({
   receiverPhoto: string;
   date: string;
 }) {
-  // stages: 0 = sealed gift, 1 = giver opening, 2 = ripple, 3 = receiver opening, 4 = settled
+  // stages: 0 = sealed envelope, 1 = envelope opening, 2 = giver revealed,
+  //         3 = ripple travelling, 4 = receiver revealed, 5 = settled / pulled together
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
     if (stage === 1) {
-      const t = setTimeout(() => setStage(2), 1100);
+      // envelope opening sequence ~1.5s before giver card settles
+      const t = setTimeout(() => setStage(2), 1500);
       return () => clearTimeout(t);
     }
     if (stage === 2) {
-      const t = setTimeout(() => setStage(3), 1600);
+      // pause, then ripple begins travelling
+      const t = setTimeout(() => setStage(3), 900);
       return () => clearTimeout(t);
     }
     if (stage === 3) {
-      const t = setTimeout(() => setStage(4), 1200);
+      // ripple travels, then receiver emerges
+      const t = setTimeout(() => setStage(4), 1400);
+      return () => clearTimeout(t);
+    }
+    if (stage === 4) {
+      const t = setTimeout(() => setStage(5), 1100);
       return () => clearTimeout(t);
     }
   }, [stage]);
@@ -223,52 +231,63 @@ function GiftSection({
 
   return (
     <section className="mt-32">
-      {stage === 0 ? (
-        <button
-          type="button"
-          onClick={tap}
-          className="group mx-auto flex w-full max-w-md flex-col items-center text-center focus:outline-none"
-        >
-          <span className="text-5xl transition-transform duration-500 group-hover:-translate-y-1 group-active:scale-95">
-            🎁
-          </span>
-          <p className="eyebrow mt-6">Origins</p>
-          <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
-            The moments that started this story
-          </h2>
-          <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Two small moments created one unforgettable story.
-          </p>
-          <SealedCard />
-          <span className="mt-8 text-xs uppercase tracking-[0.22em] text-accent">
-            Tap to begin
-          </span>
-        </button>
-      ) : (
-        <div className="mx-auto flex max-w-md flex-col items-center text-center">
-          <p className="eyebrow">Origins</p>
-          <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
-            The moments that started this story
-          </h2>
+      <div className="mx-auto flex max-w-md flex-col items-center text-center">
+        <p className="eyebrow">Two moments. One story.</p>
+        <h2 className="mt-4 font-serif text-2xl italic sm:text-3xl">
+          Where it all began
+        </h2>
 
+        {stage === 0 ? (
+          <button
+            type="button"
+            onClick={tap}
+            aria-label="Open the envelope"
+            className="group mt-10 flex w-full flex-col items-center focus:outline-none"
+          >
+            <Envelope state="sealed" />
+            <span className="mt-8 font-serif text-base italic text-foreground/70">
+              Some moments are worth unfolding
+            </span>
+            <span className="eyebrow mt-3 text-accent">Open their memories</span>
+          </button>
+        ) : (
           <div className="mt-10 flex w-full flex-col items-center">
-            <div className={stage >= 4 ? "gift-float" : undefined}>
-              <OpenedCard
-                role="Giver"
-                sentence={giverSentence}
-                photo={giverPhoto}
-                date={date}
-                tilt={-2}
-              />
-            </div>
+            {/* Envelope animates open, then fades as the first card rises out of it */}
+            {stage === 1 && (
+              <div className="mb-[-40px]">
+                <Envelope state="opening" />
+              </div>
+            )}
 
-            {/* 24px gap, then ripple acts as the connector */}
-            <div className="relative my-6 h-[120px] w-full">
-              {stage >= 2 && stage < 4 && <DownwardRipple />}
-            </div>
+            {stage >= 2 && (
+              <div
+                className={
+                  "card-rise " + (stage >= 5 ? "pull-down" : "")
+                }
+              >
+                <OpenedCard
+                  role="Giver"
+                  sentence={giverSentence}
+                  photo={giverPhoto}
+                  date={date}
+                  tilt={-2}
+                />
+              </div>
+            )}
 
-            {stage >= 3 ? (
-              <div className={stage >= 4 ? "unseal gift-float" : "unseal"}>
+            {/* Ripple as the connector — 16px of breathing room on either side */}
+            {stage >= 3 && (
+              <div className="relative my-4 h-[88px] w-full">
+                <DownwardRipple persistent={stage >= 5} />
+              </div>
+            )}
+
+            {stage >= 4 && (
+              <div
+                className={
+                  "card-rise " + (stage >= 5 ? "pull-up" : "")
+                }
+              >
                 <OpenedCard
                   role="Receiver"
                   sentence={receiverSentence}
@@ -277,54 +296,81 @@ function GiftSection({
                   tilt={2}
                 />
               </div>
-            ) : (
-              <SealedCard small role="Receiver" />
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }
 
-function SealedCard({ role = "Giver", small = false }: { role?: string; small?: boolean }) {
+function Envelope({ state }: { state: "sealed" | "opening" }) {
+  const opening = state === "opening";
   return (
     <div
       aria-hidden
       className={
-        (small ? "mt-0 max-w-[240px] " : "mt-10 max-w-[260px] ") +
-        "relative w-full overflow-hidden rounded-lg bg-card p-3 shadow-[0_18px_40px_-22px_oklch(0.2_0.04_40/0.5)] ring-1 ring-border/60"
+        "envelope relative mx-auto w-[280px] " +
+        (opening ? "envelope-lift" : "transition-transform duration-500 hover:-translate-y-1")
       }
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md bg-[oklch(0.93_0.018_75)]">
-        {/* envelope-style cross seal */}
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,oklch(0.95_0.015_75)_0%,oklch(0.9_0.02_70)_100%)]" />
-        <div className="absolute inset-0">
-          <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-border/70" />
-          <div className="absolute bottom-0 left-1/2 top-0 w-px -translate-x-1/2 bg-border/70" />
-          <div className="absolute left-1/2 top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/85 shadow-[0_0_22px_oklch(0.62_0.14_35/0.55)]" />
+      {/* Envelope body — cream textured stationery */}
+      <div className="envelope-body relative aspect-[7/5] w-full overflow-hidden rounded-[6px] shadow-[0_30px_60px_-30px_oklch(0.2_0.04_40/0.55),0_8px_20px_-10px_oklch(0.2_0.04_40/0.25)] ring-1 ring-[oklch(0.85_0.025_70)]">
+        {/* paper grain */}
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,oklch(0.97_0.015_80)_0%,oklch(0.93_0.022_72)_100%)]" />
+        <div className="absolute inset-0 opacity-[0.08] mix-blend-multiply [background-image:radial-gradient(oklch(0.4_0.05_50)_1px,transparent_1px)] [background-size:3px_3px]" />
+
+        {/* handwritten line, like an address */}
+        <div className="absolute inset-x-0 bottom-5 px-8 text-left">
+          <p className="font-serif text-[11px] italic text-foreground/55">
+            Every Ripple begins with two hearts
+          </p>
+          <p className="font-serif text-[11px] italic text-foreground/55">
+            that never met.
+          </p>
+        </div>
+
+        {/* triangular flap */}
+        <div
+          className={
+            "envelope-flap absolute inset-x-0 top-0 origin-top " +
+            (opening ? "envelope-flap-open" : "")
+          }
+          style={{
+            height: "62%",
+            background:
+              "linear-gradient(180deg, oklch(0.95 0.018 75) 0%, oklch(0.91 0.024 70) 100%)",
+            clipPath: "polygon(0 0, 100% 0, 50% 100%)",
+            boxShadow: "0 2px 2px oklch(0.2 0.04 40 / 0.08)",
+          }}
+        />
+
+        {/* embossed gold wax seal */}
+        <div
+          className={
+            "wax-seal absolute left-1/2 top-[44%] h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full " +
+            (opening ? "wax-seal-break" : "wax-seal-glow")
+          }
+        >
+          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,oklch(0.72_0.16_38)_0%,oklch(0.52_0.16_32)_55%,oklch(0.38_0.12_28)_100%)] shadow-[0_2px_6px_oklch(0.2_0.04_40/0.4),inset_0_-2px_4px_oklch(0.2_0.04_40/0.35),inset_0_2px_3px_oklch(1_0_0/0.25)]" />
+          <div className="absolute inset-0 flex items-center justify-center font-serif text-[15px] italic text-[oklch(0.96_0.02_75)] [text-shadow:0_1px_1px_oklch(0.2_0.04_40/0.5)]">
+            R
+          </div>
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-between">
-        <span className="eyebrow text-accent">{role}</span>
-        <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          Sealed
-        </span>
-      </div>
-      <p className="mt-2 h-5 rounded bg-muted/60" />
     </div>
   );
 }
 
-function DownwardRipple() {
+function DownwardRipple({ persistent = false }: { persistent?: boolean }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-full">
       <span className="ripple-ring-down" />
-      <span className="ripple-ring-down" style={{ animationDelay: "0.7s" }} />
-      <span className="ripple-ring-down" style={{ animationDelay: "1.4s" }} />
+      <span className="ripple-ring-down" style={{ animationDelay: "0.6s" }} />
+      {!persistent && <span className="ripple-ring-down" style={{ animationDelay: "1.2s" }} />}
       <span className="ripple-drop" />
-      <span className="ripple-drop" style={{ animationDelay: "0.5s" }} />
-      <span className="ripple-drop" style={{ animationDelay: "1s" }} />
+      <span className="ripple-drop" style={{ animationDelay: "0.4s" }} />
+      <span className="ripple-drop" style={{ animationDelay: "0.9s" }} />
     </div>
   );
 }
