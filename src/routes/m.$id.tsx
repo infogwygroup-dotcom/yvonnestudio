@@ -199,27 +199,16 @@ function LetterSection({
   receiverPhoto: string;
   date: string;
 }) {
-  // 0=sealed, 1=wax breaking + flap opening, 2=giver rising,
-  // 3=ripple flowing, 4=receiver rising, 5=settled
+  // 0 sealed · 1 lift + wax crack · 2 flap opens + warm glow ·
+  // 3 giver rises · 4 ripple flows · 5 receiver rises · 6 settled
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
-    if (stage === 1) {
-      const t = setTimeout(() => setStage(2), 1100);
-      return () => clearTimeout(t);
-    }
-    if (stage === 2) {
-      const t = setTimeout(() => setStage(3), 1200);
-      return () => clearTimeout(t);
-    }
-    if (stage === 3) {
-      const t = setTimeout(() => setStage(4), 1100);
-      return () => clearTimeout(t);
-    }
-    if (stage === 4) {
-      const t = setTimeout(() => setStage(5), 1300);
-      return () => clearTimeout(t);
-    }
+    const beats: Record<number, number> = { 1: 500, 2: 700, 3: 900, 4: 850, 5: 1100 };
+    const ms = beats[stage];
+    if (!ms) return;
+    const t = setTimeout(() => setStage((s) => s + 1), ms);
+    return () => clearTimeout(t);
   }, [stage]);
 
   const formattedDate = new Date(date)
@@ -261,40 +250,38 @@ function LetterSection({
         </div>
       )}
 
-      {stage === 1 && (
+      {(stage === 1 || stage === 2) && (
         <div className="mt-14 flex justify-center">
-          <Envelope opening />
+          <Envelope phase={stage === 1 ? "lift" : "open"} />
         </div>
       )}
 
-      {stage >= 2 && (
-        <div className="mt-12 flex flex-col items-center gap-[24px]">
-          <div className={"mem-rise w-full max-w-2xl " + (stage >= 5 ? "mem-settle-down" : "")}>
+      {stage >= 3 && (
+        <div className="mt-12 flex flex-col items-center gap-[22px]">
+          <div className={"mem-rise w-full max-w-2xl " + (stage >= 6 ? "mem-settle-down" : "")}>
             <MemoryCard
               role="GIVER"
               date={formattedDate}
               photo={giverPhoto}
               quote={giverSentence}
-              caption="When she shared this meal, she wrote only two words."
-              sprigSide="right"
+              caption="A small gesture, left for someone she would never meet."
             />
           </div>
 
-          {stage >= 3 && (
-            <div className="relative h-[60px] w-full max-w-2xl">
+          {stage >= 4 && (
+            <div className="relative h-[40px] w-full max-w-2xl">
               <RippleStream />
             </div>
           )}
 
-          {stage >= 4 && (
-            <div className={"mem-rise w-full max-w-2xl " + (stage >= 5 ? "mem-settle-up" : "")}>
+          {stage >= 5 && (
+            <div className={"mem-rise w-full max-w-2xl " + (stage >= 6 ? "mem-settle-up" : "")}>
               <MemoryCard
                 role="RECEIVER"
                 date={formattedDate}
                 photo={receiverPhoto}
                 quote={receiverSentence}
-                caption="Her reply completed the story."
-                sprigSide="right"
+                caption="Her reply arrived, and the ripple closed its circle."
               />
             </div>
           )}
@@ -304,21 +291,23 @@ function LetterSection({
   );
 }
 
-function Envelope({ opening = false }: { opening?: boolean }) {
+function Envelope({ phase = "rest" }: { phase?: "rest" | "lift" | "open" }) {
+  const lifting = phase !== "rest";
+  const opening = phase === "open";
   return (
     <div
       aria-hidden
       className={
-        "relative mx-auto w-[340px] sm:w-[420px] " +
-        (opening ? "" : "transition-transform duration-500 group-hover:-translate-y-[4px]")
+        "relative mx-auto w-[360px] sm:w-[480px] " +
+        (lifting ? "env-lift" : "transition-transform duration-500 group-hover:-translate-y-[4px]")
       }
       style={{ perspective: "900px" }}
     >
       {/* envelope body */}
       <div
         className={
-          "relative aspect-[16/7] w-full overflow-hidden rounded-[10px] " +
-          (opening ? "" : "env-rest")
+          "relative aspect-[3/1] w-full overflow-hidden rounded-[8px] " +
+          (lifting ? "" : "env-rest")
         }
         style={{
           background:
@@ -332,17 +321,24 @@ function Envelope({ opening = false }: { opening?: boolean }) {
         {/* aged vignette */}
         <div className="pointer-events-none absolute inset-0 [background:radial-gradient(140%_140%_at_50%_30%,transparent_55%,oklch(0.78_0.05_55/0.35)_100%)]" />
 
+        {/* warm inner glow as flap opens */}
+        {opening && (
+          <div className="pointer-events-none absolute inset-0 env-warm-glow [background:radial-gradient(60%_80%_at_50%_60%,oklch(0.86_0.10_70/0.55),transparent_70%)]" />
+        )}
+
         {/* handwritten script — top left */}
-        <div className="absolute left-[7%] top-[18%] right-[42%]">
-          <p className="font-hand text-[22px] leading-[1.15] text-[oklch(0.42_0.06_45)] sm:text-[26px]">
+        <div className="absolute left-[6%] top-[16%] right-[44%]">
+          <p className="font-hand text-[18px] leading-[1.2] text-[oklch(0.42_0.06_45)] opacity-80 sm:text-[22px]">
             Every Ripple begins
             <br />
-            with two hearts that never met.
+            with two hearts
+            <br />
+            that never met.
           </p>
         </div>
 
         {/* botanical sprig — right side */}
-        <Sprig className="absolute right-[6%] top-[12%] h-[78%] w-auto text-[oklch(0.7_0.08_55)] opacity-80" />
+        <Sprig className="absolute right-[5%] top-[14%] h-[72%] w-auto text-[oklch(0.7_0.08_55)] opacity-70" />
 
         {/* envelope flap (top triangle) */}
         <div
@@ -362,19 +358,19 @@ function Envelope({ opening = false }: { opening?: boolean }) {
         <div
           className={
             "absolute left-1/2 top-[50%] z-10 -translate-x-1/2 -translate-y-1/2 " +
-            (opening ? "env-wax-break" : "")
+            (lifting ? "env-wax-break" : "")
           }
           aria-hidden
         >
           <div
-            className="flex h-[34px] w-[34px] items-center justify-center text-[13px] font-serif italic text-[oklch(0.95_0.02_70)]"
+            className="flex h-[36px] w-[36px] items-center justify-center text-[14px] font-serif italic text-[oklch(0.95_0.02_70)]"
             style={{
               background:
-                "radial-gradient(circle at 35% 30%, oklch(0.7 0.16 45) 0%, oklch(0.5 0.16 32) 55%, oklch(0.32 0.11 25) 100%)",
+                "radial-gradient(circle at 32% 28%, oklch(0.62 0.14 38) 0%, oklch(0.42 0.13 28) 55%, oklch(0.26 0.08 22) 100%)",
               borderRadius: "48% 52% 46% 54% / 52% 44% 56% 48%",
-              transform: "rotate(-6deg)",
+              transform: "rotate(-8deg)",
               boxShadow:
-                "0 2px 3px oklch(0.2 0.04 40 / 0.4), inset 0 -1px 2px oklch(0.2 0.04 40 / 0.4), inset 0 1px 1px oklch(1 0 0 / 0.25)",
+                "0 3px 5px oklch(0.2 0.04 40 / 0.45), inset 0 -1px 2px oklch(0.2 0.04 40 / 0.5), inset 0 1px 1px oklch(1 0 0 / 0.3)",
             }}
           >
             R
@@ -439,14 +435,12 @@ function MemoryCard({
   photo,
   quote,
   caption,
-  sprigSide = "right",
 }: {
   role: string;
   date: string;
   photo: string;
   quote: string;
   caption: string;
-  sprigSide?: "left" | "right";
 }) {
   return (
     <article
@@ -464,12 +458,12 @@ function MemoryCard({
       {/* image */}
       <div className="col-span-12 sm:col-span-5">
         <div className="h-full p-4 sm:p-5">
-          <div className="h-full overflow-hidden rounded-[6px]">
+          <div className="h-full overflow-hidden rounded-[8px]">
             <img
               src={photo}
               alt=""
               className="block h-full w-full object-cover"
-              style={{ aspectRatio: "5 / 4" }}
+              style={{ aspectRatio: "4 / 5" }}
               loading="lazy"
             />
           </div>
@@ -487,20 +481,17 @@ function MemoryCard({
           </span>
         </div>
 
-        <p className="mt-5 font-serif text-[28px] italic leading-[1.15] text-foreground sm:text-[32px]">
+        <p className="mt-5 font-hand text-[26px] leading-[1.2] text-foreground sm:text-[30px]">
           &ldquo;{quote}&rdquo;
         </p>
 
-        <p className="mt-5 font-serif text-[15px] italic leading-[1.55] text-foreground/65">
+        <p className="mt-5 font-serif text-[14px] italic leading-[1.55] text-foreground/60">
           {caption}
         </p>
 
         {/* faded botanical sprig behind right edge */}
         <Sprig
-          className={
-            "pointer-events-none absolute bottom-3 h-[70%] w-auto text-[oklch(0.72_0.07_55)] opacity-30 " +
-            (sprigSide === "right" ? "right-3" : "left-3 scale-x-[-1]")
-          }
+          className="pointer-events-none absolute bottom-3 right-3 h-[60%] w-auto text-[oklch(0.72_0.07_55)] opacity-20"
         />
       </div>
     </article>
