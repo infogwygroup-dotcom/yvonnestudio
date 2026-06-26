@@ -330,6 +330,8 @@ export const Route = createFileRoute("/api/create-moment")({
             recentDirectors = [];
           }
 
+          const rarity: Rarity = rollRarity();
+
           const brief = await callDirector(
             apiKey,
             sentenceOne,
