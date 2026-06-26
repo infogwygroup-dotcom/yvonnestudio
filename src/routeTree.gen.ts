@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VNextRouteImport } from './routes/v.next'
 import { Route as VBeta1RouteImport } from './routes/v.beta1'
 import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
@@ -23,6 +24,11 @@ const CollectionRoute = CollectionRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VNextRoute = VNextRouteImport.update({
+  id: '/v/next',
+  path: '/v/next',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VBeta1Route = VBeta1RouteImport.update({
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
+  '/v/next': typeof VNextRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
+  '/v/next': typeof VNextRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,12 +70,25 @@ export interface FileRoutesById {
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
+  '/v/next': typeof VNextRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/collection' | '/api/create-moment' | '/m/$id' | '/v/beta1'
+  fullPaths:
+    | '/'
+    | '/collection'
+    | '/api/create-moment'
+    | '/m/$id'
+    | '/v/beta1'
+    | '/v/next'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/collection' | '/api/create-moment' | '/m/$id' | '/v/beta1'
+  to:
+    | '/'
+    | '/collection'
+    | '/api/create-moment'
+    | '/m/$id'
+    | '/v/beta1'
+    | '/v/next'
   id:
     | '__root__'
     | '/'
@@ -75,6 +96,7 @@ export interface FileRouteTypes {
     | '/api/create-moment'
     | '/m/$id'
     | '/v/beta1'
+    | '/v/next'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -83,6 +105,7 @@ export interface RootRouteChildren {
   ApiCreateMomentRoute: typeof ApiCreateMomentRoute
   MIdRoute: typeof MIdRoute
   VBeta1Route: typeof VBeta1Route
+  VNextRoute: typeof VNextRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +122,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v/next': {
+      id: '/v/next'
+      path: '/v/next'
+      fullPath: '/v/next'
+      preLoaderRoute: typeof VNextRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/v/beta1': {
@@ -131,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCreateMomentRoute: ApiCreateMomentRoute,
   MIdRoute: MIdRoute,
   VBeta1Route: VBeta1Route,
+  VNextRoute: VNextRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
