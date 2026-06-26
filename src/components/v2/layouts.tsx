@@ -1,5 +1,5 @@
 import type { MomentView } from "@/lib/moments.functions";
-import { MetadataFooter } from "./MetadataFooter";
+import { CollectionHeader, MetadataFooter } from "./MetadataFooter";
 
 type Props = { moment: MomentView };
 
@@ -14,6 +14,7 @@ function PageShell({
 }) {
   return (
     <main className={"paper min-h-screen px-4 pb-20 pt-12 sm:px-8 " + className}>
+      <CollectionHeader moment={moment} />
       <div className="mx-auto max-w-5xl">{children}</div>
       <MetadataFooter moment={moment} />
     </main>
