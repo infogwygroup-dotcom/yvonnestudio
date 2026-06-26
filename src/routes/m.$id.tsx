@@ -504,6 +504,4 @@ function LetterPage({
   );
 }
 
-function _UnusedSprig({ className = "" }: { className?: string }) {
-_ = _UnusedSprig; // placeholder to satisfy patch parser
 
