@@ -68,7 +68,7 @@ function HomePage() {
   if (submitting) return <ComposingScreen />;
 
   return (
-    <main className="paper min-h-screen">
+    <main className="paper min-h-screen relative">
       <VersionSwitcher current="beta1" />
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
