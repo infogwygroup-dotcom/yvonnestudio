@@ -29,6 +29,40 @@ type DirectorBrief = {
 
 type Rarity = "common" | "rare" | "epic" | "legendary";
 
+// Canonical director pool. Keep in sync with the list rendered into the system prompt.
+const DIRECTOR_POOL = [
+  "Wong Kar Wai",
+  "Makoto Shinkai",
+  "Studio Ghibli",
+  "Pixar",
+  "Hayao Miyazaki Sketchbook",
+  "Wes Anderson",
+  "Denis Villeneuve",
+  "Christopher Nolan",
+  "Edward Hopper Painting",
+  "Vintage Magazine Editorial",
+  "Japanese Lifestyle Photography",
+  "Documentary Photography",
+  "Watercolour Journal",
+  "Clay Illustration",
+  "Neo Pop Illustration",
+  "Storybook",
+] as const;
+
+function normaliseDirectorName(raw: string): string {
+  return raw.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function matchPoolDirector(raw: string): string | null {
+  const n = normaliseDirectorName(raw);
+  if (!n) return null;
+  for (const d of DIRECTOR_POOL) {
+    const dn = normaliseDirectorName(d);
+    if (n === dn || n.includes(dn) || dn.includes(n)) return d;
+  }
+  return null;
+}
+
 function rollRarity(): Rarity {
   const r = Math.random();
   if (r < 0.01) return "legendary";
@@ -57,11 +91,16 @@ async function callDirector(
   photoOneDataUrl: string,
   photoTwoDataUrl: string,
   recentDirectors: string[],
+  unexploredDirectors: string[],
   rarity: Rarity,
 ): Promise<DirectorBrief> {
   const recentBlock = recentDirectors.length
     ? `\nRECENTLY USED DIRECTORS (avoid repeating these unless the story absolutely demands it — Ripple Studio must feel like a different film every time):\n- ${recentDirectors.join("\n- ")}\n`
     : "";
+
+  const explorationBlock = unexploredDirectors.length
+    ? `\nSTYLE EXPLORATION — UNEXPLORED DIRECTORS (this collector has NEVER received a Ripple in any of these sensibilities; STRONGLY prefer one of them so the collection keeps surprising them, unless a different director is an obviously better emotional fit):\n- ${unexploredDirectors.join("\n- ")}\n`
+    : `\nSTYLE EXPLORATION: this collector has already received at least one Ripple from every director in the pool — bias toward the LEAST recently used direction instead.\n`;
 
   const systemPrompt = `You are Ripple Studio — a complete film studio collapsed into one mind. For every memory you become, in order: AI Screenwriter (read the two sentences and two photos and find the true emotion), AI Director (choose the cinematic language), AI Cinematographer (decide lens, light, frame), AI Art Director (decide palette, costume, setting), AI Composer (write the final emotional line). The user never sees these roles.
 
@@ -86,7 +125,7 @@ Workflow (internal — never expose to the viewer):
    - Clay Illustration (cute, handmade, miniature, craft, warm)
    - Neo Pop Illustration (bold, graphic, bright, flat, youthful)
    - Storybook (children's illustration, gentle, dream, magic)
-${recentBlock}   Selection rule: emotion decides the director. Never force the story into one visual language. If the emotion strongly fits a recently-used direction anyway, you may still choose it — but bias hard towards variety. Never always choose the same one.
+${recentBlock}${explorationBlock}   Selection rule: emotion decides the director, but the collector's archive matters. Among directors that fit the emotion, prefer one from the UNEXPLORED list above. Only fall back to a recently-used director when no unexplored option remotely fits the story. Never always choose the same one.
 3. Choose ONE MEDIUM the chosen direction would naturally use: Cinematic Frame, Magazine Spread, Movie Poster, Watercolour Page, Sketchbook Page, Storybook Plate, Painting, Editorial Photograph, Film Still, Illustration. Collage is forbidden unless the medium itself is collage.
 4. CINEMATOGRAPHER: lens, framing, camera height, light source and quality, palette, atmosphere, time of day, season.
 5. ART DIRECTOR: re-stage the SCENE — where the people are, what they are doing, environment, props, costume, colour story. Inspired by the references, not copied.
@@ -314,21 +353,31 @@ export const Route = createFileRoute("/api/create-moment")({
 
           // Pull the most recent director choices to bias the new pick toward variety.
           let recentDirectors: string[] = [];
+          let usedDirectorSet = new Set<string>();
           try {
             const { data: recents } = await supabaseAdmin
               .from("moments")
               .select("director_notes")
               .order("created_at", { ascending: false })
-              .limit(8);
+              .limit(200);
             recentDirectors = (recents ?? [])
               .map((r) => {
                 const notes = (r.director_notes ?? {}) as { director?: string };
                 return (notes.director ?? "").trim();
               })
               .filter(Boolean);
+            for (const raw of recentDirectors) {
+              const matched = matchPoolDirector(raw);
+              if (matched) usedDirectorSet.add(matched);
+            }
+            // Keep only the 8 most recent for the "avoid repeating" hint.
+            recentDirectors = recentDirectors.slice(0, 8);
           } catch {
             recentDirectors = [];
+            usedDirectorSet = new Set<string>();
           }
+
+          const unexploredDirectors = DIRECTOR_POOL.filter((d) => !usedDirectorSet.has(d));
 
           const rarity: Rarity = rollRarity();
 
@@ -339,6 +388,7 @@ export const Route = createFileRoute("/api/create-moment")({
             photoOneDataUrl,
             photoTwoDataUrl,
             recentDirectors,
+            unexploredDirectors,
             rarity,
           );
 
