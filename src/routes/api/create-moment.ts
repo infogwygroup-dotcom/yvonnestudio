@@ -213,11 +213,9 @@ Rules:
       "Lovable-API-Key": apiKey,
     },
     body: JSON.stringify({
-      model: "openai/gpt-image-2",
-      prompt,
-      size: "1536x1024",
-      quality: "low",
-      n: 1,
+      model: "google/gemini-3.1-flash-image",
+      messages: [{ role: "user", content: prompt }],
+      modalities: ["image", "text"],
     }),
   });
 
