@@ -205,25 +205,45 @@ export function VinylLayout({ moment }: Props) {
 /* ============================================================ */
 export function MuseumCardLayout({ moment }: Props) {
   const collectionId = `RS-${(moment.ripple_number ?? 0).toString().padStart(6, "0")}`;
+  const year = new Date(moment.created_at).getFullYear();
   return (
-    <PageShell moment={moment}>
-      <div className="mx-auto max-w-2xl">
-        <div className="bg-background p-10 shadow-2xl ring-1 ring-black/10">
-          <img src={moment.card_image_url} alt={moment.tagline} className="mx-auto max-h-[60vh] w-auto object-contain" />
-        </div>
-        <div className="mx-auto mt-8 max-w-md border-l-2 border-foreground/70 pl-6">
-          <p className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">{collectionId}</p>
-          <h1 className="mt-2 font-serif text-2xl italic">{moment.tagline}</h1>
-          <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-            Ripple Studio · {new Date(moment.created_at).getFullYear()}
-          </p>
-          <p className="mt-4 font-serif text-sm leading-relaxed text-foreground/85">
-            {moment.interpretation}
-          </p>
-          <p className="mt-4 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            Medium · {moment.visual_language?.slice(0, 3).join(", ")}
-          </p>
-        </div>
+    <PageShell moment={moment} className="bg-[#efe9dc]">
+      <div className="mx-auto grid max-w-4xl gap-12 sm:grid-cols-[1.4fr_1fr]">
+        <figure className="bg-[#f7f2e6] p-6 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.35)] ring-1 ring-black/10">
+          <div className="border border-foreground/15 p-2">
+            <img src={moment.card_image_url} alt={moment.tagline} className="w-full object-contain" />
+          </div>
+        </figure>
+        <aside className="self-end">
+          <div className="bg-[#f7f2e6] p-6 ring-1 ring-foreground/15">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+              {collectionId} · GALLERY VII
+            </p>
+            <h1 className="mt-3 font-serif text-2xl italic leading-snug text-foreground">
+              {moment.tagline}
+            </h1>
+            <p className="mt-1 font-serif text-[12px] italic text-muted-foreground">
+              Ripple Studio, {year}
+            </p>
+            <dl className="mt-5 grid grid-cols-[5.5rem_1fr] gap-y-2 text-[11px]">
+              <dt className="uppercase tracking-[0.18em] text-muted-foreground">Medium</dt>
+              <dd className="font-serif italic">{moment.visual_language?.slice(0, 3).join(", ") || "Mixed"}</dd>
+              <dt className="uppercase tracking-[0.18em] text-muted-foreground">Origin</dt>
+              <dd className="font-serif italic">{moment.giver_location || "—"} · {moment.receiver_location || "—"}</dd>
+              <dt className="uppercase tracking-[0.18em] text-muted-foreground">Mood</dt>
+              <dd className="font-serif italic">{moment.mood}</dd>
+              <dt className="uppercase tracking-[0.18em] text-muted-foreground">Acquired</dt>
+              <dd className="font-mono text-[10px] tracking-[0.18em]"><FormattedDate iso={moment.created_at} /></dd>
+            </dl>
+            <div className="my-5 h-px bg-foreground/15" />
+            <p className="font-serif text-[13px] leading-relaxed text-foreground/85">
+              {moment.interpretation}
+            </p>
+            <p className="mt-5 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+              From the Permanent Collection
+            </p>
+          </div>
+        </aside>
       </div>
     </PageShell>
   );
