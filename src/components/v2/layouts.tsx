@@ -292,7 +292,7 @@ export function FilmStripLayout({ moment }: Props) {
   while (frames.length < 3) frames.push(moment.card_image_url);
   return (
     <PageShell moment={moment}>
-      <p className="eyebrow text-center">Contact Strip · {moment.director}</p>
+      <p className="eyebrow text-center">Contact Strip · {moment.narrative_device || moment.mood}</p>
       <div className="mx-auto mt-6 max-w-md bg-neutral-900 p-3 shadow-2xl">
         <div className="flex justify-between px-1 py-1">
           {Array.from({ length: 8 }).map((_, i) => (
