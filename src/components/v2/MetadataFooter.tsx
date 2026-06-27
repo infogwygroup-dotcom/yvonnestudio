@@ -7,11 +7,30 @@ const RARITY_LABEL: Record<MomentView["rarity"], string> = {
   legendary: "Legendary Archive",
 };
 
+export function CollectionHeader({ moment }: { moment: MomentView }) {
+  const number = moment.ripple_number
+    ? String(moment.ripple_number).padStart(6, "0")
+    : "000000";
+  const year = new Date(moment.created_at).getFullYear();
+  const edition = moment.ripple_number ?? "—";
+  return (
+    <header className="mx-auto mb-10 max-w-5xl border-b border-foreground/15 pb-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+        <span className="font-serif text-[13px] tracking-[0.22em] text-foreground">
+          Ripple Collection
+        </span>
+        <span>Edition {edition}</span>
+        <span>Archive {year}</span>
+        <span className="font-mono tracking-[0.18em]">RS-{number}</span>
+      </div>
+    </header>
+  );
+}
+
 export function MetadataFooter({ moment }: { moment: MomentView }) {
   const number = moment.ripple_number ? String(moment.ripple_number).padStart(6, "0") : "—";
   const rows: Array<[string, string]> = [
     ["Ripple No.", number],
-    ["Directed by", "Ripple Studio"],
     ["Narrative", moment.narrative_device || moment.genre || "—"],
     ["Visual Language", moment.visual_language?.length ? moment.visual_language.join(" · ") : "—"],
     ["Presentation", moment.presentation_format || "Editorial"],

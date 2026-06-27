@@ -10,6 +10,7 @@ import {
   NewspaperLayout,
   ContactSheetLayout,
   BlueprintLayout,
+  BookChapterLayout,
   FallbackLayout,
 } from "@/components/v2/layouts";
 
@@ -20,7 +21,7 @@ export type LayoutComponent = React.ComponentType<{ moment: MomentView }>;
 const REGISTRY: Record<string, LayoutComponent> = {
   "cinema poster": CinemaPosterLayout,
   "magazine cover": MagazineCoverLayout,
-  "book chapter": MagazineCoverLayout,
+  "book chapter": BookChapterLayout,
   "journal page": JournalLayout,
   "old letter": JournalLayout,
   "travel journal": JournalLayout,
