@@ -427,16 +427,30 @@ export function BlueprintLayout({ moment }: Props) {
           <span>SHEET 01 / 01</span>
         </header>
         <div className="mt-6 grid gap-6 sm:grid-cols-[1.3fr_1fr]">
-          <div className="border border-cyan-100/40 p-2">
+          <div className="relative border border-cyan-100/40 p-2">
             <img src={moment.card_image_url} alt={moment.tagline} className="w-full object-cover opacity-90 [filter:hue-rotate(180deg)_saturate(0.6)_brightness(0.95)]" />
+            <span className="absolute -left-3 top-1/2 -translate-y-1/2 rotate-180 font-mono text-[9px] tracking-[0.28em] text-cyan-100/80" style={{ writingMode: "vertical-rl" }}>↕ 1620 mm</span>
+            <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-mono text-[9px] tracking-[0.28em] text-cyan-100/80">↔ 2160 mm</span>
+            <span className="absolute -top-3 right-2 -rotate-2 font-serif text-[11px] italic text-cyan-100/85">— soft north light, morning</span>
           </div>
           <div className="font-mono text-xs leading-relaxed">
             <p className="text-cyan-200/70">TITLE</p>
-            <p className="mt-1 font-serif text-xl italic not-italic">{moment.tagline}</p>
+            <p className="mt-1 font-serif text-xl italic">{moment.tagline}</p>
             <p className="mt-4 text-cyan-200/70">NARRATIVE</p>
             <p className="mt-1">{moment.narrative_device}</p>
+            <p className="mt-4 text-cyan-200/70">MEASUREMENTS</p>
+            <ul className="mt-1 space-y-0.5">
+              <li>· Frame · 2160 × 1620 mm</li>
+              <li>· Scale · 1 : 24</li>
+              <li>· Palette · {(moment.visual_language ?? []).slice(0, 2).join(", ") || "—"}</li>
+            </ul>
             <p className="mt-4 text-cyan-200/70">NOTES</p>
-            <p className="mt-1 leading-relaxed">{moment.interpretation}</p>
+            <p className="mt-1 font-serif italic leading-relaxed text-cyan-50/90">{moment.interpretation}</p>
+            <p className="mt-4 -rotate-2 font-serif text-[11px] italic text-cyan-100/70">— check pencil weight in upper third</p>
+            <div className="mt-6 flex items-end justify-between border-t border-cyan-100/30 pt-3 text-[10px] tracking-[0.22em] text-cyan-100/70">
+              <span>DRAWN BY HAND</span>
+              <span>REV. 01</span>
+            </div>
           </div>
         </div>
       </div>
