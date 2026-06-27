@@ -80,6 +80,11 @@ export function CinemaPosterLayout({ moment }: Props) {
 /* ============================================================ */
 export function MagazineCoverLayout({ moment }: Props) {
   const issue = moment.ripple_number ? String(moment.ripple_number).padStart(3, "0") : "01";
+  const coverLines = [
+    moment.narrative_device || moment.genre,
+    moment.mood ? `On ${moment.mood.toLowerCase()}` : null,
+    moment.visual_language?.[0],
+  ].filter(Boolean) as string[];
   return (
     <PageShell moment={moment}>
       <div className="mx-auto max-w-2xl bg-card shadow-xl ring-1 ring-black/10">
@@ -91,10 +96,15 @@ export function MagazineCoverLayout({ moment }: Props) {
         </header>
         <div className="relative">
           <img src={moment.card_image_url} alt={moment.tagline} className="aspect-[4/5] w-full object-cover" />
-          <div className="absolute left-6 top-6 max-w-[55%] text-foreground">
-            <p className="bg-background/85 px-2 py-0.5 text-[9px] uppercase tracking-[0.28em]">
+          <div className="absolute left-6 top-6 max-w-[60%] space-y-1.5 text-foreground">
+            <p className="inline-block bg-background/85 px-2 py-0.5 text-[9px] uppercase tracking-[0.28em]">
               The {moment.narrative_device || moment.genre} Issue
             </p>
+            {coverLines.slice(0, 3).map((c) => (
+              <p key={c} className="block w-fit bg-background/80 px-2 py-0.5 font-serif text-sm italic">
+                {c}
+              </p>
+            ))}
           </div>
           <div className="absolute bottom-6 right-6 max-w-[60%] text-right">
             <p className="inline-block bg-background/85 px-3 py-2 font-serif text-2xl italic leading-tight">
@@ -102,10 +112,20 @@ export function MagazineCoverLayout({ moment }: Props) {
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 border-t border-border px-6 py-4 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          <div>{moment.mood}</div>
-          <div className="text-center">{moment.visual_language?.[0] ?? ""}</div>
-          <div className="text-right">{moment.director}</div>
+        <div className="flex items-center justify-between gap-6 border-t border-border px-6 py-4 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          <div className="flex items-end gap-[2px]" aria-hidden>
+            {Array.from({ length: 28 }).map((_, i) => (
+              <span
+                key={i}
+                className="block bg-foreground"
+                style={{ width: i % 3 === 0 ? 2 : 1, height: 28 + ((i * 7) % 6) }}
+              />
+            ))}
+          </div>
+          <div className="text-right font-mono text-[9px] tracking-[0.18em]">
+            <p>{moment.mood}</p>
+            <p>9 771234 {issue}00 · ${(((moment.ripple_number ?? 1) % 9) + 6).toFixed(2)}</p>
+          </div>
         </div>
       </div>
     </PageShell>
