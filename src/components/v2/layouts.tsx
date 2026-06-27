@@ -169,31 +169,66 @@ export function JournalLayout({ moment }: Props) {
 /* 4. VINYL                                                      */
 /* ============================================================ */
 export function VinylLayout({ moment }: Props) {
+  const sideA = (moment.visual_language ?? []).slice(0, 3);
+  const sideB = (moment.visual_language ?? []).slice(3, 6);
+  const catalog = `RS-${(moment.ripple_number ?? 0).toString().padStart(5, "0")}`;
   return (
     <PageShell moment={moment}>
       <div className="grid gap-10 sm:grid-cols-2">
         <div className="relative aspect-square w-full overflow-hidden bg-neutral-900 shadow-2xl ring-1 ring-black/30">
           <img src={moment.card_image_url} alt={moment.tagline} className="h-full w-full object-cover" />
+          <div className="absolute inset-x-0 top-0 flex justify-between p-4 text-[9px] uppercase tracking-[0.32em] text-white/80">
+            <span>Ripple Records</span>
+            <span>{catalog}</span>
+          </div>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-5 text-white">
-            <p className="text-[10px] uppercase tracking-[0.3em] opacity-75">Side A · {moment.mood}</p>
+            <p className="text-[10px] uppercase tracking-[0.3em] opacity-75">Long Play · 33⅓ RPM · {moment.mood}</p>
             <h1 className="mt-1 font-serif text-2xl italic">{moment.tagline}</h1>
           </div>
         </div>
-        <div className="flex flex-col justify-center bg-card p-6 shadow-lg ring-1 ring-black/10">
-          <p className="eyebrow">Long Play · 33⅓ RPM</p>
-          <h2 className="mt-3 font-serif text-3xl italic">{moment.narrative_device}</h2>
-          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            Composed by Ripple Studio
+        <div className="flex flex-col justify-between bg-[#f3ecdc] p-6 shadow-lg ring-1 ring-black/10">
+          <div>
+            <div className="flex items-baseline justify-between border-b border-foreground/30 pb-2">
+              <p className="font-serif text-xl tracking-[0.32em]">RIPPLE RECORDS</p>
+              <p className="font-mono text-[10px] tracking-[0.22em] text-muted-foreground">{catalog}</p>
+            </div>
+            <h2 className="mt-4 font-serif text-2xl italic">{moment.narrative_device}</h2>
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              An original recording · {new Date(moment.created_at).getFullYear()}
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-6 text-sm">
+              <div>
+                <p className="border-b border-foreground/30 pb-1 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                  Side A
+                </p>
+                <ol className="mt-2 space-y-1 font-serif">
+                  {sideA.map((v, i) => (
+                    <li key={v} className="flex gap-2">
+                      <span className="w-5 text-muted-foreground">A{i + 1}.</span>
+                      <span className="italic">{v}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div>
+                <p className="border-b border-foreground/30 pb-1 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                  Side B
+                </p>
+                <ol className="mt-2 space-y-1 font-serif">
+                  {(sideB.length ? sideB : ["Reprise", "Coda"]).map((v, i) => (
+                    <li key={v + i} className="flex gap-2">
+                      <span className="w-5 text-muted-foreground">B{i + 1}.</span>
+                      <span className="italic">{v}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </div>
+          <p className="mt-6 border-t border-foreground/20 pt-4 text-xs italic leading-relaxed text-muted-foreground">
+            {moment.interpretation}
           </p>
-          <ol className="mt-6 space-y-1 font-serif text-sm">
-            {(moment.visual_language ?? []).slice(0, 5).map((v, i) => (
-              <li key={v} className="flex gap-3 border-b border-border/40 py-1">
-                <span className="w-6 text-muted-foreground">{String(i + 1).padStart(2, "0")}.</span>
-                <span className="italic">{v}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-6 text-xs italic leading-relaxed text-muted-foreground">{moment.interpretation}</p>
         </div>
       </div>
     </PageShell>
