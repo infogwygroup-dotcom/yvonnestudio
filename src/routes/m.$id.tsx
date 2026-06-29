@@ -211,7 +211,9 @@ type Memory = {
   caption: string;
 };
 
-function LetterSection({
+export type LetterMemory = Memory;
+
+export function LetterSection({
   date,
   giver,
   receiver,
