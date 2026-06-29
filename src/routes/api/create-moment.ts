@@ -116,23 +116,8 @@ The two photos are REFERENCES ONLY — location scouting, actor portraits, prop 
 Workflow (internal — never expose to the viewer):
 1. Read the emotional evidence and decide: emotional tone, relationship, location, culture, atmosphere, symbols, pacing, keywords.
 2. SECRETLY choose ONE cinematic DIRECTION whose sensibility fits this specific story. Pick exactly one from this pool — the choice MUST vary dramatically across Ripples, not gravitate to the same few:
-   - Wong Kar Wai (loneliness, memory, distance, rain, neon, reflection, slow motion, warm green, film grain)
-   - Makoto Shinkai (hope, distance, sky, sunset, dreamlike clouds, soft glow, cinematic anime)
-   - Studio Ghibli (kindness, meal, family, warmth, nature, hand painted, gentle, storybook)
-   - Pixar (unexpected friendship, hope, joy, colourful, expressive, soft 3D)
-   - Hayao Miyazaki Sketchbook (watercolor, wind, flowers, peaceful, minimal)
-   - Wes Anderson (symmetry, pastel, quirky, playful, storybook framing)
-   - Denis Villeneuve (vast, quiet, minimal, solitude, large scale architecture, strong light)
-   - Christopher Nolan (time, memory, parallel lives, deep shadows, high contrast)
-   - Edward Hopper Painting (waiting, silence, window, late afternoon, solitude, painting)
-   - Vintage Magazine Editorial (fashion, beautiful typography, minimal, paper texture)
-   - Japanese Lifestyle Photography (calm, everyday, coffee, wood, natural light, film)
-   - Documentary Photography (real, street, humanity, authentic, not stylised)
-   - Watercolour Journal (travel notebook, hand painted, light ink, soft colours)
-   - Clay Illustration (cute, handmade, miniature, craft, warm)
-   - Neo Pop Illustration (bold, graphic, bright, flat, youthful)
-   - Storybook (children's illustration, gentle, dream, magic)
-${recentBlock}${explorationBlock}   Selection rule: emotion decides the director, but the collector's archive matters. Among directors that fit the emotion, prefer one from the UNEXPLORED list above. Only fall back to a recently-used director when no unexplored option remotely fits the story. Never always choose the same one.
+${directorListBlock}
+${recentBlock}${explorationBlock}   Selection rule: emotion decides the director, but the collector's archive matters. Among directors that fit the emotion, prefer one from the UNEXPLORED list above, then options marked with more ★ stars (curator priority). Only fall back to a recently-used director when no unexplored option remotely fits the story. Never always choose the same one.
 3. Choose ONE MEDIUM the chosen direction would naturally use: Cinematic Frame, Magazine Spread, Movie Poster, Watercolour Page, Sketchbook Page, Storybook Plate, Painting, Editorial Photograph, Film Still, Illustration. Collage is forbidden unless the medium itself is collage.
 4. CINEMATOGRAPHER: lens, framing, camera height, light source and quality, palette, atmosphere, time of day, season.
 5. ART DIRECTOR: re-stage the SCENE — where the people are, what they are doing, environment, props, costume, colour story. Inspired by the references, not copied.
@@ -144,7 +129,7 @@ ${rarityDirective(rarity)}
 
 ${presentationDirective(rarity)}
 
-NARRATIVE DEVICE — choose ONE storytelling angle that explains WHY this scene exists. Pick from: ${NARRATIVE_DEVICES.join(" · ")}. Set "narrative_device" to that exact label. This replaces generic genre tagging.
+NARRATIVE DEVICE — choose ONE storytelling angle that explains WHY this scene exists. Pick from (★ = curator-preferred): ${narrativeListRendered}. Set "narrative_device" to that exact label. This replaces generic genre tagging.
 
 9.5. Also generate a GENRE (one of: Coming of Age, Romance, Slice of Life, Quiet Drama, Hope, Homecoming, Friendship, Journey, Family, Healing, Dream, Documentary, Road Movie, Mystery, Urban Poetry, Memory — or another single short label that fits better). Generate one MOOD (one short adjective: Hopeful, Lonely, Warm, Peaceful, Bittersweet, Joyful, Nostalgic, Dreamlike, Reflective, Playful, Melancholic, Quiet, etc.). Generate 3–5 short VISUAL_LANGUAGE tags (e.g. "Warm Film Grain", "Blue Hour", "Rain Reflection", "Golden Hour", "Soft Dust", "Minimal Japanese", "Painterly", "Handmade Paper", "Kodak Portra", "Leica Street", "Magazine Editorial", "Neo Noir", "Dreamlike", "Oil Painting", "Vintage Travel", "Watercolor Journal", "Handwritten Memory" — or invent new ones that fit). These appear in a small archival "Ripple Identity" caption — keep each tag 1–3 words, title case.
 
