@@ -58,6 +58,7 @@ export type MomentView = {
   sentence_one: string;
   sentence_two: string;
   card_image_url: string;
+  thumb_image_url: string;
   photo_one_url: string;
   photo_two_url: string;
   still_one_url: string;
