@@ -90,6 +90,16 @@ export const NARRATIVES: NarrativeEntry[] = [
   { label: "Inheritance of Small Things", priority: 2, minRarity: "epic" },
   { label: "The Photograph We Never Took", priority: 2, minRarity: "epic" },
   { label: "Footnote of a Stranger", priority: 1, minRarity: "legendary" },
+
+  // ── Legendary narratives — only the rarest Ripples unlock these ──
+  { label: "The Unsent Lullaby",          priority: 2, minRarity: "legendary" },
+  { label: "A Room Remembered",           priority: 2, minRarity: "legendary" },
+  { label: "The Last Warmth of a Season", priority: 2, minRarity: "legendary" },
+  { label: "Strangers Borrowing the Same Light", priority: 2, minRarity: "legendary" },
+  { label: "The Map We Drew by Mistake",  priority: 2, minRarity: "legendary" },
+  { label: "What the Rain Did Not Wash Away", priority: 2, minRarity: "legendary" },
+  { label: "The Echo of a Door Closing",  priority: 2, minRarity: "legendary" },
+  { label: "A Clock That Stopped for Two People", priority: 3, minRarity: "legendary" },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
