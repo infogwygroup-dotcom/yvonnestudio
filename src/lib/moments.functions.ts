@@ -167,3 +167,29 @@ export const getMoment = createServerFn({ method: "GET" })
       receiver_caption: notes.receiver_caption ?? "",
     };
   });
+
+export const saveMomentThumb = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => ThumbSchema.parse(input))
+  .handler(async ({ data }): Promise<{ ok: true }> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const match = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(data.dataUrl);
+    if (!match) throw new Error("Invalid image data");
+    const contentType = match[1];
+    const ext = contentType === "image/jpeg" ? "jpg" : contentType.split("/")[1];
+    const bytes = Uint8Array.from(atob(match[2]), (c) => c.charCodeAt(0));
+
+    const path = `thumbs/${data.id}.${ext}`;
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("moments")
+      .upload(path, bytes, { contentType, upsert: true });
+    if (upErr) throw new Error(upErr.message);
+
+    const { error: updErr } = await supabaseAdmin
+      .from("moments")
+      .update({ thumb_image_path: path })
+      .eq("id", data.id);
+    if (updErr) throw new Error(updErr.message);
+
+    return { ok: true };
+  });
