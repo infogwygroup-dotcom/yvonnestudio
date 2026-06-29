@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { getMoment } from "@/lib/moments.functions";
 import { pickLayout } from "@/lib/presentation";
+import { LetterSection } from "@/routes/m.$id";
 
 export const Route = createFileRoute("/v2/m/$id")({
   loader: async ({ params }) => {
@@ -57,5 +58,36 @@ export const Route = createFileRoute("/v2/m/$id")({
 function V2MomentPage() {
   const { moment } = Route.useLoaderData();
   const Layout = pickLayout(moment.presentation_format);
-  return <Layout moment={moment} />;
+  return (
+    <>
+      <Layout moment={moment} />
+      <section className="paper px-6 pb-32">
+        <div className="mx-auto max-w-4xl">
+          <LetterSection
+            date={moment.created_at}
+            giver={{
+              sentence: moment.sentence_one,
+              still: moment.photo_one_url,
+              location: moment.giver_location,
+              merchant: moment.giver_merchant,
+              meal: moment.giver_meal,
+              caption:
+                moment.giver_caption ||
+                "When she shared this meal,\nshe only wrote two words.",
+            }}
+            receiver={{
+              sentence: moment.sentence_two,
+              still: moment.photo_two_url,
+              location: moment.receiver_location,
+              merchant: moment.receiver_merchant,
+              meal: moment.receiver_meal,
+              caption:
+                moment.receiver_caption ||
+                "His reply quietly\ncompleted the story.",
+            }}
+          />
+        </div>
+      </section>
+    </>
+  );
 }
