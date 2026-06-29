@@ -3,16 +3,24 @@ import { z } from "zod";
 
 const InputSchema = z.object({ id: z.string().uuid() });
 
+const ThumbSchema = z.object({
+  id: z.string().uuid(),
+  // data URL: data:image/png;base64,XXXX
+  dataUrl: z.string().min(64).max(8_000_000),
+});
+
 export type MomentSummary = {
   id: string;
   tagline: string;
   card_image_url: string;
+  thumb_image_url: string;
   created_at: string;
   ripple_number: number | null;
   rarity: "common" | "rare" | "epic" | "legendary";
   genre: string;
   mood: string;
   format: string;
+  presentation_format: string;
 };
 
 export const listMoments = createServerFn({ method: "GET" }).handler(
@@ -20,12 +28,16 @@ export const listMoments = createServerFn({ method: "GET" }).handler(
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("moments")
-      .select("id, tagline, card_image_path, created_at, ripple_number, rarity, genre, mood, format")
+      .select("id, tagline, card_image_path, thumb_image_path, created_at, ripple_number, rarity, genre, mood, format, presentation_format")
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) throw new Error(error.message);
     if (!rows || rows.length === 0) return [];
-    const paths = rows.map((r) => r.card_image_path).filter(Boolean);
+    const paths = Array.from(
+      new Set(
+        rows.flatMap((r) => [r.card_image_path, (r as { thumb_image_path?: string | null }).thumb_image_path]).filter((p): p is string => !!p),
+      ),
+    );
     const { data: signed } = await supabaseAdmin.storage
       .from("moments")
       .createSignedUrls(paths, 60 * 60 * 24 * 7);
@@ -34,12 +46,14 @@ export const listMoments = createServerFn({ method: "GET" }).handler(
       id: r.id,
       tagline: r.tagline,
       card_image_url: urlFor(r.card_image_path),
+      thumb_image_url: urlFor((r as { thumb_image_path?: string | null }).thumb_image_path ?? "") || urlFor(r.card_image_path),
       created_at: r.created_at,
       ripple_number: r.ripple_number ?? null,
       rarity: (r.rarity ?? "common") as MomentSummary["rarity"],
       genre: r.genre ?? "",
       mood: r.mood ?? "",
       format: r.format ?? "",
+      presentation_format: (r as { presentation_format?: string | null }).presentation_format ?? "",
     }));
   },
 );
@@ -50,6 +64,7 @@ export type MomentView = {
   sentence_one: string;
   sentence_two: string;
   card_image_url: string;
+  thumb_image_url: string;
   photo_one_url: string;
   photo_two_url: string;
   still_one_url: string;
@@ -83,7 +98,7 @@ export const getMoment = createServerFn({ method: "GET" })
     const { data: row, error } = await supabaseAdmin
       .from("moments")
       .select(
-        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format, narrative_device, presentation_format",
+        "id, tagline, sentence_one, sentence_two, card_image_path, thumb_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format, narrative_device, presentation_format",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -93,6 +108,7 @@ export const getMoment = createServerFn({ method: "GET" })
 
     const paths = [
       row.card_image_path,
+      (row as { thumb_image_path?: string | null }).thumb_image_path,
       row.photo_one_path,
       row.photo_two_path,
       row.still_one_path,
@@ -125,6 +141,7 @@ export const getMoment = createServerFn({ method: "GET" })
       sentence_one: row.sentence_one,
       sentence_two: row.sentence_two,
       card_image_url: urlFor(row.card_image_path),
+      thumb_image_url: urlFor((row as { thumb_image_path?: string | null }).thumb_image_path ?? ""),
       photo_one_url: urlFor(row.photo_one_path),
       photo_two_url: urlFor(row.photo_two_path),
       still_one_url: row.still_one_path ? urlFor(row.still_one_path) : urlFor(row.photo_one_path),
@@ -149,4 +166,30 @@ export const getMoment = createServerFn({ method: "GET" })
       receiver_meal: notes.receiver_meal ?? "",
       receiver_caption: notes.receiver_caption ?? "",
     };
+  });
+
+export const saveMomentThumb = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => ThumbSchema.parse(input))
+  .handler(async ({ data }): Promise<{ ok: true }> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const match = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(data.dataUrl);
+    if (!match) throw new Error("Invalid image data");
+    const contentType = match[1];
+    const ext = contentType === "image/jpeg" ? "jpg" : contentType.split("/")[1];
+    const bytes = Uint8Array.from(atob(match[2]), (c) => c.charCodeAt(0));
+
+    const path = `thumbs/${data.id}.${ext}`;
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("moments")
+      .upload(path, bytes, { contentType, upsert: true });
+    if (upErr) throw new Error(upErr.message);
+
+    const { error: updErr } = await supabaseAdmin
+      .from("moments")
+      .update({ thumb_image_path: path })
+      .eq("id", data.id);
+    if (updErr) throw new Error(updErr.message);
+
+    return { ok: true };
   });
