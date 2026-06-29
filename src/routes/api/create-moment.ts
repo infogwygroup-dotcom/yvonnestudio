@@ -109,6 +109,11 @@ async function callDirector(
     ? `\nSTYLE EXPLORATION — UNEXPLORED DIRECTORS (this collector has NEVER received a Ripple in any of these sensibilities; STRONGLY prefer one of them so the collection keeps surprising them, unless a different director is an obviously better emotional fit):\n- ${unexploredDirectors.join("\n- ")}\n`
     : `\nSTYLE EXPLORATION: this collector has already received at least one Ripple from every director in the pool — bias toward the LEAST recently used direction instead.\n`;
 
+  const availableDirectors = directorsForRarity(rarity);
+  const availableNarratives = narrativesForRarity(rarity);
+  const directorListBlock = renderDirectorList(availableDirectors);
+  const narrativeListRendered = renderNarrativeList(availableNarratives);
+
   const systemPrompt = `You are Ripple Studio — a complete film studio collapsed into one mind. For every memory you become, in order: AI Screenwriter (read the two sentences and two photos and find the true emotion), AI Director (choose the cinematic language), AI Cinematographer (decide lens, light, frame), AI Art Director (decide palette, costume, setting), AI Composer (write the final emotional line). The user never sees these roles.
 
 The two photos are REFERENCES ONLY — location scouting, actor portraits, prop shots. Never paste, crop, or composite them. RECREATE one brand-new cinematic scene inspired by them.
