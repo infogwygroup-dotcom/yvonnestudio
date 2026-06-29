@@ -1,4 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  DIRECTOR_NAMES,
+  directorsForRarity,
+  narrativesForRarity,
+  renderDirectorList,
+  renderNarrativeList,
+  weightedPick,
+  type Tier,
+} from "@/lib/v2/catalog";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 
@@ -29,15 +38,7 @@ type DirectorBrief = {
   receiver_still_brief: string;
 };
 
-type Rarity = "common" | "rare" | "epic" | "legendary";
-
-// Narrative devices — replace generic "Genre" in the user-facing identity block.
-const NARRATIVE_DEVICES = [
-  "Beginning Again", "The First Step", "A Letter Never Sent", "Parallel Lives",
-  "The Same Sky", "Missed Connection", "One Table Two Worlds", "Echoes",
-  "Silent Kindness", "Time Capsule", "Crossing Paths", "Homecoming",
-  "Waiting", "An Ordinary Miracle", "Shared Memory",
-] as const;
+type Rarity = Tier;
 
 // Presentation formats — gated by rarity. Common/Rare stay grounded; Epic/Legendary unlock experimental editions.
 const PRESENTATION_BY_RARITY: Record<Rarity, string[]> = {
@@ -47,25 +48,8 @@ const PRESENTATION_BY_RARITY: Record<Rarity, string[]> = {
   legendary: ["Vinyl Record Cover", "Museum Exhibition Card", "Comic Page", "Scrapbook", "Memory Album", "Passport Page", "Blueprint", "Gallery Print"],
 };
 
-// Canonical director pool. Keep in sync with the list rendered into the system prompt.
-const DIRECTOR_POOL = [
-  "Wong Kar Wai",
-  "Makoto Shinkai",
-  "Studio Ghibli",
-  "Pixar",
-  "Hayao Miyazaki Sketchbook",
-  "Wes Anderson",
-  "Denis Villeneuve",
-  "Christopher Nolan",
-  "Edward Hopper Painting",
-  "Vintage Magazine Editorial",
-  "Japanese Lifestyle Photography",
-  "Documentary Photography",
-  "Watercolour Journal",
-  "Clay Illustration",
-  "Neo Pop Illustration",
-  "Storybook",
-] as const;
+// Canonical director pool — edit in src/lib/v2/catalog.ts
+const DIRECTOR_POOL = DIRECTOR_NAMES;
 
 function normaliseDirectorName(raw: string): string {
   return raw.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
