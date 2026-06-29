@@ -7,12 +7,14 @@ export type MomentSummary = {
   id: string;
   tagline: string;
   card_image_url: string;
+  thumb_image_url: string;
   created_at: string;
   ripple_number: number | null;
   rarity: "common" | "rare" | "epic" | "legendary";
   genre: string;
   mood: string;
   format: string;
+  presentation_format: string;
 };
 
 export const listMoments = createServerFn({ method: "GET" }).handler(
@@ -20,12 +22,16 @@ export const listMoments = createServerFn({ method: "GET" }).handler(
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("moments")
-      .select("id, tagline, card_image_path, created_at, ripple_number, rarity, genre, mood, format")
+      .select("id, tagline, card_image_path, thumb_image_path, created_at, ripple_number, rarity, genre, mood, format, presentation_format")
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) throw new Error(error.message);
     if (!rows || rows.length === 0) return [];
-    const paths = rows.map((r) => r.card_image_path).filter(Boolean);
+    const paths = Array.from(
+      new Set(
+        rows.flatMap((r) => [r.card_image_path, (r as { thumb_image_path?: string | null }).thumb_image_path]).filter((p): p is string => !!p),
+      ),
+    );
     const { data: signed } = await supabaseAdmin.storage
       .from("moments")
       .createSignedUrls(paths, 60 * 60 * 24 * 7);
@@ -34,12 +40,14 @@ export const listMoments = createServerFn({ method: "GET" }).handler(
       id: r.id,
       tagline: r.tagline,
       card_image_url: urlFor(r.card_image_path),
+      thumb_image_url: urlFor((r as { thumb_image_path?: string | null }).thumb_image_path ?? "") || urlFor(r.card_image_path),
       created_at: r.created_at,
       ripple_number: r.ripple_number ?? null,
       rarity: (r.rarity ?? "common") as MomentSummary["rarity"],
       genre: r.genre ?? "",
       mood: r.mood ?? "",
       format: r.format ?? "",
+      presentation_format: (r as { presentation_format?: string | null }).presentation_format ?? "",
     }));
   },
 );
