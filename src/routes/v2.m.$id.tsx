@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { getMoment } from "@/lib/moments.functions";
+import { useEffect, useRef } from "react";
+import { getMoment, saveMomentThumb } from "@/lib/moments.functions";
 import { pickLayout } from "@/lib/presentation";
 import { LetterSection } from "@/routes/m.$id";
 
@@ -58,11 +59,63 @@ export const Route = createFileRoute("/v2/m/$id")({
 function V2MomentPage() {
   const { moment } = Route.useLoaderData();
   const Layout = pickLayout(moment.presentation_format);
+  const captureRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (moment.thumb_image_url) return;
+    const node = captureRef.current;
+    if (!node) return;
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        // Wait for fonts + images inside the capture area to load
+        if (document.fonts?.ready) await document.fonts.ready;
+        const imgs = Array.from(node.querySelectorAll("img"));
+        await Promise.all(
+          imgs.map(
+            (img) =>
+              img.complete
+                ? Promise.resolve()
+                : new Promise<void>((res) => {
+                    img.addEventListener("load", () => res(), { once: true });
+                    img.addEventListener("error", () => res(), { once: true });
+                  }),
+          ),
+        );
+        // Give layout a beat
+        await new Promise((r) => setTimeout(r, 250));
+        if (cancelled) return;
+
+        const { toJpeg } = await import("html-to-image");
+        const dataUrl = await toJpeg(node, {
+          quality: 0.88,
+          pixelRatio: 1.25,
+          backgroundColor: "#f5efe4",
+          cacheBust: true,
+          // Skip nodes with data-no-capture
+          filter: (n) =>
+            !(n instanceof HTMLElement && n.dataset.noCapture === "true"),
+        });
+        if (cancelled) return;
+        await saveMomentThumb({ data: { id: moment.id, dataUrl } });
+      } catch (err) {
+        console.warn("Thumb capture failed", err);
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [moment.id, moment.thumb_image_url]);
+
   return (
     <>
-      <Layout moment={moment} />
+      <div ref={captureRef}>
+        <Layout moment={moment} />
+      </div>
       <section className="paper px-6 pb-20">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-4xl" data-no-capture="true">
           <LetterSection
             date={moment.created_at}
             giver={{
