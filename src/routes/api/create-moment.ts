@@ -1,4 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  DIRECTOR_NAMES,
+  directorsForRarity,
+  narrativesForRarity,
+  renderDirectorList,
+  renderNarrativeList,
+  weightedPick,
+  type Tier,
+} from "@/lib/v2/catalog";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 
@@ -29,15 +38,7 @@ type DirectorBrief = {
   receiver_still_brief: string;
 };
 
-type Rarity = "common" | "rare" | "epic" | "legendary";
-
-// Narrative devices — replace generic "Genre" in the user-facing identity block.
-const NARRATIVE_DEVICES = [
-  "Beginning Again", "The First Step", "A Letter Never Sent", "Parallel Lives",
-  "The Same Sky", "Missed Connection", "One Table Two Worlds", "Echoes",
-  "Silent Kindness", "Time Capsule", "Crossing Paths", "Homecoming",
-  "Waiting", "An Ordinary Miracle", "Shared Memory",
-] as const;
+type Rarity = Tier;
 
 // Presentation formats — gated by rarity. Common/Rare stay grounded; Epic/Legendary unlock experimental editions.
 const PRESENTATION_BY_RARITY: Record<Rarity, string[]> = {
@@ -47,25 +48,8 @@ const PRESENTATION_BY_RARITY: Record<Rarity, string[]> = {
   legendary: ["Vinyl Record Cover", "Museum Exhibition Card", "Comic Page", "Scrapbook", "Memory Album", "Passport Page", "Blueprint", "Gallery Print"],
 };
 
-// Canonical director pool. Keep in sync with the list rendered into the system prompt.
-const DIRECTOR_POOL = [
-  "Wong Kar Wai",
-  "Makoto Shinkai",
-  "Studio Ghibli",
-  "Pixar",
-  "Hayao Miyazaki Sketchbook",
-  "Wes Anderson",
-  "Denis Villeneuve",
-  "Christopher Nolan",
-  "Edward Hopper Painting",
-  "Vintage Magazine Editorial",
-  "Japanese Lifestyle Photography",
-  "Documentary Photography",
-  "Watercolour Journal",
-  "Clay Illustration",
-  "Neo Pop Illustration",
-  "Storybook",
-] as const;
+// Canonical director pool — edit in src/lib/v2/catalog.ts
+const DIRECTOR_POOL = DIRECTOR_NAMES;
 
 function normaliseDirectorName(raw: string): string {
   return raw.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -125,6 +109,11 @@ async function callDirector(
     ? `\nSTYLE EXPLORATION — UNEXPLORED DIRECTORS (this collector has NEVER received a Ripple in any of these sensibilities; STRONGLY prefer one of them so the collection keeps surprising them, unless a different director is an obviously better emotional fit):\n- ${unexploredDirectors.join("\n- ")}\n`
     : `\nSTYLE EXPLORATION: this collector has already received at least one Ripple from every director in the pool — bias toward the LEAST recently used direction instead.\n`;
 
+  const availableDirectors = directorsForRarity(rarity);
+  const availableNarratives = narrativesForRarity(rarity);
+  const directorListBlock = renderDirectorList(availableDirectors);
+  const narrativeListRendered = renderNarrativeList(availableNarratives);
+
   const systemPrompt = `You are Ripple Studio — a complete film studio collapsed into one mind. For every memory you become, in order: AI Screenwriter (read the two sentences and two photos and find the true emotion), AI Director (choose the cinematic language), AI Cinematographer (decide lens, light, frame), AI Art Director (decide palette, costume, setting), AI Composer (write the final emotional line). The user never sees these roles.
 
 The two photos are REFERENCES ONLY — location scouting, actor portraits, prop shots. Never paste, crop, or composite them. RECREATE one brand-new cinematic scene inspired by them.
@@ -132,23 +121,8 @@ The two photos are REFERENCES ONLY — location scouting, actor portraits, prop 
 Workflow (internal — never expose to the viewer):
 1. Read the emotional evidence and decide: emotional tone, relationship, location, culture, atmosphere, symbols, pacing, keywords.
 2. SECRETLY choose ONE cinematic DIRECTION whose sensibility fits this specific story. Pick exactly one from this pool — the choice MUST vary dramatically across Ripples, not gravitate to the same few:
-   - Wong Kar Wai (loneliness, memory, distance, rain, neon, reflection, slow motion, warm green, film grain)
-   - Makoto Shinkai (hope, distance, sky, sunset, dreamlike clouds, soft glow, cinematic anime)
-   - Studio Ghibli (kindness, meal, family, warmth, nature, hand painted, gentle, storybook)
-   - Pixar (unexpected friendship, hope, joy, colourful, expressive, soft 3D)
-   - Hayao Miyazaki Sketchbook (watercolor, wind, flowers, peaceful, minimal)
-   - Wes Anderson (symmetry, pastel, quirky, playful, storybook framing)
-   - Denis Villeneuve (vast, quiet, minimal, solitude, large scale architecture, strong light)
-   - Christopher Nolan (time, memory, parallel lives, deep shadows, high contrast)
-   - Edward Hopper Painting (waiting, silence, window, late afternoon, solitude, painting)
-   - Vintage Magazine Editorial (fashion, beautiful typography, minimal, paper texture)
-   - Japanese Lifestyle Photography (calm, everyday, coffee, wood, natural light, film)
-   - Documentary Photography (real, street, humanity, authentic, not stylised)
-   - Watercolour Journal (travel notebook, hand painted, light ink, soft colours)
-   - Clay Illustration (cute, handmade, miniature, craft, warm)
-   - Neo Pop Illustration (bold, graphic, bright, flat, youthful)
-   - Storybook (children's illustration, gentle, dream, magic)
-${recentBlock}${explorationBlock}   Selection rule: emotion decides the director, but the collector's archive matters. Among directors that fit the emotion, prefer one from the UNEXPLORED list above. Only fall back to a recently-used director when no unexplored option remotely fits the story. Never always choose the same one.
+${directorListBlock}
+${recentBlock}${explorationBlock}   Selection rule: emotion decides the director, but the collector's archive matters. Among directors that fit the emotion, prefer one from the UNEXPLORED list above, then options marked with more ★ stars (curator priority). Only fall back to a recently-used director when no unexplored option remotely fits the story. Never always choose the same one.
 3. Choose ONE MEDIUM the chosen direction would naturally use: Cinematic Frame, Magazine Spread, Movie Poster, Watercolour Page, Sketchbook Page, Storybook Plate, Painting, Editorial Photograph, Film Still, Illustration. Collage is forbidden unless the medium itself is collage.
 4. CINEMATOGRAPHER: lens, framing, camera height, light source and quality, palette, atmosphere, time of day, season.
 5. ART DIRECTOR: re-stage the SCENE — where the people are, what they are doing, environment, props, costume, colour story. Inspired by the references, not copied.
@@ -160,7 +134,7 @@ ${rarityDirective(rarity)}
 
 ${presentationDirective(rarity)}
 
-NARRATIVE DEVICE — choose ONE storytelling angle that explains WHY this scene exists. Pick from: ${NARRATIVE_DEVICES.join(" · ")}. Set "narrative_device" to that exact label. This replaces generic genre tagging.
+NARRATIVE DEVICE — choose ONE storytelling angle that explains WHY this scene exists. Pick from (★ = curator-preferred): ${narrativeListRendered}. Set "narrative_device" to that exact label. This replaces generic genre tagging.
 
 9.5. Also generate a GENRE (one of: Coming of Age, Romance, Slice of Life, Quiet Drama, Hope, Homecoming, Friendship, Journey, Family, Healing, Dream, Documentary, Road Movie, Mystery, Urban Poetry, Memory — or another single short label that fits better). Generate one MOOD (one short adjective: Hopeful, Lonely, Warm, Peaceful, Bittersweet, Joyful, Nostalgic, Dreamlike, Reflective, Playful, Melancholic, Quiet, etc.). Generate 3–5 short VISUAL_LANGUAGE tags (e.g. "Warm Film Grain", "Blue Hour", "Rain Reflection", "Golden Hour", "Soft Dust", "Minimal Japanese", "Painterly", "Handmade Paper", "Kodak Portra", "Leica Street", "Magazine Editorial", "Neo Noir", "Dreamlike", "Oil Painting", "Vintage Travel", "Watercolor Journal", "Handwritten Memory" — or invent new ones that fit). These appear in a small archival "Ripple Identity" caption — keep each tag 1–3 words, title case.
 
@@ -423,9 +397,17 @@ export const Route = createFileRoute("/api/create-moment")({
 
           // Deterministic fallback if the model omits the new V2 fields.
           let narrativeDevice = (brief.narrative_device ?? "").trim();
-          if (!narrativeDevice) {
-            const seed = (sentenceOne + sentenceTwo).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-            narrativeDevice = NARRATIVE_DEVICES[seed % NARRATIVE_DEVICES.length];
+          {
+            const pool = narrativesForRarity(rarity);
+            const matched = pool.find(
+              (n) => n.label.toLowerCase() === narrativeDevice.toLowerCase(),
+            );
+            if (matched) {
+              narrativeDevice = matched.label;
+            } else {
+              const seed = (sentenceOne + sentenceTwo).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+              narrativeDevice = weightedPick(pool, seed).label;
+            }
           }
           let presentationFormat = (brief.presentation_format ?? "").trim();
           const allowedPresentations = PRESENTATION_BY_RARITY[rarity];
