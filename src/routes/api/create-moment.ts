@@ -397,9 +397,17 @@ export const Route = createFileRoute("/api/create-moment")({
 
           // Deterministic fallback if the model omits the new V2 fields.
           let narrativeDevice = (brief.narrative_device ?? "").trim();
-          if (!narrativeDevice) {
-            const seed = (sentenceOne + sentenceTwo).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-            narrativeDevice = NARRATIVE_DEVICES[seed % NARRATIVE_DEVICES.length];
+          {
+            const pool = narrativesForRarity(rarity);
+            const matched = pool.find(
+              (n) => n.label.toLowerCase() === narrativeDevice.toLowerCase(),
+            );
+            if (matched) {
+              narrativeDevice = matched.label;
+            } else {
+              const seed = (sentenceOne + sentenceTwo).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+              narrativeDevice = weightedPick(pool, seed).label;
+            }
           }
           let presentationFormat = (brief.presentation_format ?? "").trim();
           const allowedPresentations = PRESENTATION_BY_RARITY[rarity];
