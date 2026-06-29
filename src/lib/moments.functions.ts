@@ -3,6 +3,12 @@ import { z } from "zod";
 
 const InputSchema = z.object({ id: z.string().uuid() });
 
+const ThumbSchema = z.object({
+  id: z.string().uuid(),
+  // data URL: data:image/png;base64,XXXX
+  dataUrl: z.string().min(64).max(8_000_000),
+});
+
 export type MomentSummary = {
   id: string;
   tagline: string;
