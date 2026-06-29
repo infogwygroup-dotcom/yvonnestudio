@@ -92,7 +92,7 @@ export const getMoment = createServerFn({ method: "GET" })
     const { data: row, error } = await supabaseAdmin
       .from("moments")
       .select(
-        "id, tagline, sentence_one, sentence_two, card_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format, narrative_device, presentation_format",
+        "id, tagline, sentence_one, sentence_two, card_image_path, thumb_image_path, photo_one_path, photo_two_path, still_one_path, still_two_path, created_at, director_notes, ripple_number, rarity, genre, mood, visual_language, format, narrative_device, presentation_format",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -102,6 +102,7 @@ export const getMoment = createServerFn({ method: "GET" })
 
     const paths = [
       row.card_image_path,
+      (row as { thumb_image_path?: string | null }).thumb_image_path,
       row.photo_one_path,
       row.photo_two_path,
       row.still_one_path,
@@ -134,6 +135,7 @@ export const getMoment = createServerFn({ method: "GET" })
       sentence_one: row.sentence_one,
       sentence_two: row.sentence_two,
       card_image_url: urlFor(row.card_image_path),
+      thumb_image_url: urlFor((row as { thumb_image_path?: string | null }).thumb_image_path ?? ""),
       photo_one_url: urlFor(row.photo_one_path),
       photo_two_url: urlFor(row.photo_two_path),
       still_one_url: row.still_one_path ? urlFor(row.still_one_path) : urlFor(row.photo_one_path),
