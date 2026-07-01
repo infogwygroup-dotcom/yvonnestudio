@@ -332,32 +332,11 @@ function ComposingScreen() {
   );
 }
 
-function VersionSwitcher({ current }: { current: "beta1" | "beta2" | "next" | "v3" }) {
-  const versions = [
-    { id: "beta1" as const, label: "Beta 1.0", to: "/v/beta1" },
-    { id: "beta2" as const, label: "Beta 2.0", to: "/v/beta2" },
-    { id: "v3" as const, label: "V3.0", to: "/v/v3" },
-    { id: "next" as const, label: "Next", to: "/v/next" },
-  ];
+function VersionSwitcher({ current: _current }: { current: "beta1" | "beta2" | "next" | "v3" }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center pt-4 sm:pt-6">
-      <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border/70 bg-background/80 px-1.5 py-1 text-[10px] uppercase tracking-[0.18em] shadow-sm backdrop-blur">
-        <span className="px-2 text-muted-foreground/70">Version</span>
-        {versions.map((v) => {
-          const active = v.id === current;
-          return (
-            <Link
-              key={v.id}
-              to={v.to}
-              className={
-                "rounded-full px-3 py-1 transition-colors " +
-                (active ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground")
-              }
-            >
-              {v.label}
-            </Link>
-          );
-        })}
+      <div className="pointer-events-auto rounded-full border border-border/70 bg-background/80 px-3.5 py-1 text-[10px] uppercase tracking-[0.18em] shadow-sm backdrop-blur text-foreground">
+        Beta 2.0
       </div>
     </div>
   );
