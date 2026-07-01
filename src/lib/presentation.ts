@@ -11,6 +11,10 @@ import {
   ContactSheetLayout,
   BlueprintLayout,
   BookChapterLayout,
+  PostcardLayout,
+  PolaroidLayout,
+  ReceiptLayout,
+  BookmarkLayout,
   FallbackLayout,
 } from "@/components/v2/layouts";
 
@@ -29,16 +33,24 @@ const REGISTRY: Record<string, LayoutComponent> = {
   "scrapbook": JournalLayout,
   "memory album": JournalLayout,
   "passport page": JournalLayout,
+  "handwritten note": JournalLayout,
   "vinyl record cover": VinylLayout,
   "museum exhibition card": MuseumCardLayout,
   "gallery print": MuseumCardLayout,
   "film strip": FilmStripLayout,
   "movie ticket": TicketLayout,
+  "ticket stub": TicketLayout,
   "newspaper front page": NewspaperLayout,
   "storyboard": ContactSheetLayout,
   "comic page": ContactSheetLayout,
   "photo print": ContactSheetLayout,
+  "photo strip": ContactSheetLayout,
   "blueprint": BlueprintLayout,
+  "postcard": PostcardLayout,
+  "polaroid frame": PolaroidLayout,
+  "cafe receipt": ReceiptLayout,
+  "café receipt": ReceiptLayout,
+  "bookmark": BookmarkLayout,
 };
 
 export function pickLayout(presentationFormat: string): LayoutComponent {
