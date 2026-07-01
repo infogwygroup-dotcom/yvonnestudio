@@ -458,45 +458,6 @@ export function BlueprintLayout({ moment }: Props) {
   );
 }
 
-/* ============================================================ */
-/* 11. BOOK CHAPTER                                              */
-/* ============================================================ */
-export function BookChapterLayout({ moment }: Props) {
-  const chapter = ((moment.ripple_number ?? 1) % 24) + 1;
-  return (
-    <PageShell moment={moment} className="bg-[#f3ecdc]">
-      <div className="mx-auto grid max-w-4xl gap-10 bg-[#fbf6ea] p-10 shadow-xl ring-1 ring-amber-900/10 sm:grid-cols-[1fr_1.2fr] sm:p-14">
-        <div className="relative">
-          <img src={moment.card_image_url} alt={moment.tagline} className="w-full object-cover shadow-md ring-1 ring-amber-900/15" />
-          <div className="absolute -right-2 -top-3 h-24 w-6 bg-rose-700/90 shadow-md" aria-hidden />
-          <p className="mt-3 text-center font-serif text-xs italic text-amber-900/70">
-            Plate {chapter} · {moment.giver_location}
-          </p>
-        </div>
-        <article className="font-serif text-stone-800">
-          <p className="text-[10px] uppercase tracking-[0.4em] text-stone-500">Chapter {chapter}</p>
-          <h1 className="mt-2 text-3xl italic leading-tight text-stone-900">
-            {moment.tagline}
-          </h1>
-          <p className="mt-6 text-[15px] leading-[1.85] text-stone-800">
-            <span className="float-left mr-2 mt-1 font-serif text-5xl leading-none text-stone-900">
-              {moment.interpretation?.[0] ?? "T"}
-            </span>
-            {moment.interpretation?.slice(1)}
-          </p>
-          <p className="relative mt-8 -rotate-1 pl-4 text-[12px] italic leading-relaxed text-rose-900/70">
-            <span className="absolute left-0 top-1 h-full w-px bg-rose-900/40" />
-            margin note — {moment.mood?.toLowerCase()}, light from the left, hold the breath here.
-          </p>
-          <div className="mt-10 flex items-baseline justify-between border-t border-stone-300 pt-3 text-[10px] uppercase tracking-[0.28em] text-stone-500">
-            <span>Ripple Collection · Vol. I</span>
-            <span>p. {String((moment.ripple_number ?? 1) * 7).padStart(3, "0")}</span>
-          </div>
-        </article>
-      </div>
-    </PageShell>
-  );
-}
 
 /* ============================================================ */
 /* 12. POSTCARD                                                  */
