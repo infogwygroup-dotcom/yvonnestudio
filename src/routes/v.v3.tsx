@@ -1,16 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
-export const Route = createFileRoute("/v/beta2")({
+export const Route = createFileRoute("/v/v3")({
   head: () => ({
     meta: [
-      { title: "Ripple Studio · Beta 2.0" },
+      { title: "Ripple Studio · V3.0 — Collectible Editions" },
       {
         name: "description",
         content:
           "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
       },
-      { property: "og:title", content: "Ripple Studio · Beta 2.0" },
+      { property: "og:title", content: "Ripple Studio · V3.0 — Collectible Editions" },
       {
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
@@ -72,13 +72,14 @@ function HomePage() {
       fd.append("photo_two", files.two);
       fd.append("sentence_one", sentences.one.trim());
       fd.append("sentence_two", sentences.two.trim());
+      fd.append("version", "v3");
       const res = await fetch("/api/create-moment", { method: "POST", body: fd });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error || `Failed (${res.status})`);
       }
       const { id } = (await res.json()) as { id: string };
-      navigate({ to: "/v2/m/$id", params: { id } });
+      navigate({ to: "/v3/m/$id", params: { id } });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setSubmitting(false);
@@ -89,7 +90,7 @@ function HomePage() {
 
   return (
     <main className="paper min-h-screen relative">
-      <VersionSwitcher current="beta2" />
+      <VersionSwitcher current="v3" />
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>

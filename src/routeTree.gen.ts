@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VV3RouteImport } from './routes/v.v3'
 import { Route as VNextRouteImport } from './routes/v.next'
 import { Route as VBeta2RouteImport } from './routes/v.beta2'
 import { Route as VBeta1RouteImport } from './routes/v.beta1'
@@ -27,6 +28,11 @@ const CollectionRoute = CollectionRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VV3Route = VV3RouteImport.update({
+  id: '/v/v3',
+  path: '/v/v3',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VNextRoute = VNextRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/v/beta1': typeof VBeta1Route
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
+  '/v/v3': typeof VV3Route
   '/v2/m/$id': typeof V2MIdRoute
   '/v3/m/$id': typeof V3MIdRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/v/beta1': typeof VBeta1Route
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
+  '/v/v3': typeof VV3Route
   '/v2/m/$id': typeof V2MIdRoute
   '/v3/m/$id': typeof V3MIdRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/v/beta1': typeof VBeta1Route
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
+  '/v/v3': typeof VV3Route
   '/v2/m/$id': typeof V2MIdRoute
   '/v3/m/$id': typeof V3MIdRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/v/beta1'
     | '/v/beta2'
     | '/v/next'
+    | '/v/v3'
     | '/v2/m/$id'
     | '/v3/m/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/v/beta1'
     | '/v/beta2'
     | '/v/next'
+    | '/v/v3'
     | '/v2/m/$id'
     | '/v3/m/$id'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/v/beta1'
     | '/v/beta2'
     | '/v/next'
+    | '/v/v3'
     | '/v2/m/$id'
     | '/v3/m/$id'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   VBeta1Route: typeof VBeta1Route
   VBeta2Route: typeof VBeta2Route
   VNextRoute: typeof VNextRoute
+  VV3Route: typeof VV3Route
   V2MIdRoute: typeof V2MIdRoute
   V3MIdRoute: typeof V3MIdRoute
 }
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v/v3': {
+      id: '/v/v3'
+      path: '/v/v3'
+      fullPath: '/v/v3'
+      preLoaderRoute: typeof VV3RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/v/next': {
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   VBeta1Route: VBeta1Route,
   VBeta2Route: VBeta2Route,
   VNextRoute: VNextRoute,
+  VV3Route: VV3Route,
   V2MIdRoute: V2MIdRoute,
   V3MIdRoute: V3MIdRoute,
 }
