@@ -1,33 +1,22 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-
-const checkNextEnabled = createServerFn({ method: "GET" }).handler(async () => {
-  return { disabled: process.env.DISABLE_V_NEXT === "true" };
-});
 
 export const Route = createFileRoute("/v/beta2")({
   head: () => ({
     meta: [
-      { title: "Ripple Studio · Next — Experimental" },
+      { title: "Ripple Studio · Beta 2.0" },
       {
         name: "description",
         content:
           "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
       },
-      { property: "og:title", content: "Ripple Studio · Next" },
+      { property: "og:title", content: "Ripple Studio · Beta 2.0" },
       {
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
       },
     ],
   }),
-  loader: async () => {
-    const { disabled } = await checkNextEnabled();
-    if (disabled) {
-      throw redirect({ to: "/v/beta1" });
-    }
-  },
   errorComponent: ({ error, reset }) => (
     <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <p className="eyebrow">Something went wrong</p>
