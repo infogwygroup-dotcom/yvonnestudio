@@ -1,1 +1,0 @@
-ALTER TABLE public.moments ADD COLUMN IF NOT EXISTS thumb_image_path text;

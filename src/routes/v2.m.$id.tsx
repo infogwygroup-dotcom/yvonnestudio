@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
-import { getMoment, saveMomentThumb } from "@/lib/moments.functions";
+import { getMoment } from "@/lib/moments.functions";
 import { pickLayout } from "@/lib/presentation";
 import { LetterSection } from "@/routes/m.$id";
 
@@ -59,63 +58,11 @@ export const Route = createFileRoute("/v2/m/$id")({
 function V2MomentPage() {
   const { moment } = Route.useLoaderData();
   const Layout = pickLayout(moment.presentation_format);
-  const captureRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (moment.thumb_image_url) return;
-    const node = captureRef.current;
-    if (!node) return;
-    let cancelled = false;
-
-    const run = async () => {
-      try {
-        // Wait for fonts + images inside the capture area to load
-        if (document.fonts?.ready) await document.fonts.ready;
-        const imgs = Array.from(node.querySelectorAll("img"));
-        await Promise.all(
-          imgs.map(
-            (img) =>
-              img.complete
-                ? Promise.resolve()
-                : new Promise<void>((res) => {
-                    img.addEventListener("load", () => res(), { once: true });
-                    img.addEventListener("error", () => res(), { once: true });
-                  }),
-          ),
-        );
-        // Give layout a beat
-        await new Promise((r) => setTimeout(r, 250));
-        if (cancelled) return;
-
-        const { toJpeg } = await import("html-to-image");
-        const dataUrl = await toJpeg(node, {
-          quality: 0.88,
-          pixelRatio: 1.25,
-          backgroundColor: "#f5efe4",
-          cacheBust: true,
-          // Skip nodes with data-no-capture
-          filter: (n) =>
-            !(n instanceof HTMLElement && n.dataset.noCapture === "true"),
-        });
-        if (cancelled) return;
-        await saveMomentThumb({ data: { id: moment.id, dataUrl } });
-      } catch (err) {
-        console.warn("Thumb capture failed", err);
-      }
-    };
-    run();
-    return () => {
-      cancelled = true;
-    };
-  }, [moment.id, moment.thumb_image_url]);
-
   return (
     <>
-      <div ref={captureRef}>
-        <Layout moment={moment} />
-      </div>
-      <section className="paper px-6 pb-20">
-        <div className="mx-auto max-w-4xl" data-no-capture="true">
+      <Layout moment={moment} />
+      <section className="paper px-6 pb-32">
+        <div className="mx-auto max-w-4xl">
           <LetterSection
             date={moment.created_at}
             giver={{
@@ -139,28 +86,6 @@ function V2MomentPage() {
                 "His reply quietly\ncompleted the story.",
             }}
           />
-
-          <div className="mt-16 flex flex-col items-center gap-5 text-center">
-            <div className="h-px w-16 bg-border" />
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/v/next"
-                className="btn-journal inline-flex items-center gap-2 px-6 py-3 text-xs font-medium uppercase tracking-[0.18em]"
-              >
-                Create another Ripple
-                <span>→</span>
-              </Link>
-              <Link
-                to="/collection"
-                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-              >
-                Open the Archive
-              </Link>
-            </div>
-            <p className="text-[11px] text-muted-foreground/70">
-              Every Ripple is a one-of-a-kind edition.
-            </p>
-          </div>
         </div>
       </section>
     </>

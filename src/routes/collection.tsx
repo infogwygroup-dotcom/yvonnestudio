@@ -89,15 +89,8 @@ function CollectionPage() {
                 className="group block"
               >
                 <div className="relative overflow-hidden rounded-sm bg-[#fbf6ec] shadow-[0_1px_2px_rgba(60,40,20,0.08),0_8px_24px_-12px_rgba(60,40,20,0.25)] ring-1 ring-stone-200/70 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_2px_4px_rgba(60,40,20,0.1),0_16px_32px_-12px_rgba(60,40,20,0.35)]">
-                  <div className="aspect-[3/4] overflow-hidden bg-stone-200 flex items-start justify-center">
-                    {m.thumb_image_url ? (
-                      <img
-                        src={m.thumb_image_url}
-                        alt={m.tagline}
-                        loading="lazy"
-                        className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
-                      />
-                    ) : m.card_image_url ? (
+                  <div className="aspect-[3/4] overflow-hidden bg-stone-200">
+                    {m.card_image_url ? (
                       <img
                         src={m.card_image_url}
                         alt={m.tagline}
