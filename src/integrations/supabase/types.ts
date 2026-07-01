@@ -34,6 +34,7 @@ export type Database = {
           still_one_path: string | null
           still_two_path: string | null
           tagline: string
+          thumb_image_path: string | null
           visual_language: string[] | null
         }
         Insert: {
@@ -55,6 +56,7 @@ export type Database = {
           still_one_path?: string | null
           still_two_path?: string | null
           tagline: string
+          thumb_image_path?: string | null
           visual_language?: string[] | null
         }
         Update: {
@@ -76,6 +78,7 @@ export type Database = {
           still_one_path?: string | null
           still_two_path?: string | null
           tagline?: string
+          thumb_image_path?: string | null
           visual_language?: string[] | null
         }
         Relationships: []
