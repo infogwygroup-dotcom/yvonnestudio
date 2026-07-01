@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VV3RouteImport } from './routes/v.v3'
 import { Route as VNextRouteImport } from './routes/v.next'
 import { Route as VBeta2RouteImport } from './routes/v.beta2'
 import { Route as VBeta1RouteImport } from './routes/v.beta1'
 import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
+import { Route as V3MIdRouteImport } from './routes/v3.m.$id'
 import { Route as V2MIdRouteImport } from './routes/v2.m.$id'
 
 const CollectionRoute = CollectionRouteImport.update({
@@ -26,6 +28,11 @@ const CollectionRoute = CollectionRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VV3Route = VV3RouteImport.update({
+  id: '/v/v3',
+  path: '/v/v3',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VNextRoute = VNextRouteImport.update({
@@ -53,6 +60,11 @@ const ApiCreateMomentRoute = ApiCreateMomentRouteImport.update({
   path: '/api/create-moment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const V3MIdRoute = V3MIdRouteImport.update({
+  id: '/v3/m/$id',
+  path: '/v3/m/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const V2MIdRoute = V2MIdRouteImport.update({
   id: '/v2/m/$id',
   path: '/v2/m/$id',
@@ -67,7 +79,9 @@ export interface FileRoutesByFullPath {
   '/v/beta1': typeof VBeta1Route
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
+  '/v/v3': typeof VV3Route
   '/v2/m/$id': typeof V2MIdRoute
+  '/v3/m/$id': typeof V3MIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,7 +91,9 @@ export interface FileRoutesByTo {
   '/v/beta1': typeof VBeta1Route
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
+  '/v/v3': typeof VV3Route
   '/v2/m/$id': typeof V2MIdRoute
+  '/v3/m/$id': typeof V3MIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,7 +104,9 @@ export interface FileRoutesById {
   '/v/beta1': typeof VBeta1Route
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
+  '/v/v3': typeof VV3Route
   '/v2/m/$id': typeof V2MIdRoute
+  '/v3/m/$id': typeof V3MIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,7 +118,9 @@ export interface FileRouteTypes {
     | '/v/beta1'
     | '/v/beta2'
     | '/v/next'
+    | '/v/v3'
     | '/v2/m/$id'
+    | '/v3/m/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -110,7 +130,9 @@ export interface FileRouteTypes {
     | '/v/beta1'
     | '/v/beta2'
     | '/v/next'
+    | '/v/v3'
     | '/v2/m/$id'
+    | '/v3/m/$id'
   id:
     | '__root__'
     | '/'
@@ -120,7 +142,9 @@ export interface FileRouteTypes {
     | '/v/beta1'
     | '/v/beta2'
     | '/v/next'
+    | '/v/v3'
     | '/v2/m/$id'
+    | '/v3/m/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,7 +155,9 @@ export interface RootRouteChildren {
   VBeta1Route: typeof VBeta1Route
   VBeta2Route: typeof VBeta2Route
   VNextRoute: typeof VNextRoute
+  VV3Route: typeof VV3Route
   V2MIdRoute: typeof V2MIdRoute
+  V3MIdRoute: typeof V3MIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -148,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v/v3': {
+      id: '/v/v3'
+      path: '/v/v3'
+      fullPath: '/v/v3'
+      preLoaderRoute: typeof VV3RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/v/next': {
@@ -185,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCreateMomentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/v3/m/$id': {
+      id: '/v3/m/$id'
+      path: '/v3/m/$id'
+      fullPath: '/v3/m/$id'
+      preLoaderRoute: typeof V3MIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/v2/m/$id': {
       id: '/v2/m/$id'
       path: '/v2/m/$id'
@@ -203,7 +243,9 @@ const rootRouteChildren: RootRouteChildren = {
   VBeta1Route: VBeta1Route,
   VBeta2Route: VBeta2Route,
   VNextRoute: VNextRoute,
+  VV3Route: VV3Route,
   V2MIdRoute: V2MIdRoute,
+  V3MIdRoute: V3MIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

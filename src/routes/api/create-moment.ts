@@ -8,6 +8,7 @@ import {
   weightedPick,
   type Tier,
 } from "@/lib/v2/catalog";
+import { mergedPresentationPool, renderV3FormatHints } from "@/lib/v3/formats";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
 
@@ -86,9 +87,16 @@ function rarityDirective(rarity: Rarity): string {
   }
 }
 
-function presentationDirective(rarity: Rarity): string {
-  const pool = PRESENTATION_BY_RARITY[rarity];
-  return `PRESENTATION FORMAT — choose ONE collectible edition format for THIS Ripple from this rarity-gated pool: ${pool.join(" · ")}. Set "presentation_format" to that exact label. The presentation IS part of the artwork — pick the one that best frames the emotion, not the most decorative one.`;
+function presentationDirective(rarity: Rarity, version: "v2" | "v3"): string {
+  const pool =
+    version === "v3"
+      ? mergedPresentationPool(rarity, PRESENTATION_BY_RARITY)
+      : PRESENTATION_BY_RARITY[rarity];
+  const v3Hint =
+    version === "v3"
+      ? `\n\nSome of these formats are physical collectibles — think of the memory as a real object someone would keep. Reference for the new editions:\n${renderV3FormatHints(rarity)}\n\nAsk yourself: "What is the most beautiful real-world medium to preserve THIS memory?" Choose the one that best matches the story's emotion, not the most decorative one. The same story should be able to become a different format on another day — avoid picking the most obvious format twice in a row.`
+      : "";
+  return `PRESENTATION FORMAT — choose ONE collectible edition format for THIS Ripple from this rarity-gated pool: ${pool.join(" · ")}. Set "presentation_format" to that exact label. The presentation IS part of the artwork — pick the one that best frames the emotion, not the most decorative one.${v3Hint}`;
 }
 
 async function callDirector(
@@ -100,6 +108,7 @@ async function callDirector(
   recentDirectors: string[],
   unexploredDirectors: string[],
   rarity: Rarity,
+  version: "v2" | "v3" = "v2",
 ): Promise<DirectorBrief> {
   const recentBlock = recentDirectors.length
     ? `\nRECENTLY USED DIRECTORS (avoid repeating these unless the story absolutely demands it — Ripple Studio must feel like a different film every time):\n- ${recentDirectors.join("\n- ")}\n`
@@ -132,7 +141,7 @@ ${recentBlock}${explorationBlock}   Selection rule: emotion decides the director
 
 ${rarityDirective(rarity)}
 
-${presentationDirective(rarity)}
+${presentationDirective(rarity, version)}
 
 NARRATIVE DEVICE — choose ONE storytelling angle that explains WHY this scene exists. Pick from (★ = curator-preferred): ${narrativeListRendered}. Set "narrative_device" to that exact label. This replaces generic genre tagging.
 
@@ -332,6 +341,8 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoTwo = form.get("photo_two");
           const sentenceOne = String(form.get("sentence_one") ?? "").trim();
           const sentenceTwo = String(form.get("sentence_two") ?? "").trim();
+          const version: "v2" | "v3" =
+            String(form.get("version") ?? "").toLowerCase() === "v3" ? "v3" : "v2";
 
           if (!(photoOne instanceof File) || !(photoTwo instanceof File)) {
             return Response.json({ error: "Both photos are required." }, { status: 400 });
@@ -393,6 +404,7 @@ export const Route = createFileRoute("/api/create-moment")({
             recentDirectors,
             unexploredDirectors,
             rarity,
+            version,
           );
 
           // Deterministic fallback if the model omits the new V2 fields.
@@ -410,7 +422,10 @@ export const Route = createFileRoute("/api/create-moment")({
             }
           }
           let presentationFormat = (brief.presentation_format ?? "").trim();
-          const allowedPresentations = PRESENTATION_BY_RARITY[rarity];
+          const allowedPresentations =
+            version === "v3"
+              ? mergedPresentationPool(rarity, PRESENTATION_BY_RARITY)
+              : PRESENTATION_BY_RARITY[rarity];
           const normalised = presentationFormat.toLowerCase();
           const matchedPresentation = allowedPresentations.find(
             (p) => p.toLowerCase() === normalised,
