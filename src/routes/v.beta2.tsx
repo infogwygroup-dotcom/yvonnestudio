@@ -1,22 +1,42 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
-export const Route = createFileRoute("/v/beta1")({
+export const Route = createFileRoute("/v/beta2")({
   head: () => ({
     meta: [
-      { title: "Ripple Studio · Beta 1.0 — Gujjiu" },
+      { title: "Ripple Studio · Beta 2.0" },
       {
         name: "description",
         content:
           "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
       },
-      { property: "og:title", content: "Ripple Studio · Beta 1.0" },
+      { property: "og:title", content: "Ripple Studio · Beta 2.0" },
       {
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
       },
     ],
   }),
+  errorComponent: ({ error, reset }) => (
+    <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <p className="eyebrow">Something went wrong</p>
+      <p className="mt-4 text-sm text-muted-foreground">
+        {error instanceof Error ? error.message : "Please try again."}
+      </p>
+      <button
+        onClick={() => reset?.()}
+        className="mt-6 btn-journal px-6 py-2 text-xs uppercase tracking-[0.18em]"
+      >
+        Retry
+      </button>
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <p className="eyebrow">Not found</p>
+      <p className="mt-4 text-sm text-muted-foreground">This page does not exist.</p>
+    </div>
+  ),
   component: HomePage,
 });
 
@@ -58,7 +78,7 @@ function HomePage() {
         throw new Error(body.error || `Failed (${res.status})`);
       }
       const { id } = (await res.json()) as { id: string };
-      navigate({ to: "/m/$id", params: { id } });
+      navigate({ to: "/v2/m/$id", params: { id } });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setSubmitting(false);
@@ -69,7 +89,7 @@ function HomePage() {
 
   return (
     <main className="paper min-h-screen relative">
-      <VersionSwitcher current="beta1" />
+      <VersionSwitcher current="beta2" />
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>

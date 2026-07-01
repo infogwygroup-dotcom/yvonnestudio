@@ -332,9 +332,10 @@ function ComposingScreen() {
   );
 }
 
-function VersionSwitcher({ current }: { current: "beta1" | "next" }) {
+function VersionSwitcher({ current }: { current: "beta1" | "beta2" | "next" }) {
   const versions = [
     { id: "beta1" as const, label: "Beta 1.0", to: "/v/beta1" },
+    { id: "beta2" as const, label: "Beta 2.0", to: "/v/beta2" },
     { id: "next" as const, label: "Next", to: "/v/next" },
   ];
   return (
