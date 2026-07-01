@@ -458,6 +458,144 @@ export function BlueprintLayout({ moment }: Props) {
   );
 }
 
+
+/* ============================================================ */
+/* 12. POSTCARD                                                  */
+/* ============================================================ */
+export function PostcardLayout({ moment }: Props) {
+  const number = (moment.ripple_number ?? 0).toString().padStart(6, "0");
+  return (
+    <PageShell moment={moment}>
+      <div className="mx-auto grid max-w-4xl gap-6 bg-[#fbf7ec] p-5 shadow-[0_28px_70px_-30px_rgba(80,55,30,0.35)] ring-1 ring-amber-900/10 sm:grid-cols-[1.2fr_1fr] sm:p-8">
+        <div className="relative overflow-hidden bg-[#f3ead7] p-3 shadow-inner ring-1 ring-amber-900/10">
+          <img src={moment.card_image_url} alt={moment.tagline} className="w-full object-cover shadow-sm" />
+          <div className="absolute bottom-5 left-5 bg-background/85 px-3 py-1.5 font-serif text-xs italic text-foreground">
+            {moment.tagline}
+          </div>
+        </div>
+        <div className="flex flex-col justify-between p-2 sm:p-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Air Mail</span>
+              <div className="h-10 w-12 bg-[#b91c1c]/90 p-1 text-[8px] uppercase tracking-widest text-white/90">
+                <div className="border border-white/40 p-0.5 text-center">RS<br/>{moment.rarity[0].toUpperCase()}</div>
+              </div>
+            </div>
+            <div className="space-y-0.5 border-b border-foreground/20 pb-3">
+              <p className="font-serif text-xs text-foreground/60">To: A stranger who left a kindness</p>
+              <p className="font-serif text-xs text-foreground/60">From: {moment.giver_location || "Somewhere"}</p>
+            </div>
+            <p className="font-serif text-sm italic leading-relaxed text-foreground/85">
+              {moment.interpretation}
+            </p>
+          </div>
+          <div className="mt-6 flex items-center justify-between border-t border-foreground/15 pt-3 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+            <span>Ripple Post No. {number}</span>
+            <span><FormattedDate iso={moment.created_at} /></span>
+          </div>
+        </div>
+      </div>
+    </PageShell>
+  );
+}
+
+/* ============================================================ */
+/* 13. POLAROID FRAME                                            */
+/* ============================================================ */
+export function PolaroidLayout({ moment }: Props) {
+  return (
+    <PageShell moment={moment}>
+      <div className="mx-auto max-w-xl">
+        <div className="bg-[#f5f0e6] p-4 pb-10 shadow-[0_24px_50px_-20px_rgba(70,50,30,0.4)] ring-1 ring-amber-900/10 rotate-[-1.5deg]">
+          <div className="relative overflow-hidden bg-black">
+            <img src={moment.card_image_url} alt={moment.tagline} className="w-full object-cover" />
+          </div>
+          <p className="mt-4 text-center font-hand text-lg text-amber-950/85">
+            {moment.tagline}
+          </p>
+          <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+            {moment.mood} · {new Date(moment.created_at).getFullYear()}
+          </p>
+        </div>
+      </div>
+    </PageShell>
+  );
+}
+
+/* ============================================================ */
+/* 14. CAFÉ RECEIPT                                             */
+/* ============================================================ */
+export function ReceiptLayout({ moment }: Props) {
+  const number = (moment.ripple_number ?? 0).toString().padStart(6, "0");
+  const items = [
+    { name: "One kind sentence", price: "∞" },
+    { name: "A stranger's photo", price: "—" },
+    { name: "Memory preserved", price: moment.rarity[0].toUpperCase() + moment.rarity.slice(1) },
+  ];
+  return (
+    <PageShell moment={moment}>
+      <div className="mx-auto max-w-sm bg-[#faf8f3] p-8 shadow-[0_18px_45px_-15px_rgba(50,40,30,0.35)] [background:linear-gradient(#faf8f3_0_0)_padding-box,linear-gradient(135deg,transparent_6px,#d4c8b0_6px,#d4c8b0_7px,transparent_7px)_0_0/10px_10px_repeat] ring-1 ring-foreground/10">
+        <div className="text-center font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/70">
+          <p>RIPPLE CAFÉ</p>
+          <p>{moment.giver_location || "Everywhere"} · {new Date(moment.created_at).getFullYear()}</p>
+        </div>
+        <div className="my-5 border-t border-dashed border-foreground/30" />
+        <p className="text-center font-serif text-xl italic leading-tight text-foreground">
+          {moment.tagline}
+        </p>
+        <div className="my-4 border-t border-dashed border-foreground/30" />
+        <div className="space-y-2 font-mono text-xs text-foreground/80">
+          {items.map((it, i) => (
+            <div key={i} className="flex justify-between">
+              <span>{it.name}</span>
+              <span>{it.price}</span>
+            </div>
+          ))}
+        </div>
+        <div className="my-4 border-t border-dashed border-foreground/30" />
+        <p className="text-center font-serif text-xs italic leading-relaxed text-foreground/70">
+          {moment.interpretation}
+        </p>
+        <div className="my-4 border-t border-dashed border-foreground/30" />
+        <p className="text-center font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+          Receipt No. {number} · Thank you for this ripple
+        </p>
+      </div>
+    </PageShell>
+  );
+}
+
+/* ============================================================ */
+/* 15. BOOKMARK                                                  */
+/* ============================================================ */
+export function BookmarkLayout({ moment }: Props) {
+  const number = (moment.ripple_number ?? 0).toString().padStart(6, "0");
+  return (
+    <PageShell moment={moment}>
+      <div className="mx-auto max-w-md overflow-hidden bg-[#fbf6ec] shadow-[0_24px_55px_-20px_rgba(70,50,30,0.35)] ring-1 ring-amber-900/10">
+        <div className="relative h-48 w-full">
+          <img src={moment.card_image_url} alt={moment.tagline} className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fbf6ec]" />
+        </div>
+        <div className="px-8 pb-10 pt-4 text-center">
+          <div className="mx-auto mb-4 h-1 w-12 bg-foreground/20" />
+          <p className="font-serif text-lg italic leading-snug text-foreground">
+            “{moment.tagline}”
+          </p>
+          <p className="mt-3 font-serif text-xs italic text-muted-foreground">
+            {moment.narrative_device}
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-3 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+            <span>Ripple</span>
+            <span className="h-px w-6 bg-foreground/20" />
+            <span>No. {number}</span>
+          </div>
+        </div>
+      </div>
+    </PageShell>
+  );
+}
+
 /* ============================================================ */
 /* FALLBACK — editorial                                          */
 /* ============================================================ */

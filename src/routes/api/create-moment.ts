@@ -43,7 +43,19 @@ type Rarity = Tier;
 
 // Presentation formats — gated by rarity. Common/Rare stay grounded; Epic/Legendary unlock experimental editions.
 const PRESENTATION_BY_RARITY: Record<Rarity, string[]> = {
-  common: ["Cinema Poster", "Journal Page", "Magazine Cover", "Photo Print"],
+  common: [
+    "Cinema Poster",
+    "Journal Page",
+    "Magazine Cover",
+    "Photo Print",
+    "Postcard",
+    "Photo Strip",
+    "Polaroid Frame",
+    "Café Receipt",
+    "Ticket Stub",
+    "Handwritten Note",
+    "Bookmark",
+  ],
   rare: ["Cinema Poster", "Magazine Cover", "Journal Page", "Travel Journal", "Notebook", "Old Letter"],
   epic: ["Magazine Cover", "Museum Exhibition Card", "Film Strip", "Movie Ticket", "Newspaper Front Page", "Storyboard", "Book Chapter"],
   legendary: ["Vinyl Record Cover", "Museum Exhibition Card", "Comic Page", "Scrapbook", "Memory Album", "Passport Page", "Blueprint", "Gallery Print"],
@@ -83,7 +95,7 @@ function rarityDirective(rarity: Rarity): string {
     case "rare":
       return `RARITY: RARE (≈10%). Stay within the cinematic frame, but introduce one unexpected artistic treatment — a striking camera angle, a symbolic composition, exceptional lighting, more emotional staging, or refined typography. Leave "format" as "Cinematic Frame".`;
     default:
-      return `RARITY: COMMON. Beautiful standard cinematic frame. Leave "format" as "Cinematic Frame".`;
+      return `RARITY: COMMON. A beautiful standard edition, but the format should still surprise. Choose from: Cinema Poster, Journal Page, Magazine Cover, Photo Print, Postcard, Photo Strip, Polaroid Frame, Café Receipt, Ticket Stub, Handwritten Note, Bookmark. Leave "format" as "Cinematic Frame" and set "presentation_format" to one grounded, collectible format that frames the emotion without overpowering it.`;
   }
 }
 
