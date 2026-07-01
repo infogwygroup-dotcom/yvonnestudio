@@ -6,7 +6,7 @@ const checkNextEnabled = createServerFn({ method: "GET" }).handler(async () => {
   return { disabled: process.env.DISABLE_V_NEXT === "true" };
 });
 
-export const Route = createFileRoute("/v/next")({
+export const Route = createFileRoute("/v/beta2")({
   head: () => ({
     meta: [
       { title: "Ripple Studio · Next — Experimental" },
