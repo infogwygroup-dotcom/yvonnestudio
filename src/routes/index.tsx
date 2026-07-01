@@ -301,10 +301,11 @@ function ComposingScreen() {
   );
 }
 
-function VersionSwitcher({ current }: { current: "beta1" | "beta2" | "next" }) {
+function VersionSwitcher({ current }: { current: "beta1" | "beta2" | "next" | "v3" }) {
   const versions = [
     { id: "beta1" as const, label: "Beta 1.0", to: "/v/beta1", note: "Stable" },
     { id: "beta2" as const, label: "Beta 2.0", to: "/v/beta2", note: "Stable" },
+    { id: "v3" as const, label: "V3.0", to: "/v/v3", note: "Collectibles" },
     { id: "next" as const, label: "Next", to: "/v/next", note: "Experimental" },
   ];
   return (
