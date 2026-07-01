@@ -341,6 +341,8 @@ export const Route = createFileRoute("/api/create-moment")({
           const photoTwo = form.get("photo_two");
           const sentenceOne = String(form.get("sentence_one") ?? "").trim();
           const sentenceTwo = String(form.get("sentence_two") ?? "").trim();
+          const version: "v2" | "v3" =
+            String(form.get("version") ?? "").toLowerCase() === "v3" ? "v3" : "v2";
 
           if (!(photoOne instanceof File) || !(photoTwo instanceof File)) {
             return Response.json({ error: "Both photos are required." }, { status: 400 });
@@ -402,6 +404,7 @@ export const Route = createFileRoute("/api/create-moment")({
             recentDirectors,
             unexploredDirectors,
             rarity,
+            version,
           );
 
           // Deterministic fallback if the model omits the new V2 fields.
@@ -419,7 +422,10 @@ export const Route = createFileRoute("/api/create-moment")({
             }
           }
           let presentationFormat = (brief.presentation_format ?? "").trim();
-          const allowedPresentations = PRESENTATION_BY_RARITY[rarity];
+          const allowedPresentations =
+            version === "v3"
+              ? mergedPresentationPool(rarity, PRESENTATION_BY_RARITY)
+              : PRESENTATION_BY_RARITY[rarity];
           const normalised = presentationFormat.toLowerCase();
           const matchedPresentation = allowedPresentations.find(
             (p) => p.toLowerCase() === normalised,
