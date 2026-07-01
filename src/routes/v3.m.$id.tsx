@@ -88,6 +88,22 @@ function V3MomentPage() {
           />
         </div>
       </section>
+
+      <section className="paper px-6 pb-24">
+        <div className="mx-auto max-w-4xl flex flex-col items-center text-center">
+          <div className="h-px w-24 bg-border" />
+          <Link
+            to="/v/v3"
+            className="group mt-10 btn-journal inline-flex items-center gap-3 px-10 py-4 text-sm font-medium uppercase tracking-[0.18em]"
+          >
+            Create another ripple
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </Link>
+          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-muted-foreground/70">
+            Every new story starts with two moments
+          </p>
+        </div>
+      </section>
     </>
   );
 }
