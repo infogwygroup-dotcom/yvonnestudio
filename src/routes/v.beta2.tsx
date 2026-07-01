@@ -89,7 +89,7 @@ function HomePage() {
 
   return (
     <main className="paper min-h-screen relative">
-      <VersionSwitcher current="next" />
+      <VersionSwitcher current="beta2" />
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-28 sm:pt-28">
         <header className="text-center">
           <p className="eyebrow">VOL. 01 · EVERYDAY STORIES</p>
