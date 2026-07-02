@@ -17,19 +17,42 @@ export const Route = createFileRoute("/m/$id")({
     if (!moment) throw notFound();
     return { moment };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const m = loaderData?.moment;
+    const url = `https://yvonnestudio.lovable.app/m/${params.id}`;
+    const fallbackDesc =
+      "A Ripple Moment — a cinematic memory born from two strangers, two photos, and two sentences of kindness.";
+    const desc = m?.tagline
+      ? `${m.tagline} — a Ripple Moment made from two strangers exchanging kindness.`
+      : fallbackDesc;
     return {
       meta: [
         { title: m ? `"${m.tagline}" — Ripple Moment` : "A Ripple Moment" },
-        { name: "description", content: m?.tagline ?? "A Ripple Moment" },
+        { name: "description", content: desc },
         { property: "og:title", content: m?.tagline ?? "A Ripple Moment" },
-        { property: "og:description", content: "A memory two strangers made together." },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
         { property: "og:image", content: m?.card_image_url ?? "" },
-        { property: "og:type", content: "website" },
+        { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:image", content: m?.card_image_url ?? "" },
       ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: m
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "CreativeWork",
+                name: m.tagline,
+                url,
+                image: m.card_image_url ?? undefined,
+                description: desc,
+              }),
+            },
+          ]
+        : undefined,
     };
   },
   component: MomentPage,
