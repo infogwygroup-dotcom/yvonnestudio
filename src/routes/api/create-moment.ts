@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createHmac, timingSafeEqual } from "crypto";
 import {
   DIRECTOR_NAMES,
   directorsForRarity,
@@ -337,6 +338,56 @@ function b64ToBuffer(b64: string) {
   return Buffer.from(b64, "base64");
 }
 
+// Detect real image type from magic bytes. Returns normalised MIME or null.
+function detectImageMime(bytes: Buffer): "image/jpeg" | "image/png" | "image/webp" | "image/gif" | null {
+  if (bytes.length < 12) return null;
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
+  if (
+    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 &&
+    bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a
+  ) return "image/png";
+  if (
+    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+    bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+  ) return "image/webp";
+  if (
+    bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x38 &&
+    (bytes[4] === 0x37 || bytes[4] === 0x39) && bytes[5] === 0x61
+  ) return "image/gif";
+  return null;
+}
+
+function extForMime(mime: string): string {
+  if (mime === "image/png") return "png";
+  if (mime === "image/webp") return "webp";
+  if (mime === "image/gif") return "gif";
+  return "jpg";
+}
+
+function verifyTicket(secret: string, ticket: string, ip: string): boolean {
+  const [expStr, sig] = ticket.split(".");
+  if (!expStr || !sig) return false;
+  const exp = Number(expStr);
+  if (!Number.isFinite(exp) || Date.now() > exp) return false;
+  const expected = createHmac("sha256", secret).update(`${ip}.${exp}`).digest("hex");
+  const a = Buffer.from(sig, "hex");
+  const b = Buffer.from(expected, "hex");
+  if (a.length !== b.length) return false;
+  try {
+    return timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
+
+function clientIp(request: Request): string {
+  return (
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "anon"
+  );
+}
+
 export const Route = createFileRoute("/api/create-moment")({
   server: {
     handlers: {
@@ -345,7 +396,22 @@ export const Route = createFileRoute("/api/create-moment")({
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const apiKey = process.env.LOVABLE_API_KEY;
           if (!apiKey) {
-            return Response.json({ error: "Missing LOVABLE_API_KEY" }, { status: 500 });
+            console.error("[create-moment] Missing LOVABLE_API_KEY");
+            return Response.json({ error: "Service unavailable" }, { status: 503 });
+          }
+
+          // Require a signed ticket obtained from /api/public/moment-ticket.
+          // The ticket endpoint is per-IP rate-limited; this prevents unauthenticated
+          // scripts from directly hammering the expensive AI pipeline.
+          const ticketSecret = process.env.MOMENT_TICKET_SECRET;
+          if (!ticketSecret) {
+            console.error("[create-moment] Missing MOMENT_TICKET_SECRET");
+            return Response.json({ error: "Service unavailable" }, { status: 503 });
+          }
+          const ticket = request.headers.get("x-moment-ticket") ?? "";
+          const ip = clientIp(request);
+          if (!verifyTicket(ticketSecret, ticket, ip)) {
+            return Response.json({ error: "Invalid or expired request token." }, { status: 401 });
           }
 
           const form = await request.formData();
@@ -372,8 +438,15 @@ export const Route = createFileRoute("/api/create-moment")({
 
           const photoOneBytes = Buffer.from(await photoOne.arrayBuffer());
           const photoTwoBytes = Buffer.from(await photoTwo.arrayBuffer());
-          const photoOneType = photoOne.type || "image/jpeg";
-          const photoTwoType = photoTwo.type || "image/jpeg";
+          // NEVER trust client-supplied MIME. Verify via magic bytes.
+          const photoOneType = detectImageMime(photoOneBytes);
+          const photoTwoType = detectImageMime(photoTwoBytes);
+          if (!photoOneType || !photoTwoType) {
+            return Response.json(
+              { error: "Photos must be JPEG, PNG, WebP, or GIF images." },
+              { status: 400 },
+            );
+          }
           const photoOneDataUrl = `data:${photoOneType};base64,${photoOneBytes.toString("base64")}`;
           const photoTwoDataUrl = `data:${photoTwoType};base64,${photoTwoBytes.toString("base64")}`;
 
@@ -464,8 +537,8 @@ export const Route = createFileRoute("/api/create-moment")({
           const stillTwoBytes = stillTwoB64 ? b64ToBuffer(stillTwoB64) : null;
 
           const id = crypto.randomUUID();
-          const ext1 = photoOneType.includes("png") ? "png" : "jpg";
-          const ext2 = photoTwoType.includes("png") ? "png" : "jpg";
+          const ext1 = extForMime(photoOneType);
+          const ext2 = extForMime(photoTwoType);
           const photoOnePath = `${id}/photo-one.${ext1}`;
           const photoTwoPath = `${id}/photo-two.${ext2}`;
           const cardPath = `${id}/card.png`;
@@ -536,9 +609,13 @@ export const Route = createFileRoute("/api/create-moment")({
 
           return Response.json({ id: inserted.id });
         } catch (err) {
-          const message = err instanceof Error ? err.message : "Unknown error";
-          console.error("[create-moment]", message);
-          return Response.json({ error: message }, { status: 500 });
+          // Log the full error server-side, return a generic message to the client
+          // to avoid leaking DB / storage / upstream API implementation details.
+          console.error("[create-moment]", err);
+          return Response.json(
+            { error: "We couldn't create your Ripple right now. Please try again." },
+            { status: 500 },
+          );
         }
       },
     },
