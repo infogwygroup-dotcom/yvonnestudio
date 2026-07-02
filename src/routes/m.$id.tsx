@@ -202,6 +202,8 @@ function MomentPage() {
         <div className="flex flex-col items-center gap-5">
           <button
             onClick={share}
+            aria-label={copied ? "Link copied to clipboard" : "Share this moment"}
+            aria-live="polite"
             className="rounded-full bg-primary px-8 py-4 text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground transition hover:bg-accent"
           >
             {copied ? "Link copied" : "Share this moment"}
