@@ -77,23 +77,45 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Y•studio" },
-      { name: "description", content: "director workflow" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Y•studio" },
-      { property: "og:description", content: "director workflow" },
+      { title: "Ripple Studio — Sharing Kindness" },
+      {
+        name: "description",
+        content:
+          "Ripple Studio turns two strangers, two photos, and two sentences into a cinematic memory — an AI-directed keepsake of everyday kindness worth sharing.",
+      },
+      { property: "og:site_name", content: "Ripple Studio" },
+      { property: "og:title", content: "Ripple Studio — Sharing Kindness" },
+      {
+        property: "og:description",
+        content:
+          "An AI creative director that transforms two strangers' photos and words into a cinematic memory of everyday kindness.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Y•studio" },
-      { name: "twitter:description", content: "director workflow" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/889e7da3-f281-470b-95c0-be69d4a91f3c/id-preview-4f759038--db7b8293-b312-4692-9433-e788bf5dfbf2.lovable.app-1782483687544.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/889e7da3-f281-470b-95c0-be69d4a91f3c/id-preview-4f759038--db7b8293-b312-4692-9433-e788bf5dfbf2.lovable.app-1782483687544.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Ripple Studio — Sharing Kindness" },
+      {
+        name: "twitter:description",
+        content:
+          "Two strangers. Two photos. Two sentences. An AI director turns them into a cinematic memory.",
+      },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Ripple Studio",
+          url: "https://yvonnestudio.lovable.app",
+          description:
+            "An AI creative director that turns small acts of kindness between strangers into cinematic memories.",
+        }),
       },
     ],
   }),

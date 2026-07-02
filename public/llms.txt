@@ -1,0 +1,17 @@
+# Ripple Studio
+
+> An AI creative director that turns two strangers, two photos, and two sentences into a cinematic memory of everyday kindness.
+
+Ripple Studio is a web app where two people exchange a small act of kindness, each leaving one photo and one sentence. An AI director (drawing on 26 director voices, 24 narrative devices, and 20+ presentation formats) composes the pair into a single collectible memory, tagged with a rarity tier.
+
+## Pages
+
+- [Home](/): Create a new Ripple Moment from two photos and two sentences.
+- [My Collection](/collection): Archive of every Ripple Moment created — a growing gallery of collectible memories.
+- [Beta 2.0](/v/beta2): The currently published creation flow — Infinite Stories Engine with 26 directors and 20 presentation formats.
+
+## Optional
+
+- [Beta 1.0](/v/beta1): Frozen snapshot of the original stable release.
+- [V3.0 Collectible Editions](/v/v3): Experimental physical formats — postcards, magnets, library cards, passport stamps.
+- [Next](/v/next): Experimental sandbox for the newest director voices and layouts.

@@ -9,14 +9,17 @@ export const Route = createFileRoute("/v/beta1")({
       {
         name: "description",
         content:
-          "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
+          "Gujjiu Beta 1.0 — the first stable release of Ripple Studio's AI director. A frozen snapshot of the original two-photo, two-sentence memory flow.",
       },
       { property: "og:title", content: "Ripple Studio · Beta 1.0" },
       {
         property: "og:description",
-        content: "Turn a small kindness into a memory worth keeping.",
+        content: "The original stable release of Ripple Studio's AI director — the first Gujjiu snapshot.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/v/beta1" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/v/beta1" }],
   }),
   component: HomePage,
 });
@@ -196,10 +199,11 @@ function SlotField({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
+          aria-label={preview ? `Change ${label.toLowerCase()} photo` : `Upload ${label.toLowerCase()} photo — ${uploadLabel}`}
           className="mt-5 relative block aspect-[4/5] w-full overflow-hidden journal-card upload-card hover:border-accent/60 sm:mt-4 sm:aspect-square"
         >
           {preview ? (
-            <img src={preview} alt="" className="h-full w-full object-cover" />
+            <img src={preview} alt={`Preview of ${label.toLowerCase()} photo`} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-muted-foreground sm:gap-3">
               <EmptyPhotoIllustration className="h-12 w-12 opacity-60 sm:h-11 sm:w-11" />

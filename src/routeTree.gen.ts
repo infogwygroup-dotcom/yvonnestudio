@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VV3RouteImport } from './routes/v.v3'
@@ -21,6 +22,11 @@ import { Route as V3MIdRouteImport } from './routes/v3.m.$id'
 import { Route as V2MIdRouteImport } from './routes/v2.m.$id'
 import { Route as ApiPublicMomentTicketRouteImport } from './routes/api/public/moment-ticket'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionRoute = CollectionRouteImport.update({
   id: '/collection',
   path: '/collection',
@@ -80,6 +86,7 @@ const ApiPublicMomentTicketRoute = ApiPublicMomentTicketRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/collection': typeof CollectionRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/collection': typeof CollectionRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/collection': typeof CollectionRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/create-moment': typeof ApiCreateMomentRoute
   '/m/$id': typeof MIdRoute
   '/v/beta1': typeof VBeta1Route
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/collection'
+    | '/sitemap.xml'
     | '/api/create-moment'
     | '/m/$id'
     | '/v/beta1'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/collection'
+    | '/sitemap.xml'
     | '/api/create-moment'
     | '/m/$id'
     | '/v/beta1'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/collection'
+    | '/sitemap.xml'
     | '/api/create-moment'
     | '/m/$id'
     | '/v/beta1'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CollectionRoute: typeof CollectionRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiCreateMomentRoute: typeof ApiCreateMomentRoute
   MIdRoute: typeof MIdRoute
   VBeta1Route: typeof VBeta1Route
@@ -175,6 +188,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collection': {
       id: '/collection'
       path: '/collection'
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CollectionRoute: CollectionRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiCreateMomentRoute: ApiCreateMomentRoute,
   MIdRoute: MIdRoute,
   VBeta1Route: VBeta1Route,

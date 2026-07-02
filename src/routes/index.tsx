@@ -16,6 +16,22 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Ripple Studio",
+          url: "https://yvonnestudio.lovable.app",
+          description:
+            "Ripple Studio turns two strangers' photos and words into a cinematic memory of everyday kindness.",
+        }),
+      },
     ],
   }),
   component: HomePage,
@@ -196,10 +212,11 @@ function SlotField({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
+          aria-label={preview ? `Change ${label.toLowerCase()} photo` : `Upload ${label.toLowerCase()} photo — ${uploadLabel}`}
           className="mt-5 relative block aspect-[4/5] w-full overflow-hidden journal-card upload-card hover:border-accent/60 sm:mt-4 sm:aspect-square"
         >
           {preview ? (
-            <img src={preview} alt="" className="h-full w-full object-cover" />
+            <img src={preview} alt={`Preview of ${label.toLowerCase()} photo`} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-muted-foreground sm:gap-3">
               <EmptyPhotoIllustration className="h-12 w-12 opacity-60 sm:h-11 sm:w-11" />

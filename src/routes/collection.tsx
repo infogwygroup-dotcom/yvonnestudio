@@ -18,7 +18,22 @@ export const Route = createFileRoute("/collection")({
       { property: "og:title", content: "My Ripple Collection" },
       {
         property: "og:description",
-        content: "An archive of every Ripple Moment you've created.",
+        content: "An archive of every Ripple Moment you've created — a growing collection of everyday kindness.",
+      },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/collection" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/collection" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "My Ripple Collection",
+          url: "https://yvonnestudio.lovable.app/collection",
+          description: "Archive of Ripple Moments — collectible memories of small kindness.",
+        }),
       },
     ],
   }),
