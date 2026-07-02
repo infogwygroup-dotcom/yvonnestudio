@@ -9,14 +9,17 @@ export const Route = createFileRoute("/v/beta1")({
       {
         name: "description",
         content:
-          "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
+          "Gujjiu Beta 1.0 — the first stable release of Ripple Studio's AI director. A frozen snapshot of the original two-photo, two-sentence memory flow.",
       },
       { property: "og:title", content: "Ripple Studio · Beta 1.0" },
       {
         property: "og:description",
-        content: "Turn a small kindness into a memory worth keeping.",
+        content: "The original stable release of Ripple Studio's AI director — the first Gujjiu snapshot.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/v/beta1" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/v/beta1" }],
   }),
   component: HomePage,
 });
