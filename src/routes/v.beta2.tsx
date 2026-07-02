@@ -9,14 +9,17 @@ export const Route = createFileRoute("/v/beta2")({
       {
         name: "description",
         content:
-          "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
+          "Beta 2.0 introduces the Infinite Stories Engine — 26 director voices, 24 narrative devices, and 20 presentation formats for each Ripple memory.",
       },
       { property: "og:title", content: "Ripple Studio · Beta 2.0" },
       {
         property: "og:description",
-        content: "Turn a small kindness into a memory worth keeping.",
+        content: "The Infinite Stories Engine — 26 directors and 20 presentation formats reimagine every kindness.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/v/beta2" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/v/beta2" }],
   }),
   errorComponent: ({ error, reset }) => (
     <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
