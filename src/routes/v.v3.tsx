@@ -9,14 +9,17 @@ export const Route = createFileRoute("/v/v3")({
       {
         name: "description",
         content:
-          "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
+          "V3.0 Collectible Editions — postcards, fridge magnets, library cards, passport stamps and other physical formats for every Ripple memory.",
       },
       { property: "og:title", content: "Ripple Studio · V3.0 — Collectible Editions" },
       {
         property: "og:description",
-        content: "Turn a small kindness into a memory worth keeping.",
+        content: "Postcards, magnets, library cards, passport stamps — Ripple memories as collectible physical formats.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/v/v3" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/v/v3" }],
   }),
   errorComponent: ({ error, reset }) => (
     <div className="paper flex min-h-screen flex-col items-center justify-center px-6 text-center">
