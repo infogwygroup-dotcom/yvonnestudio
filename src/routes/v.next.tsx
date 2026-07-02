@@ -14,14 +14,17 @@ export const Route = createFileRoute("/v/next")({
       {
         name: "description",
         content:
-          "Two strangers. Two photos. Two sentences. Ripple Studio turns a small act of kindness into a memory worth keeping.",
+          "The experimental Next lane of Ripple Studio — a sandbox for the newest director voices, layout engines, and narrative devices before they graduate.",
       },
       { property: "og:title", content: "Ripple Studio · Next" },
       {
         property: "og:description",
-        content: "Turn a small kindness into a memory worth keeping.",
+        content: "The experimental sandbox for Ripple Studio's newest AI director voices and layouts.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/v/next" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/v/next" }],
   }),
   loader: async () => {
     const { disabled } = await checkNextEnabled();
