@@ -16,6 +16,22 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Turn a small kindness into a memory worth keeping.",
       },
+      { property: "og:url", content: "https://yvonnestudio.lovable.app/" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://yvonnestudio.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Ripple Studio",
+          url: "https://yvonnestudio.lovable.app",
+          description:
+            "Ripple Studio turns two strangers' photos and words into a cinematic memory of everyday kindness.",
+        }),
+      },
     ],
   }),
   component: HomePage,
