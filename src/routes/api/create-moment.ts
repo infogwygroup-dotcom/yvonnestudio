@@ -95,19 +95,29 @@ function rarityDirective(rarity: Rarity): string {
     case "rare":
       return `RARITY: RARE (≈10%). Stay within the cinematic frame, but introduce one unexpected artistic treatment — a striking camera angle, a symbolic composition, exceptional lighting, more emotional staging, or refined typography. Leave "format" as "Cinematic Frame".`;
     default:
-      return `RARITY: COMMON. A beautiful standard edition, but the format should still surprise. The Common pool has 11 formats — spread the love across ALL of them, not just Cinema Poster / Photo Print. Leave "format" as "Cinematic Frame" and set "presentation_format" to the ONE format whose real-world object best carries THIS specific emotion. Use this mood→format map as guidance (not a hard rule — pick the closest match, and when two feel equal, pick the one that has appeared LESS often recently):
-  • Cinematic / dramatic / romantic / longing → Cinema Poster
-  • Reflective / diary-like / private thought → Journal Page or Handwritten Note
-  • Editorial / stylish / confident → Magazine Cover
-  • Documentary / observational / grounded → Photo Print
-  • Travel / distance / sending love across cities → Postcard
-  • Playful / friendship / candid moments in a series → Photo Strip
-  • Nostalgic / snapshot / a single frozen memory → Polaroid Frame
-  • Small everyday kindness / café / food / mundane sacred → Café Receipt
-  • Event / arrival / one-night-only / crossed paths → Ticket Stub
-  • Intimate / whispered / personal message → Handwritten Note
-  • Literary / a line worth returning to / quiet inspiration → Bookmark
-Never default to Cinema Poster or Photo Print unless the emotion truly calls for it.`;
+      return `RARITY: COMMON. A beautiful standard edition, but the format should still surprise. The Common pool has 11 formats and EACH one must earn regular selection — no default gravity to Cinema Poster or Photo Print. Leave "format" as "Cinematic Frame" and set "presentation_format" to the ONE format whose real-world object best carries THIS specific emotion.
+
+Use this expanded mood→format map (guidance, not a hard rule — pick the closest match; when two feel equal, pick the one that appeared LESS often recently). Every mood tag from the Ripple pool has at least one home here, and every format has at least three moods that fit it, so the distribution stays balanced:
+
+  • Cinema Poster ← Cinematic · Dramatic · Romantic · Longing · Epic · Bittersweet-heroic · Fateful · Slow-burn
+  • Journal Page ← Reflective · Diary-like · Contemplative · Melancholic · Quiet · Introspective · Rainy-afternoon · Solitary
+  • Magazine Cover ← Editorial · Stylish · Confident · Bold · Urban · Fashionable · Aspirational · Playful-chic
+  • Photo Print ← Documentary · Observational · Grounded · Honest · Everyday · Neutral · Understated · Portrait-like
+  • Postcard ← Travel · Distance · Homesick · Sending love · Between cities · Warm greeting · Vacation · Faraway friend
+  • Photo Strip ← Playful · Friendship · Candid · Silly · Sibling energy · Shared laughter · Quick sequence · Youthful
+  • Polaroid Frame ← Nostalgic · Snapshot · Frozen moment · Fleeting · First-time · Golden-hour · Tender · Faded memory
+  • Café Receipt ← Small everyday kindness · Café · Food · Mundane-sacred · Comfort · Warm meal · Ordinary Tuesday · Shared bill
+  • Ticket Stub ← Event · Arrival · One-night-only · Crossed paths · Concert · Journey begins · Anticipation · Encounter
+  • Handwritten Note ← Intimate · Whispered · Personal message · Confession · Gratitude · Apology · Love-letter · Small secret
+  • Bookmark ← Literary · A line worth returning to · Quiet inspiration · Poetic · Aphoristic · Wisdom · Pause · Marker of a chapter
+
+Selection procedure:
+ 1. Identify the strongest 1–2 mood tags in THIS memory.
+ 2. Look them up above; collect every format they touch.
+ 3. Among that shortlist, pick the format whose physical object would most honour the moment (a receipt for a shared meal, a ticket for a first meeting, a bookmark for a line that stayed).
+ 4. Tie-break by rarity of recent use — favour under-represented formats.
+
+Never fall back to Cinema Poster or Photo Print unless the emotion is unmistakably cinematic or observational-documentary.`;
   }
 }
 
