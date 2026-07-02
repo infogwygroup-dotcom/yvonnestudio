@@ -95,29 +95,7 @@ function rarityDirective(rarity: Rarity): string {
     case "rare":
       return `RARITY: RARE (≈10%). Stay within the cinematic frame, but introduce one unexpected artistic treatment — a striking camera angle, a symbolic composition, exceptional lighting, more emotional staging, or refined typography. Leave "format" as "Cinematic Frame".`;
     default:
-      return `RARITY: COMMON. A beautiful standard edition, but the format should still surprise. The Common pool has 11 formats and EACH one must earn regular selection — no default gravity to Cinema Poster or Photo Print. Leave "format" as "Cinematic Frame" and set "presentation_format" to the ONE format whose real-world object best carries THIS specific emotion.
-
-Use this expanded mood→format map (guidance, not a hard rule — pick the closest match; when two feel equal, pick the one that appeared LESS often recently). Every mood tag from the Ripple pool has at least one home here, and every format has at least three moods that fit it, so the distribution stays balanced:
-
-  • Cinema Poster ← Cinematic · Dramatic · Romantic · Longing · Epic · Bittersweet-heroic · Fateful · Slow-burn
-  • Journal Page ← Reflective · Diary-like · Contemplative · Melancholic · Quiet · Introspective · Rainy-afternoon · Solitary
-  • Magazine Cover ← Editorial · Stylish · Confident · Bold · Urban · Fashionable · Aspirational · Playful-chic
-  • Photo Print ← Documentary · Observational · Grounded · Honest · Everyday · Neutral · Understated · Portrait-like
-  • Postcard ← Travel · Distance · Homesick · Sending love · Between cities · Warm greeting · Vacation · Faraway friend
-  • Photo Strip ← Playful · Friendship · Candid · Silly · Sibling energy · Shared laughter · Quick sequence · Youthful
-  • Polaroid Frame ← Nostalgic · Snapshot · Frozen moment · Fleeting · First-time · Golden-hour · Tender · Faded memory
-  • Café Receipt ← Small everyday kindness · Café · Food · Mundane-sacred · Comfort · Warm meal · Ordinary Tuesday · Shared bill
-  • Ticket Stub ← Event · Arrival · One-night-only · Crossed paths · Concert · Journey begins · Anticipation · Encounter
-  • Handwritten Note ← Intimate · Whispered · Personal message · Confession · Gratitude · Apology · Love-letter · Small secret
-  • Bookmark ← Literary · A line worth returning to · Quiet inspiration · Poetic · Aphoristic · Wisdom · Pause · Marker of a chapter
-
-Selection procedure:
- 1. Identify the strongest 1–2 mood tags in THIS memory.
- 2. Look them up above; collect every format they touch.
- 3. Among that shortlist, pick the format whose physical object would most honour the moment (a receipt for a shared meal, a ticket for a first meeting, a bookmark for a line that stayed).
- 4. Tie-break by rarity of recent use — favour under-represented formats.
-
-Never fall back to Cinema Poster or Photo Print unless the emotion is unmistakably cinematic or observational-documentary.`;
+      return `RARITY: COMMON. A beautiful standard edition, but the format should still surprise. Choose from: Cinema Poster, Journal Page, Magazine Cover, Photo Print, Postcard, Photo Strip, Polaroid Frame, Café Receipt, Ticket Stub, Handwritten Note, Bookmark. Leave "format" as "Cinematic Frame" and set "presentation_format" to one grounded, collectible format that frames the emotion without overpowering it.`;
   }
 }
 
@@ -130,7 +108,7 @@ function presentationDirective(rarity: Rarity, version: "v2" | "v3"): string {
     version === "v3"
       ? `\n\nSome of these formats are physical collectibles — think of the memory as a real object someone would keep. Reference for the new editions:\n${renderV3FormatHints(rarity)}\n\nAsk yourself: "What is the most beautiful real-world medium to preserve THIS memory?" Choose the one that best matches the story's emotion, not the most decorative one. The same story should be able to become a different format on another day — avoid picking the most obvious format twice in a row.`
       : "";
-  return `PRESENTATION FORMAT — choose ONE collectible edition format for THIS Ripple from this rarity-gated pool: ${pool.join(" · ")}. Set "presentation_format" to that exact label. The presentation IS part of the artwork — pick the one that best frames the emotion, not the most decorative one. VARIETY MANDATE: across many Ripples the distribution of formats MUST feel balanced. Actively avoid Cinema Poster and Photo Print unless the emotion is unmistakably cinematic or documentary — for gentler, quieter, more personal moments prefer Postcard, Polaroid Frame, Handwritten Note, Café Receipt, Ticket Stub, Bookmark, Photo Strip, or Journal Page instead.${v3Hint}`;
+  return `PRESENTATION FORMAT — choose ONE collectible edition format for THIS Ripple from this rarity-gated pool: ${pool.join(" · ")}. Set "presentation_format" to that exact label. The presentation IS part of the artwork — pick the one that best frames the emotion, not the most decorative one.${v3Hint}`;
 }
 
 async function callDirector(
