@@ -23,11 +23,14 @@ export const Route = createFileRoute("/collection")({
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(collectionQuery),
-  errorComponent: ({ error }) => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-stone-700">
-      <p>Couldn't load your collection. {error.message}</p>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    if (typeof console !== "undefined") console.error("[collection]", error);
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 text-stone-700">
+        <p>Something went wrong — please try again.</p>
+      </div>
+    );
+  },
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: CollectionPage,
 });

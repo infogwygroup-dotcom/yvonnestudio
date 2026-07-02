@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { postCreateMoment } from "@/lib/moment-ticket";
 import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -52,7 +53,7 @@ function HomePage() {
       fd.append("photo_two", files.two);
       fd.append("sentence_one", sentences.one.trim());
       fd.append("sentence_two", sentences.two.trim());
-      const res = await fetch("/api/create-moment", { method: "POST", body: fd });
+      const res = await postCreateMoment(fd);
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error || `Failed (${res.status})`);

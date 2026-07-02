@@ -19,6 +19,7 @@ import { Route as MIdRouteImport } from './routes/m.$id'
 import { Route as ApiCreateMomentRouteImport } from './routes/api/create-moment'
 import { Route as V3MIdRouteImport } from './routes/v3.m.$id'
 import { Route as V2MIdRouteImport } from './routes/v2.m.$id'
+import { Route as ApiPublicMomentTicketRouteImport } from './routes/api/public/moment-ticket'
 
 const CollectionRoute = CollectionRouteImport.update({
   id: '/collection',
@@ -70,6 +71,11 @@ const V2MIdRoute = V2MIdRouteImport.update({
   path: '/v2/m/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMomentTicketRoute = ApiPublicMomentTicketRouteImport.update({
+  id: '/api/public/moment-ticket',
+  path: '/api/public/moment-ticket',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
   '/v/v3': typeof VV3Route
+  '/api/public/moment-ticket': typeof ApiPublicMomentTicketRoute
   '/v2/m/$id': typeof V2MIdRoute
   '/v3/m/$id': typeof V3MIdRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
   '/v/v3': typeof VV3Route
+  '/api/public/moment-ticket': typeof ApiPublicMomentTicketRoute
   '/v2/m/$id': typeof V2MIdRoute
   '/v3/m/$id': typeof V3MIdRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/v/beta2': typeof VBeta2Route
   '/v/next': typeof VNextRoute
   '/v/v3': typeof VV3Route
+  '/api/public/moment-ticket': typeof ApiPublicMomentTicketRoute
   '/v2/m/$id': typeof V2MIdRoute
   '/v3/m/$id': typeof V3MIdRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/v/beta2'
     | '/v/next'
     | '/v/v3'
+    | '/api/public/moment-ticket'
     | '/v2/m/$id'
     | '/v3/m/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/v/beta2'
     | '/v/next'
     | '/v/v3'
+    | '/api/public/moment-ticket'
     | '/v2/m/$id'
     | '/v3/m/$id'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/v/beta2'
     | '/v/next'
     | '/v/v3'
+    | '/api/public/moment-ticket'
     | '/v2/m/$id'
     | '/v3/m/$id'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   VBeta2Route: typeof VBeta2Route
   VNextRoute: typeof VNextRoute
   VV3Route: typeof VV3Route
+  ApiPublicMomentTicketRoute: typeof ApiPublicMomentTicketRoute
   V2MIdRoute: typeof V2MIdRoute
   V3MIdRoute: typeof V3MIdRoute
 }
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof V2MIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/moment-ticket': {
+      id: '/api/public/moment-ticket'
+      path: '/api/public/moment-ticket'
+      fullPath: '/api/public/moment-ticket'
+      preLoaderRoute: typeof ApiPublicMomentTicketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   VBeta2Route: VBeta2Route,
   VNextRoute: VNextRoute,
   VV3Route: VV3Route,
+  ApiPublicMomentTicketRoute: ApiPublicMomentTicketRoute,
   V2MIdRoute: V2MIdRoute,
   V3MIdRoute: V3MIdRoute,
 }
